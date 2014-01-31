@@ -1,0 +1,29 @@
+{
+  "name": "koa-body-parse",
+  "version": "0.0.1",
+  "description": "Simple wrapper around co-body for koa",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dlau/koa-body-parse"
+  },
+  "keywords": [
+    "koa",
+    "middleware",
+    "body",
+    "request",
+    "parse"
+  ],
+  "author": "Daryl Lau",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dlau/koa-body-parse/issues"
+  },
+  "homepage": "https://github.com/dlau/koa-body-parse",
+  "dependencies": {
+    "co-body": "0.0.1"
+  }
+}
