@@ -23,7 +23,7 @@ var app = koa();
 app.use(koa_body());
 
 app.use(function *(){
-  console.log(this.request.req.body);
+  console.log(this.request.body);
 });
 
 ```
