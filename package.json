@@ -1,5 +1,5 @@
 {
-  "name": "koa-body-parse",
+  "name": "koa-body",
   "version": "0.0.1",
   "description": "Simple wrapper around co-body for koa",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dlau/koa-body-parse"
+    "url": "git://github.com/dlau/koa-body"
   },
   "keywords": [
     "koa",
@@ -20,9 +20,9 @@
   "author": "Daryl Lau",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dlau/koa-body-parse/issues"
+    "url": "https://github.com/dlau/koa-body/issues"
   },
-  "homepage": "https://github.com/dlau/koa-body-parse",
+  "homepage": "https://github.com/dlau/koa-body",
   "dependencies": {
     "co-body": "0.0.1"
   }
