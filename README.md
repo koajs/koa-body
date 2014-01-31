@@ -11,8 +11,13 @@ $ npm install koa-body
 
 ## Options
 
-  TODO
-  
+- patchNode 
+  Set the body parameter in the node request object `this.req.body`
+  *defauls to false*
+- patchKoa
+  Set the body parameter in the koa request object `this.request.body`
+  *defaults to true*
+
 ## Example
 
 ```js
