@@ -3,6 +3,8 @@
 
   [koa](https://github.com/koajs/koa) middleware for parsing a request body. This is a simple wrapper around [co-body](https://github.com/co/co-body). Provides similar functionality to the express's [request body parser](http://expressjs.com/api.html#req.body)
 
+  Doesn't support multipart
+
 ## Installation
 
 ```
