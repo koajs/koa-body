@@ -1,5 +1,4 @@
 'use strict';
-
 var co_body = require('co-body');
 
 module.exports = function(opts){
