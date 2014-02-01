@@ -1,7 +1,7 @@
 {
   "name": "koa-body",
   "version": "0.0.3",
-  "description": "Simple wrapper around co-body for koa",
+  "description": "koa middleware that parses request body",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
