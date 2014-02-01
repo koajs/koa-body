@@ -2,8 +2,8 @@
 var co_body = require('co-body');
 
 module.exports = function(opts){
-  var patchNode = (opts && opts.patchNode) || false;
-  var patchKoa = (opts && opts.patchKoa) || true;
+  var patchNode = (opts && 'patchNode' in opts) ? opts.patchNode : false;
+  var patchKoa = (opts && 'patchKoa' in opts) ? opts.patchKoa : true;
   return function *(next){
     var body;
     if(this.is('application/json')){
