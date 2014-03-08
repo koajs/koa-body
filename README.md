@@ -46,7 +46,7 @@ var koa_body = require('koa-body')();
 
 app.post(
   '/users',
-  mwBody,
+  koa_body,
   function *(next) {
     console.log(this.request.body);
     //...
