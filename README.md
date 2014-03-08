@@ -30,8 +30,28 @@ app.use(koa_body());
 
 app.use(function *(){
   console.log(this.request.body);
+  //...
 });
 
+```
+
+## Usage with [koa-router](https://github.com/alexmingoia/koa-router)
+It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
+```js
+//note the function call
+var koa_body = require('koa-body')();
+
+//initialize router 
+//...
+
+app.post(
+  '/users',
+  mwBody,
+  function *(next) {
+    console.log(this.request.body);
+    //...
+  }
+);
 ```
 
 # License
