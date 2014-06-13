@@ -1,29 +1,50 @@
 {
   "name": "koa-body",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "koa middleware that parses request body",
-  "main": "index.js",
+  "files": [
+    "index.js",
+    "example.js",
+    "test.js",
+    "README.md",
+    "LICENSE",
+    "Makefile",
+    ".gitignore",
+    ".npmignore"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "make start",
+    "test": "make test"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dlau/koa-body"
+    "url": "https://github.com/dlau/koa-body"
   },
   "keywords": [
     "koa",
-    "middleware",
-    "body",
     "request",
-    "parse"
+    "middleware",
+    "bodyparser",
+    "parse",
+    "json",
+    "bodyjson",
+    "parsejson",
+    "parseform",
+    "form"
   ],
-  "author": "Daryl Lau",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dlau/koa-body/issues"
-  },
-  "homepage": "https://github.com/dlau/koa-body",
   "dependencies": {
-    "co-body": "0.0.1"
-  }
+    "co-body": "*"
+  },
+  "devDependencies": {
+    "koa": "*",
+    "mocha": "*",
+    "should": "*",
+    "supertest": "*"
+  },
+  "contributors": [
+    {"name": "Daryl Lau"}
+    {"name": "Charlike Mike Reagent"}
+  ],
+  "author": "Daryl Lau (http://weak.io/)",
+  "license": "MIT"
 }
