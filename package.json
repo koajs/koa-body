@@ -1,6 +1,6 @@
 {
   "name": "koa-body",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "koa middleware that parses request body",
   "files": [
     "index.js",
@@ -42,8 +42,12 @@
     "supertest": "*"
   },
   "contributors": [
-    {"name": "Daryl Lau"},
-    {"name": "Charlike Mike Reagent"}
+    {
+      "name": "Daryl Lau"
+    },
+    {
+      "name": "Charlike Mike Reagent"
+    }
   ],
   "author": "Daryl Lau (http://weak.io/)",
   "license": "MIT"
