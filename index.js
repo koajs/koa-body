@@ -1,12 +1,41 @@
-'use strict';
-var co_body = require('co-body');
+/*!
+ * koa-body
+ * Copyright (c) 2014. Daryl Lau (@daryllau), Charlike Mike Reagent (@tunnckoCore)
+ * MIT LICENSE
+ */
 
-module.exports = function(opts){
-    var patchNode = (opts && 'patchNode' in opts) ? opts.patchNode : false;
-    var patchKoa = (opts && 'patchKoa' in opts) ? opts.patchKoa : true;
-    var jsonLimit = (opts && 'jsonLimit' in opts) ? opts.jsonLimit : '1mb';
-    var formLimit = (opts && 'formLimit' in opts) ? opts.formLimit : '56kb';
-    var encoding = (opts && 'encoding' in opts) ? opts.encoding : 'utf-8';
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+
+var co_body   = require('co-body');
+
+/**
+ * Expose `requestbody()`.
+ */
+
+module.exports = requestbody; 
+
+/**
+ * Initialize module middleware with the given `options`:
+ * - `jsonLimit` limits application/json request body, co-body's option
+ * - `formLimit` limits application/x-www-form-urlencoded request body, co-body's option
+ * - `patchNode` Set the body parameter in the **Node** request object `this.req.body`
+ * - `patchKoa` Set the body parameter in the **Koa** request object `this.request.body`
+ * - `encoding` request encoding, co-body's option
+ *
+ * @param {Object} options
+ * @return {Function}
+ * @api public
+ */
+function requestbody(opts) {
+  var jsonLimit = (opts && 'jsonLimit' in opts) ? opts.jsonLimit : '1mb',
+      formLimit = (opts && 'formLimit' in opts) ? opts.formLimit : '56kb',
+      patchNode = (opts && 'patchNode' in opts) ? opts.patchNode : false,
+      patchKoa  = (opts && 'patchKoa'  in opts) ? opts.patchKoa  : true,
+      encoding  = (opts && 'encoding'  in opts) ? opts.encoding  : 'utf-8';
 
   return function *(next){
     var body;
