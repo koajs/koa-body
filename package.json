@@ -42,7 +42,7 @@
     "supertest": "*"
   },
   "contributors": [
-    {"name": "Daryl Lau"}
+    {"name": "Daryl Lau"},
     {"name": "Charlike Mike Reagent"}
   ],
   "author": "Daryl Lau (http://weak.io/)",

@@ -1,4 +1,4 @@
-koa-body [![Build Status](https://travis-ci.org/tunnckoCore/koa-better-body.png)](https://travis-ci.org/tunnckoCore/koa-better-body) [![Dependencies Status](https://david-dm.org/tunnckoCore/koa-better-body/status.svg)](https://david-dm.org/tunnckoCore/koa-better-body)
+koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body)
 ================
 
 KoaJS middleware that patch body (to Koa#req.body or Node#request.body, or bother) and parse body to json/form with co-body.
@@ -107,3 +107,4 @@ npm start
 
 ## LICENSE
 The MIT License, 2014 [Daryl Lau](http://weak.io) ([@daryllau](https://twitter.com/tunnckoCore)), [Charlike Mike Reagent](https://github.com/tunnckoCore) ([@tunnckoCore](https://twitter.com/tunnckoCore))
+
