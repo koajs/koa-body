@@ -1,17 +1,22 @@
-/*!
- * koa-body
- * Copyright (c) 2014. Daryl Lau (@daryllau), Charlike Mike Reagent (@tunnckoCore)
- * MIT LICENSE
+/**
+ * koa-body - test.js
+ * Copyright(c) 2014
+ * MIT Licensed
+ *
+ * @author  Charlike Mike Reagent (@tunnckoCore)
+ * @author  Daryl Lau (@daryllau)
+ * @api private
  */
-var koa         = require('koa');
-var betterBody  = require('./index');
-var request     = require('supertest');
-var http        = require('http');
+var fs      = require('fs'),
+    koa     = require('koa'),
+    koaBody = require('./index'),
+    request = require('supertest'),
+    http    = require('http');
 
 
 function *hello() {
-  var patchKoa  = (this.request.body) ? this.request.body : 'patchKoa=true, by default';
-  var patchNode = (this.req.body) ? this.req.body : 'patchNode=false, by default';
+  var patchKoa  = (this.request.body) ? this.request.body : 'patchKoa=true, by default',
+      patchNode = (this.req.body) ? this.req.body : 'patchNode=false, by default';
 
   
   if (this.request.body || this.req.body) {
@@ -43,7 +48,7 @@ function *hello() {
  * @type {[type]}
  */
 var appDefault = koa();
-appDefault.use(betterBody());
+appDefault.use(koaBody());
 appDefault.use(hello);
 appDefault = http.createServer(appDefault.callback());
 
@@ -53,7 +58,7 @@ appDefault = http.createServer(appDefault.callback());
  * @type {[type]}
  */
 var appAllPatched = koa();
-appAllPatched.use(betterBody({patchNode: true, jsonLimit: '1kb', formLimit: '1kb'}));
+appAllPatched.use(koaBody({uploadDir: __dirname, keepExtensions: true, patchNode: true, jsonLimit: '1kb', formLimit: '1kb'}));
 appAllPatched.use(hello);
 appAllPatched = http.createServer(appAllPatched.callback());
 
@@ -62,7 +67,7 @@ appAllPatched = http.createServer(appAllPatched.callback());
  * @type {[type]}
  */
 var appLimited = koa();
-appLimited.use(betterBody({jsonLimit: '1kb', formLimit: 8}));
+appLimited.use(koaBody({jsonLimit: '1kb', formLimit: 8}));
 appLimited.use(hello);
 appLimited = http.createServer(appLimited.callback());
 
@@ -72,7 +77,7 @@ appLimited = http.createServer(appLimited.callback());
  * @type {[type]}
  */
 var appNull = koa();
-appNull.use(betterBody({patchKoa: false, jsonLimit: '1kb', formLimit: '1kb'}));
+appNull.use(koaBody({patchKoa: false, jsonLimit: '1kb', formLimit: '1kb'}));
 appNull.use(hello);
 appNull = http.createServer(appNull.callback());
 
@@ -163,7 +168,7 @@ describe('appLimited: patchKoa=true, patchNode=false', function () {
   });
 });
 
-describe('app: patchKoa=true, patchNode=true', function () {
+describe('appAllPatched: patchKoa=true, patchNode=true', function () {
   it('should GET / request 204 No Content', function (done) {
     request(appAllPatched)
     .get('/')
@@ -208,9 +213,39 @@ describe('app: patchKoa=true, patchNode=true', function () {
       }
     });
   });
+  it('should POST / 201 Created - multipart upload', function (done) {
+    request(appAllPatched)
+    .post('/')
+    .attach('filesField', 'package.json')
+    .attach('fieldTwo', 'index.js')
+    .expect(201)
+    .end(function(err, res){
+      if(err) {
+        done(err);
+      } else {
+        var body = JSON.parse(res.text),
+            koaFileOne = body.koa.files.filesField,
+            koaFileTwo = body.koa.files.fieldTwo,
+            nodFileOne = body.node.files.filesField,
+            nodFileTwo = body.node.files.fieldTwo;
+
+        // koa res: file avatar.png uploaded
+        koaFileOne.name.should.equal('package.json');
+        koaFileTwo.name.should.equal('index.js');
+
+        // node res: file avatar.png uploaded
+        nodFileOne.name.should.equal('package.json');
+        nodFileTwo.name.should.equal('index.js');
+
+        fs.unlinkSync(koaFileOne.path)
+        fs.unlinkSync(koaFileTwo.path)
+        done();
+      }
+    });
+  });
 });
 
-describe('app: patchKoa=false, patchNode=false', function () {
+describe('appNull: patchKoa=false, patchNode=false', function () {
   it('should GET / request 204 No Content', function (done) {
     request(appNull)
     .get('/')

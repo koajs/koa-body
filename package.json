@@ -1,54 +1,63 @@
 {
   "name": "koa-body",
-  "version": "0.1.0",
-  "description": "koa middleware that parses request body",
-  "files": [
-    "index.js",
-    "example.js",
-    "test.js",
-    "README.md",
-    "LICENSE",
-    "Makefile",
-    ".gitignore",
-    ".npmignore"
-  ],
+  "version": "0.2.0",
+  "description": "A koa body parser middleware. Support multipart, urlencoded and json request bodies.",
   "scripts": {
     "start": "make start",
     "test": "make test"
   },
+  "author": {
+    "name": "Daryl Lau",
+    "email": "daryl@weak.io",
+    "url": "https://github.com/dlau"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dlau/koa-body"
+    "url": "git://github.com/dlau/koa-body.git"
   },
   "keywords": [
     "koa",
-    "request",
-    "middleware",
-    "bodyparser",
-    "parse",
+    "urlencoded",
+    "multipart",
     "json",
-    "bodyjson",
-    "parsejson",
-    "parseform",
+    "body",
+    "parser",
     "form"
   ],
+  "files": [
+    ".gitignore",
+    ".npmignore",
+    ".travis.yml",
+    "LICENSE",
+    "Makefile",
+    "README.md",
+    "example.js",
+    "index.js",
+    "test.js"
+  ],
   "dependencies": {
-    "co-body": "*"
+    "co-body": "*",
+    "formidable": "1.0.15"
   },
   "devDependencies": {
     "koa": "*",
+    "koa-router": "*",
+    "multiline": "*",
     "mocha": "*",
     "should": "*",
     "supertest": "*"
   },
   "contributors": [
     {
-      "name": "Daryl Lau"
+      "name": "Daryl Lau",
+      "email": "daryl@weak.io",
+      "url": "https://github.com/dlau"
     },
     {
-      "name": "Charlike Mike Reagent"
+      "name": "Charlike Mike Reagent",
+      "email": "mameto_100@mail.bg",
+      "url": "https://github.com/tunnckoCore"
     }
   ],
-  "author": "Daryl Lau (http://weak.io/)",
   "license": "MIT"
 }

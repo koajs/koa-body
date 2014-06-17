@@ -1,110 +1,155 @@
 koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body)
 ================
 
-KoaJS middleware that patch body (to Koa#req.body or Node#request.body, or bother) and parse body to json/form with co-body.
-[koa](https://github.com/koajs/koa) middleware for parsing a request body.
-This is a simple wrapper around [co-body](https://github.com/co/co-body). Provides similar functionality to the express's [request body parser](http://expressjs.com/api.html#req.body)
-
-Doesn't support multipart. [Discuss](https://github.com/dlau/koa-body/issues/1)
+> A full-feature [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
+[`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://felixge/node-formidable).
 
 
 ## Install
+>Install with [npm](https://github.com/npm/npm)
+
 ```
 $ npm install koa-body
 ```
 
 
-## Options
-Initialize koa-better-body middleware with the given `options`:
-- **patchNode** Set the body parameter in the **Node** request object `this.req.body`
-  *defauls to false*
-- **patchKoa** Set the body parameter in the **Koa** request object `this.request.body`
-  *defaults to true*
-- **jsonLimit** limits application/json request body, co-body's option
-  *defauls to '1mb'*
-- **formLimit** limits application/x-www-form-urlencoded request body, co-body's option
-  *defauls to '56kb'*
-- **encoding** request encoding, co-body's option
-  *defauls to 'utf-8'*
+## Features
+- 15 tests
+- can handle three type requests
+  * **multipart/form-data**
+  * **application/x-www-urlencoded**
+  * **application/json**
+- option for patch to Koa or Node, or either
+- file uploads
+- body, fields and files limiting
+- 2 dependencies only
 
 
-## Usage
+## Usage like [multer](https://github.com/expressjs/multer)
+> It's very simple, because you can access the fields and files in the `ctx.request.body` or `ctx.req.body` JSON object
+
 ```js
-var app        = require('koa')()
-  , betterBody = require('./index');
-  
-/**
- * By default body is patching to
- * Koa's ctx.request
- */
-app.use(betterBody({patchNode: false, jsonLimit: '1kb', formLimit: '1kb'}));
+var app      = require('koa')(),
+    bulter   = require('./index');
 
-app.use(function *(next){
-  var patchKoa  = (this.request.body) ? this.request.body : 'patchKoa=true, by default';
-  var patchNode = (this.req.body) ? this.req.body : 'patchNode=false, by default';
-
+app.use(bulter({uploadDir: __dirname}));
+app.use(function *(next) {
   if (this.request.method == 'POST') {
-    this.status = 201;
-  } else if (this.request.method == 'GET') {
-    this.status = 200
+    console.log(this.request.body);
+    // => POST body
+    this.body = JSON.stringify(this.request.body, null, 2);
   }
-
-  this.body = JSON.stringify({koa: patchKoa, node: patchNode});
-
-  if (this.request.method == 'PUT') {
-    this.status = 200;
-    this.body = 'resource updated successfully';
-  }
-  if (this.request.method == 'DELETE') {
-    this.status = 204;
-    this.body = 'resource deleted successfully';
-  }
+  yield next;
 });
-
-var port = process.env.PORT || 3333;
-app.listen(port);
-console.log('Koa server start listening to port '+port);
+app.listen(3131)
+console.log('curl -i http://localhost:3131/ -d "name=test"');
 ```
 
 ## Usage with [koa-router](https://github.com/alexmingoia/koa-router)
 > It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
 
 ```js
-var app     = require('koa')(),
-    router  = require('koa-router'),
-    koaBody = require('koa-body')();
+/**
+ * koa-body - example.js
+ * Copyright(c) 2014
+ * MIT Licensed
+ *
+ * @author  Charlike Mike Reagent (@tunnckoCore)
+ * @api private
+ */
+var app       = require('koa')(),
+    router    = require('koa-router'),
+    koaBody   = require('./index')(/*defaults*/);
+    multiline = require('multiline');
 
-app.use(router());
+app.use(router(app));
 
 app.post('/users', koaBody,
   function *(next) {
     console.log(this.request.body);
     // => POST body
+    this.body = JSON.stringify(this.request.body, null, 2);
+    yield next;
   }
 );
+app.get('/', function *(next) {
+  this.set('Content-Type', 'text/html');
+  this.body = multiline.stripIndent(function(){/*
+      <!doctype html>
+      <html>
+          <body>
+              <form action="/" enctype="multipart/form-data" method="post">
+              <input type="text" name="username" placeholder="username"><br>
+              <input type="text" name="title" placeholder="tile of film"><br>
+              <input type="file" name="uploads" multiple="multiple"><br>
+              <button type="submit">Upload</button>
+          </body>
+      </html>
+  */});
+});
+app.post('/', koaBody,
+  function *(next) {
+    console.log(this.request.body.fields);
+    // => {username: ""} - if empty
+
+    console.log(this.request.body.files);
+    /* => {uploads: [
+            {
+              "size": 748831,
+              "path": "/tmp/f7777b4269bf6e64518f96248537c0ab.png",
+              "name": "some-image.png",
+              "type": "image/png",
+              "mtime": "2014-06-17T11:08:52.816Z"
+            },
+            {
+              "size": 379749,
+              "path": "/tmp/83b8cf0524529482d2f8b5d0852f49bf.jpeg",
+              "name": "nodejs_rulz.jpeg",
+              "type": "image/jpeg",
+              "mtime": "2014-06-17T11:08:52.830Z"
+            }
+          ]}
+    */
+   this.body = JSON.stringify(this.request.body, null, 2)
+   yield next;
+  }
+)
+
+var port = process.env.PORT || 3333;
+app.listen(port);
+console.log('Koa server with `koa-body` parser start listening to port %s', port);
+console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
+console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);
 ```
 
-## Features
-- 14 passing (174ms) tests
-- co-body options: jsonLimit, formLimit, encoding
-- freedom to choose - patch body to
-  * KoaJS Context `this.request.body`
-  * NodeJS Context `this.req.body`
-- only 1 dependency: `co-body`
+
+## Options
+> Options available for `koa-body`. Four custom options, and others are from `raw-body` and `formidable`.
+
+- `patchNode` **{Boolean}** Patch request body to Node's `ctx.req`, default `false`
+- `patchKoa` **{Boolean}** Patch request body to Koa's `ctx.request`, default `true`
+- `jsonLimit` **{String|Integer}** The byte limit of the JSON body, default `1mb`
+- `formLimit` **{String|Integer}** The byte limit of the form body, default `56kb`
+- `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
+- `uploadDir` **{String}** Sets the directory for placing file uploads in, default `os.tmpDir()`
+- `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `true`
+- `maxFields` **{Integer}** Limits the number of fields that the querystring parser will decode, default `10`
+- `maxFieldsSize` **{Integer}** Limits the amount of memory a field (not file) can allocate _in bytes_, default `2mb`
+- `hash` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
+- `multiples` **{Boolean}** Multiple file uploads or no, default `true`
+- `bytesExpected` **{Integer}** The expected number of bytes in this form, default `null`
+
+**Note**: You can patch request body to Node or Koa in same time if you want.
+
 
 ## Test, Bench, Example
-First run `npm install` before run anything.
+> First run `npm install` before run anything.
+
 ```
-npm test
-npm start
+$ npm test
+$ npm start
 ```
 
-## Credit
 
-|[![Daryl Lau](https://avatars2.githubusercontent.com/u/2764274?s=144)](https://github.com/dlau)| [![Charlike Mike Reagent](https://avatars2.githubusercontent.com/u/5038030?s=144)](https://github.com/tunnckoCore)|
-|---|---|
-|[Daryl Lau](https://github.com/dlau) (creator) | [George Yanev](https://github.com/tunnckoCore) (contrib)|
-
-## LICENSE
-The MIT License, 2014 [Daryl Lau](http://weak.io) ([@daryllau](https://twitter.com/tunnckoCore)), [Charlike Mike Reagent](https://github.com/tunnckoCore) ([@tunnckoCore](https://twitter.com/tunnckoCore))
-
+## License
+The MIT License, 2014 [Charlike Mike Reagent](https://github.com/tunnckoCore) ([@tunnckoCore](https://twitter.com/tunnckoCore)) and [Daryl Lau](https://github.com/dlau) ([@daryllau](https://twitter.com/daryllau))

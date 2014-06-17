@@ -1,9 +1,12 @@
 TESTS = test.js
 REPORTER = spec
-TIMEOUT = 3000
+TIMEOUT = 2000
 MOCHA_OPTS =
 
-test:
+clean:
+	@sudo rm -rf /tmp/*
+
+test: node_modules
 	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
 		--harmony-generators \
 		--reporter $(REPORTER) \
@@ -12,7 +15,7 @@ test:
 		$(MOCHA_OPTS) \
 		$(TESTS)
 
-start:
+start: test
 	node --harmony example.js
 
-.PHONY: test
+.PHONY: test start
