@@ -84,7 +84,7 @@ var appAllPatchedMultipart
  */
 var appLimited = koa();
 appLimited.use(koaBody({jsonLimit: '1kb', formLimit: 8}));
-filesFieldappLimited.use(hello);
+appLimited.use(hello);
 appLimited = http.createServer(appLimited.callback());
 
 
