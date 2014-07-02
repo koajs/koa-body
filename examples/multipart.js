@@ -4,12 +4,12 @@
  * MIT Licensed
  *
  * @author  Charlike Mike Reagent (@tunnckoCore)
- * @author  Daryl Lau (@daryllau)
+ * @author  Daryl Lau (@dlau)
  * @api private
  */
 var app       = require('koa')(),
     router    = require('koa-router'),
-    koaBody   = require('./index')(/*defaults*/);
+    koaBody   = require('../index')({multipart:true});
     multiline = require('multiline');
 
 app.use(router(app));
@@ -70,3 +70,4 @@ app.listen(port);
 console.log('Koa server with `koa-body` parser start listening to port %s', port);
 console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
 console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);
+

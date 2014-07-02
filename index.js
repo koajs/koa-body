@@ -1,8 +1,9 @@
 /**
- * koa-better-body - index.js
+ * koa-body - index.js
  * Copyright(c) 2014
  * MIT Licensed
  *
+ * @author  Daryl Lau (@dlau)
  * @author  Charlike Mike Reagent (@tunnckoCore)
  * @api private
  */
@@ -23,27 +24,20 @@ var forms = require('formidable');
 module.exports = requestbody; 
 
 /**
- * Options available for `koa-better-body`. Four custom options, 
- * and others are from `raw-body` and `formidable`.
  *
  * @param {Object} options
- * @see https://github.com/tunnckoCore/koa-better-body
+ * @see https://github.com/dlau/koa-body
  * @api public
  */
 function requestbody(opts) {
   opts = opts || {}
-  opts.keepExts = opts.keepExtensions;
-  opts.jsonLimit = (opts && 'jsonLimit' in opts) ? opts.jsonLimit : '1mb',
-  opts.formLimit = (opts && 'formLimit' in opts) ? opts.formLimit : '56kb',
   opts.patchNode = (opts && 'patchNode' in opts) ? opts.patchNode : false,
   opts.patchKoa  = (opts && 'patchKoa'  in opts) ? opts.patchKoa  : true,
+  opts.multipart = (opts && 'multipart' in opts) ? opts.multipart : false;
   opts.encoding  = (opts && 'encoding'  in opts) ? opts.encoding  : 'utf-8',
-  opts.keepExts  = (opts && 'keepExts'  in opts) ? opts.keepExts  : true,
-  opts.maxFields = (opts && 'maxFields' in opts) ? opts.maxFields : 10,
-  opts.multiples = (opts && 'multiples' in opts) ? opts.multiples : true
-
-  opts.keepExtensions = opts.keepExts;
-  delete opts['keepExts'];
+  opts.jsonLimit = (opts && 'jsonLimit' in opts) ? opts.jsonLimit : '1mb',
+  opts.formLimit = (opts && 'formLimit' in opts) ? opts.formLimit : '56kb';
+  opts.formidable = (opts && 'formidable' in opts) ? opts.formidable : {};
 
   return function *(next){
     var body;
@@ -53,8 +47,8 @@ function requestbody(opts) {
     else if (this.is('urlencoded')) {
       body = yield buddy.form(this, {encoding: opts.encoding, limit: opts.formLimit});
     }
-    else if (this.is('multipart')) {
-      body = yield formy(this, opts);
+    else if (opts.multipart && this.is('multipart')) {
+      body = yield formy(this, opts.formidable);
     }
 
     if (opts.patchNode) {

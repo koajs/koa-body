@@ -58,9 +58,25 @@ appDefault = http.createServer(appDefault.callback());
  * @type {[type]}
  */
 var appAllPatched = koa();
-appAllPatched.use(koaBody({uploadDir: __dirname, keepExtensions: true, patchNode: true, jsonLimit: '1kb', formLimit: '1kb'}));
+appAllPatched.use(koaBody({patchNode: true, jsonLimit: '1kb', formLimit: '1kb'}));
 appAllPatched.use(hello);
 appAllPatched = http.createServer(appAllPatched.callback());
+
+var appAllPatchedMultipart = koa();
+appAllPatchedMultipart.use(koaBody({
+  patchNode: true,
+  jsonLimit: '1kb',
+  formLimit: '1kb',
+  multipart: true,
+  formidable: {
+    uploadDir: __dirname,
+    keepExtensions: true,
+  }
+}));
+appAllPatchedMultipart.use(hello);
+appAllPatchedMultipart = http.createServer(appAllPatchedMultipart.callback());
+
+var appAllPatchedMultipart
 
 /**
  * [appLimited description]
@@ -68,7 +84,7 @@ appAllPatched = http.createServer(appAllPatched.callback());
  */
 var appLimited = koa();
 appLimited.use(koaBody({jsonLimit: '1kb', formLimit: 8}));
-appLimited.use(hello);
+filesFieldappLimited.use(hello);
 appLimited = http.createServer(appLimited.callback());
 
 
@@ -214,7 +230,7 @@ describe('appAllPatched: patchKoa=true, patchNode=true', function () {
     });
   });
   it('should POST / 201 Created - multipart upload', function (done) {
-    request(appAllPatched)
+    request(appAllPatchedMultipart)
     .post('/')
     .attach('filesField', 'package.json')
     .attach('fieldTwo', 'index.js')

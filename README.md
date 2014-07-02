@@ -3,7 +3,6 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://trav
 
 > A full-feature [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
 [`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://felixge/node-formidable).
-- **Note:** In the npm is one version older. Without `multipart` feature.
 
 ## Related module
 - [`koa-better-body`](https://github.com/tunnckoCore/koa-better-body) - copy of this, but with better support and publishing to npm.
@@ -14,7 +13,6 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://trav
 ```
 $ npm install koa-body
 ```
-
 
 ## Features
 - 15 tests
@@ -33,96 +31,41 @@ $ npm install koa-body
 
 ```js
 var app      = require('koa')(),
-    bulter   = require('./index');
+    koaBody   = require('koa-body');
 
-app.use(bulter({uploadDir: __dirname}));
+app.use(koaBody({formidable:{uploadDir: __dirname}}));
 app.use(function *(next) {
   if (this.request.method == 'POST') {
     console.log(this.request.body);
     // => POST body
-    this.body = JSON.stringify(this.request.body, null, 2);
+    this.body = JSON.stringify(this.request.body);
   }
   yield next;
 });
 app.listen(3131)
 console.log('curl -i http://localhost:3131/ -d "name=test"');
 ```
+**For a more comprehensive example, see** `examples/multipart.js`
 
 ## Usage with [koa-router](https://github.com/alexmingoia/koa-router)
 > It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
 
 ```js
-/**
- * koa-body - example.js
- * Copyright(c) 2014
- * MIT Licensed
- *
- * @author  Charlike Mike Reagent (@tunnckoCore)
- * @api private
- */
-var app       = require('koa')(),
-    router    = require('koa-router'),
-    koaBody   = require('./index')(/*defaults*/);
-    multiline = require('multiline');
+var app     = require('koa')(),
+    router  = require('koa-router'),
+    koaBody = require('koa-body')();
 
-app.use(router(app));
+app.use(router());
 
 app.post('/users', koaBody,
   function *(next) {
     console.log(this.request.body);
     // => POST body
-    this.body = JSON.stringify(this.request.body, null, 2);
-    yield next;
+    this.body = JSON.stringify(this.request.body);
   }
 );
-app.get('/', function *(next) {
-  this.set('Content-Type', 'text/html');
-  this.body = multiline.stripIndent(function(){/*
-      <!doctype html>
-      <html>
-          <body>
-              <form action="/" enctype="multipart/form-data" method="post">
-              <input type="text" name="username" placeholder="username"><br>
-              <input type="text" name="title" placeholder="tile of film"><br>
-              <input type="file" name="uploads" multiple="multiple"><br>
-              <button type="submit">Upload</button>
-          </body>
-      </html>
-  */});
-});
-app.post('/', koaBody,
-  function *(next) {
-    console.log(this.request.body.fields);
-    // => {username: ""} - if empty
-
-    console.log(this.request.body.files);
-    /* => {uploads: [
-            {
-              "size": 748831,
-              "path": "/tmp/f7777b4269bf6e64518f96248537c0ab.png",
-              "name": "some-image.png",
-              "type": "image/png",
-              "mtime": "2014-06-17T11:08:52.816Z"
-            },
-            {
-              "size": 379749,
-              "path": "/tmp/83b8cf0524529482d2f8b5d0852f49bf.jpeg",
-              "name": "nodejs_rulz.jpeg",
-              "type": "image/jpeg",
-              "mtime": "2014-06-17T11:08:52.830Z"
-            }
-          ]}
-    */
-   this.body = JSON.stringify(this.request.body, null, 2)
-   yield next;
-  }
-)
-
-var port = process.env.PORT || 3333;
-app.listen(port);
-console.log('Koa server with `koa-body` parser start listening to port %s', port);
-console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
-console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);
+app.listen(3131)
+console.log('curl -i http://localhost:3131/ -d "name=test"');
 ```
 
 
@@ -134,13 +77,19 @@ console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port)
 - `jsonLimit` **{String|Integer}** The byte limit of the JSON body, default `1mb`
 - `formLimit` **{String|Integer}** The byte limit of the form body, default `56kb`
 - `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
-- `uploadDir` **{String}** Sets the directory for placing file uploads in, default `os.tmpDir()`
-- `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `true`
+- `multipart` **{Boolean}** Parse multipart bodies, default `false`
+- `formidable` **{Object}** Options to pass to the formidable multipart parser
+
+## Some options for formidable
+> See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options
+- `bytesExpected` **{Integer}** The expected number of bytes in this form, default `null`
 - `maxFields` **{Integer}** Limits the number of fields that the querystring parser will decode, default `10`
 - `maxFieldsSize` **{Integer}** Limits the amount of memory a field (not file) can allocate _in bytes_, default `2mb`
+- `uploadDir` **{String}** Sets the directory for placing file uploads in, default `os.tmpDir()`
+- `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `true`
 - `hash` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
 - `multiples` **{Boolean}** Multiple file uploads or no, default `true`
-- `bytesExpected` **{Integer}** The expected number of bytes in this form, default `null`
+
 
 **Note**: You can patch request body to Node or Koa in same time if you want.
 
