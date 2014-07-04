@@ -5,7 +5,7 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://trav
 [`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://felixge/node-formidable).
 
 ## Related module
-- [`koa-better-body`](https://github.com/tunnckoCore/koa-better-body) - copy of this, but with better support and publishing to npm.
+- [`koa-better-body`](https://github.com/tunnckoCore/koa-better-body)
 
 ## Install
 >Install with [npm](https://github.com/npm/npm)
@@ -94,14 +94,12 @@ console.log('curl -i http://localhost:3131/ -d "name=test"');
 **Note**: You can patch request body to Node or Koa in same time if you want.
 
 
-## Test, Bench, Example
-> First run `npm install` before run anything.
+## Tests
+> As usual - `npm test` **or** if you have [mocha][mocha-url] globally - `mocha --harmony-generators`.
 
 ```
 $ npm test
-$ npm start
 ```
-
 
 ## License
 The MIT License, 2014 [Charlike Mike Reagent](https://github.com/tunnckoCore) ([@tunnckoCore](https://twitter.com/tunnckoCore)) and [Daryl Lau](https://github.com/dlau) ([@daryllau](https://twitter.com/daryllau))
