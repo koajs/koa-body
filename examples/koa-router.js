@@ -1,48 +1,59 @@
-/**
- * koa-body - example.js
- * Copyright(c) 2014
- * MIT Licensed
- *
- * @author  Charlike Mike Reagent (@tunnckoCore)
- * @author  Daryl Lau (@daryllau)
- * @api private
- */
-var app       = require('koa')(),
+var log       = console.log,
+    app       = require('koa')(),
     router    = require('koa-router'),
-    koaBody   = require('./index')(/*defaults*/);
-    multiline = require('multiline');
+    koaBody   = require('../index'),
+    multiline = require('multiline'),
+    port      = process.env.PORT || 4291
+    host      = process.env.HOST || 'http://localhost';
 
 app.use(router(app));
 
-app.post('/users', koaBody,
+/*!
+ * Accepts only urlencoded and json bodies.
+ */
+app.post('/post/users', koaBody(),
   function *(next) {
-    console.log(this.request.body);
-    // => POST body
+    log(this.request.body);
+    // => POST body object
     this.body = JSON.stringify(this.request.body, null, 2);
     yield next;
   }
 );
+
+/*!
+ * Display HTML page with basic form.
+ */
 app.get('/', function *(next) {
   this.set('Content-Type', 'text/html');
   this.body = multiline.stripIndent(function(){/*
       <!doctype html>
       <html>
           <body>
-              <form action="/" enctype="multipart/form-data" method="post">
+              <form action="/post/upload" enctype="multipart/form-data" method="post">
               <input type="text" name="username" placeholder="username"><br>
-              <input type="text" name="title" placeholder="tile of film"><br>
+              <input type="text" name="title" placeholder="title of file"><br>
               <input type="file" name="uploads" multiple="multiple"><br>
               <button type="submit">Upload</button>
           </body>
       </html>
   */});
 });
-app.post('/', koaBody,
+
+/*!
+ * Accepts `multipart`, `json` and `urlencoded` bodies.
+ */
+app.post('/post/upload',
+  koaBody({
+    multipart: true,
+    formidable: {
+      uploadDir: __dirname + '/uploads'
+    }
+  }),
   function *(next) {
-    console.log(this.request.body.fields);
+    log(this.request.body.fields);
     // => {username: ""} - if empty
 
-    console.log(this.request.body.files);
+    log(this.request.body.files);
     /* => {uploads: [
             {
               "size": 748831,
@@ -65,8 +76,15 @@ app.post('/', koaBody,
   }
 )
 
-var port = process.env.PORT || 3333;
+var port = process.env.PORT || 4291,
+    host = process.env.HOST || 'http://localhost';
+
 app.listen(port);
-console.log('Koa server with `koa-body` parser start listening to port %s', port);
-console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
-console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);
+
+log('Visit %s:%s/ in browser.', host, port);
+log();
+log('Test with executing this commands:');
+log('curl -i %s:%s/post/users -d "user=admin"', host, port);
+log('curl -i %s:%s/post/upload -F "source=@%s/avatar.png"', host, port, __dirname);
+log();
+log('Press CTRL+C to stop...');
