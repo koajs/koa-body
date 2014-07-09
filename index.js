@@ -30,14 +30,14 @@ module.exports = requestbody;
  * @api public
  */
 function requestbody(opts) {
-  opts = opts || {}
-  opts.patchNode = (opts && 'patchNode' in opts) ? opts.patchNode : false,
-  opts.patchKoa  = (opts && 'patchKoa'  in opts) ? opts.patchKoa  : true,
-  opts.multipart = (opts && 'multipart' in opts) ? opts.multipart : false;
-  opts.encoding  = (opts && 'encoding'  in opts) ? opts.encoding  : 'utf-8',
-  opts.jsonLimit = (opts && 'jsonLimit' in opts) ? opts.jsonLimit : '1mb',
-  opts.formLimit = (opts && 'formLimit' in opts) ? opts.formLimit : '56kb';
-  opts.formidable = (opts && 'formidable' in opts) ? opts.formidable : {};
+  opts = opts || {};
+  opts.patchNode = 'patchNode' in opts ? opts.patchNode : false;
+  opts.patchKoa  = 'patchKoa'  in opts ? opts.patchKoa  : true;
+  opts.multipart = 'multipart' in opts ? opts.multipart : false;
+  opts.encoding  = 'encoding'  in opts ? opts.encoding  : 'utf-8';
+  opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
+  opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
+  opts.formidable = 'formidable' in opts ? opts.formidable : {};
 
   return function *(next){
     var body;
