@@ -40,7 +40,7 @@ function requestbody(opts) {
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
 
   return function *(next){
-    var body;
+    var body = {};
     if (this.is('json'))  {
       body = yield buddy.json(this, {encoding: opts.encoding, limit: opts.jsonLimit});
     }
