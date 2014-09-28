@@ -1,6 +1,6 @@
 {
   "name": "koa-body",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A koa body parser middleware. Support multipart, urlencoded and json request bodies.",
   "main": "index.js",
   "scripts": {
