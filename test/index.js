@@ -283,4 +283,49 @@ describe('koa-body', function () {
       .expect('content-length', 24)
       .end(done);
   });
+
+
+  it('should return empty body object with no content type', function (done) {
+      var app = koa();
+      var usersResource = new Resource('users', {
+        // POST /users
+        create: function *(next) {
+          this.body = this.req.body;
+          this.status = 200;
+        }
+      });
+
+
+      app.use(koaBody());
+      app.use(usersResource.middleware());
+
+      request(http.createServer(app.callback()))
+        .post('/users')
+        .send('Hello <b>invalid</b> content type')
+        .expect(200, {})
+        .end(done);
+    });
+
+
+  it('should return empty body object with invalid content type', function (done) {
+      var app = koa();
+      var usersResource = new Resource('users', {
+        // POST /users
+        create: function *(next) {
+          this.body = this.req.body;
+          this.status = 200;
+        }
+      });
+
+
+      app.use(koaBody());
+      app.use(usersResource.middleware());
+
+      request(http.createServer(app.callback()))
+        .post('/users')
+        .type('9c35-0-c35£ € « » ♠ ♣ ♥ ♦ ¿ �')
+        .send('Hello <b>invalid</b> content type')
+        .expect(200, {})
+        .end(done);
+    });
 });
