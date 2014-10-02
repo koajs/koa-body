@@ -323,7 +323,7 @@ describe('koa-body', function () {
 
       request(http.createServer(app.callback()))
         .post('/users')
-        .type('9c35-0-c35£ € « » ♠ ♣ ♥ ♦ ¿ �')
+        .type('text/html')
         .send('Hello <b>invalid</b> content type')
         .expect(200, {})
         .end(done);
