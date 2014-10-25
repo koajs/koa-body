@@ -238,7 +238,7 @@ describe('koa-body', function () {
   /**
    * FORM (urlencoded) LIMIT
    */
-  it('should request 413 Request Entity Too Large, because of `formLimit`', function (done) {
+  it('should request 413 Payload Too Large, because of `formLimit`', function (done) {
     var app = koa();
     var usersResource = new Resource('users', {
       // POST /users
@@ -256,8 +256,8 @@ describe('koa-body', function () {
       .post('/users')
       .type('application/x-www-form-urlencoded')
       .send('user=www-form-urlencoded')
-      .expect(413, 'Request Entity Too Large')
-      .expect('content-length', 24)
+      .expect(413, 'Payload Too Large')
+      .expect('content-length', 17)
       .end(done);
   });
 
@@ -266,7 +266,7 @@ describe('koa-body', function () {
   /**
    * JSON LIMIT
    */
-  it('should request 413 Request Entity Too Large, because of `jsonLimit`', function (done) {
+  it('should request 413 Payload Too Large, because of `jsonLimit`', function (done) {
     var app = koa();
     var usersResource = new Resource('users', {
       // POST /users
@@ -284,8 +284,8 @@ describe('koa-body', function () {
       .post('/users')
       .type('application/json')
       .send({name: 'some-long-name-for-limit'})
-      .expect(413, 'Request Entity Too Large')
-      .expect('content-length', 24)
+      .expect(413, 'Payload Too Large')
+      .expect('content-length', 17)
       .end(done);
   });
 
