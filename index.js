@@ -21,7 +21,7 @@ var forms = require('formidable');
  * Expose `requestbody()`.
  */
 
-module.exports = requestbody; 
+module.exports = requestbody;
 
 /**
  *
@@ -59,11 +59,11 @@ function requestbody(opts) {
     }
     yield next;
   };
-};
+}
 
 /**
  * Donable formidable
- * 
+ *
  * @param  {Stream} ctx
  * @param  {Object} opts
  * @return {Object}
@@ -72,9 +72,21 @@ function requestbody(opts) {
 function formy(ctx, opts) {
   return function(done) {
     var form = new forms.IncomingForm(opts)
-    form.parse(ctx.req, function(err, fields, files) {
-      if (err) return done(err)
-      done(null, {fields: fields, files: files})
-    })
-  }
+    var fields = {};
+    var files = {};
+    form
+      .on('end', function() {
+        done(null, {fields: fields, files: files});
+      })
+      .on('error', function(err) {
+        done(err);
+      })
+      .on('field', function(field, value) {
+        fields[field] = value;
+      })
+      .on('file', function(field, file) {
+        files[field] = file;
+      });
+    form.parse(ctx.req);
+  };
 }

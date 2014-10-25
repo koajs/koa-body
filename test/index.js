@@ -11,6 +11,7 @@
 
 var fs       = require('fs'),
     log      = console.log,
+    should   = require('should'),
     koa      = require('koa'),
     http     = require('http'),
     request  = require('supertest'),
@@ -117,7 +118,7 @@ describe('koa-body', function () {
     app.use(koaBody({
       multipart: true,
       formidable: {
-        uploadDir: __dirname + '/../'
+        uploadDir: __dirname + '/temp'
       }
     }));
     app.use(usersResource.middleware());
@@ -133,11 +134,15 @@ describe('koa-body', function () {
         if (err) return done(err);
 
         res.body.files.firstField.name.should.equal('package.json');
+        should(fs.statSync(res.body.files.firstField.path)).be.ok;
         fs.unlinkSync(res.body.files.firstField.path);
 
         res.body.files.secondField.name.should.equal('index.js');
+        should(fs.statSync(res.body.files.secondField.path)).be.ok;
         fs.unlinkSync(res.body.files.secondField.path);
+
         res.body.files.thirdField.name.should.equal('LICENSE');
+        should(fs.statSync(res.body.files.thirdField.path)).be.ok;
         fs.unlinkSync(res.body.files.thirdField.path);
 
         done();
