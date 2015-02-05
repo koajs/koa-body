@@ -129,21 +129,28 @@ describe('koa-body', function () {
       .attach('firstField', 'package.json')
       .attach('secondField', 'index.js')
       .attach('thirdField', 'LICENSE')
+      .attach('thirdField', 'README.md')
       .expect(201)
       .end(function(err, res){
         if (err) return done(err);
 
-        res.body.files.firstField.name.should.equal('package.json');
-        should(fs.statSync(res.body.files.firstField.path)).be.ok;
-        fs.unlinkSync(res.body.files.firstField.path);
+        res.body.files.firstField.should.be.an.Array.and.have.lengthOf(1);
+        res.body.files.firstField[0].name.should.equal('package.json');
+        should(fs.statSync(res.body.files.firstField[0].path)).be.ok;
+        fs.unlinkSync(res.body.files.firstField[0].path);
 
-        res.body.files.secondField.name.should.equal('index.js');
-        should(fs.statSync(res.body.files.secondField.path)).be.ok;
-        fs.unlinkSync(res.body.files.secondField.path);
+        res.body.files.secondField.should.be.an.Array.and.have.lengthOf(1);
+        res.body.files.secondField[0].name.should.equal('index.js');
+        should(fs.statSync(res.body.files.secondField[0].path)).be.ok;
+        fs.unlinkSync(res.body.files.secondField[0].path);
 
-        res.body.files.thirdField.name.should.equal('LICENSE');
-        should(fs.statSync(res.body.files.thirdField.path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField.path);
+        res.body.files.thirdField.should.be.an.Array.and.have.lengthOf(2);
+        res.body.files.thirdField[0].name.should.equal('LICENSE');
+        should(fs.statSync(res.body.files.thirdField[0].path)).be.ok;
+        fs.unlinkSync(res.body.files.thirdField[0].path);
+        res.body.files.thirdField[1].name.should.equal('README.md');
+        should(fs.statSync(res.body.files.thirdField[1].path)).be.ok;
+        fs.unlinkSync(res.body.files.thirdField[1].path);
 
         done();
       });

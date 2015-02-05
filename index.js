@@ -85,7 +85,11 @@ function formy(ctx, opts) {
         fields[field] = value;
       })
       .on('file', function(field, file) {
-        files[field] = file;
+        if (files[field]) {
+          files[field].push(file);
+        } else {
+          files[field] = [file];
+        }
       });
     form.parse(ctx.req);
   };
