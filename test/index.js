@@ -128,22 +128,37 @@ describe('koa-body', function () {
       .type('multipart/form-data')
       .attach('firstField', 'package.json')
       .attach('secondField', 'index.js')
+      .attach('secondField', 'package.json')
       .attach('thirdField', 'LICENSE')
+      .attach('thirdField', 'README.md')
+      .attach('thirdField', 'package.json')
       .expect(201)
       .end(function(err, res){
         if (err) return done(err);
 
+        res.body.files.firstField.should.be.an.Object;
         res.body.files.firstField.name.should.equal('package.json');
         should(fs.statSync(res.body.files.firstField.path)).be.ok;
         fs.unlinkSync(res.body.files.firstField.path);
 
-        res.body.files.secondField.name.should.equal('index.js');
-        should(fs.statSync(res.body.files.secondField.path)).be.ok;
-        fs.unlinkSync(res.body.files.secondField.path);
+        res.body.files.secondField.should.be.an.Array.and.have.lengthOf(2);
+        res.body.files.secondField[0].name.should.equal('index.js');
+        should(fs.statSync(res.body.files.secondField[0].path)).be.ok;
+        fs.unlinkSync(res.body.files.secondField[0].path);
+        res.body.files.secondField[1].name.should.equal('package.json');
+        should(fs.statSync(res.body.files.secondField[1].path)).be.ok;
+        fs.unlinkSync(res.body.files.secondField[1].path);
 
-        res.body.files.thirdField.name.should.equal('LICENSE');
-        should(fs.statSync(res.body.files.thirdField.path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField.path);
+        res.body.files.thirdField.should.be.an.Array.and.have.lengthOf(3);
+        res.body.files.thirdField[0].name.should.equal('LICENSE');
+        should(fs.statSync(res.body.files.thirdField[0].path)).be.ok;
+        fs.unlinkSync(res.body.files.thirdField[0].path);
+        res.body.files.thirdField[1].name.should.equal('README.md');
+        should(fs.statSync(res.body.files.thirdField[1].path)).be.ok;
+        fs.unlinkSync(res.body.files.thirdField[1].path);
+        res.body.files.thirdField[2].name.should.equal('package.json');
+        should(fs.statSync(res.body.files.thirdField[2].path)).be.ok;
+        fs.unlinkSync(res.body.files.thirdField[2].path);
 
         done();
       });
