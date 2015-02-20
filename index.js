@@ -41,14 +41,19 @@ function requestbody(opts) {
 
   return function *(next){
     var body = {};
-    if (this.is('json'))  {
-      body = yield buddy.json(this, {encoding: opts.encoding, limit: opts.jsonLimit});
-    }
-    else if (this.is('urlencoded')) {
-      body = yield buddy.form(this, {encoding: opts.encoding, limit: opts.formLimit});
-    }
-    else if (opts.multipart && this.is('multipart')) {
-      body = yield formy(this, opts.formidable);
+    // GET, HEAD, and DELETE requests have no defined semantics for the request body
+    // (http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
+    // so don't parse the body in those cases.
+    if (["GET", "HEAD", "DELETE"].indexOf(this.method.toUpperCase()) === -1) {
+      if (this.is('json'))  {
+        body = yield buddy.json(this, {encoding: opts.encoding, limit: opts.jsonLimit});
+      }
+      else if (this.is('urlencoded')) {
+        body = yield buddy.form(this, {encoding: opts.encoding, limit: opts.formLimit});
+      }
+      else if (opts.multipart && this.is('multipart')) {
+        body = yield formy(this, opts.formidable);
+      }
     }
 
     if (opts.patchNode) {
