@@ -79,6 +79,12 @@ console.log('curl -i http://localhost:3131/ -d "name=test"');
 - `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
 - `multipart` **{Boolean}** Parse multipart bodies, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
+- `strict` **{Boolean}** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
+
+## A note about strict mode
+> see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
+- GET, HEAD, and DELETE requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
+- koa-body is strict by default
 
 ## Some options for formidable
 > See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options

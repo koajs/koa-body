@@ -16,7 +16,9 @@ var fs       = require('fs'),
     http     = require('http'),
     request  = require('supertest'),
     koaBody  = require('../index'),
-    Resource = require('koa-resource-router');
+    Resource = require('koa-resource-router'),
+    assert   = require('assert'),
+    _        = require('lodash');
 
 describe('koa-body', function () {
   var strify = JSON.stringify, database;
@@ -208,44 +210,193 @@ describe('koa-body', function () {
 
 
 
+  describe('strict mode', function (done) {
+    var app = null;
+    var usersResource = null;
+    beforeEach(function () {
+      app = koa();
+      //push an additional, to test the multi query
+      database.users.push({name: 'charlike'});
+      usersResource = new Resource('users', {
+        // DELETE /users
+        destroy: function *(next) {
+          var user = this.params.user;
+          var multi = !!this.request.body.multi;
+          if(multi) {
+            database.users = database.users.filter(function (element) {
+              return element.name !== user;
+            });
+          }
+          else {
+            var index = _.findIndex(database.users, {name: user});
+            database.users.splice(index, 1);
+          }
+          this.status = 204;
+          this.body = ''
+        }
+      });
+    });
+
+    it('can enable strict mode', function(done) {
+      app.use(koaBody({strict: true}));
+      app.use(usersResource.middleware());
+
+      request(http.createServer(app.callback()))
+        .delete('/users/charlike')
+        .type('application/x-www-form-urlencoded')
+        .send({multi: true})
+        .expect(204)
+        .end(function(err, res) {
+          if (err) return done(err);
+            assert(_.findWhere(database.users, {name: 'charlike'}) !== undefined);
+          done();
+        });
+    });
+
+    it('can disable strict mode', function(done) {
+      app.use(koaBody({strict: false}));
+      app.use(usersResource.middleware());
+
+      request(http.createServer(app.callback()))
+        .delete('/users/charlike')
+        .type('application/x-www-form-urlencoded')
+        .send({multi: true})
+        .expect(204)
+        .end(function(err, res) {
+          if (err) return done(err);
+            assert(_.findWhere(database.users, {name: 'charlike'}) === undefined);
+          done();
+        });
+    });
+
+  });
   /**
    * JSON request body
    */
-  it('should recieve `json` request bodies', function (done) {
-    var app = koa();
-    var usersResource = new Resource('users', {
-      // POST /users
-      create: function *(next) {
-        database.users.push(this.request.body);
-        this.status = 201;
-        this.body = this.request.body;
-      }
+  describe('json request body', function (done) {
+
+    var app = null;
+    var result = null;
+
+    beforeEach(function () {
+      app = koa();
+
+      var usersResource = new Resource('users', {
+        // POST /users
+        create: function *(next) {
+          database.users.push(this.request.body);
+          this.status = 201;
+          this.body = this.request.body;
+        },
+        // GET /users
+        index: function *(next) {
+          this.status = 200;
+          this.body = _.findWhere(database.users, {name: this.request.body.name});
+        },
+        // This is a weird example, can't think of a valid use case w/ resource
+        // router
+        // DELETE /users/:name
+        destroy: function *(next) {
+          var user = this.params.user;
+          var multi = !!this.request.body.multi;
+          if(multi) {
+            database.users = database.users.filter(function (element) {
+              return element.name !== user;
+            });
+          }
+          else {
+            var index = _.findIndex(database.users, {name: user});
+            database.users.splice(index, 1);
+          }
+          this.status = 204;
+          this.body = ''
+        }
+      });
+
+      app.use(koaBody({strict: false}));
+      app.use(usersResource.middleware());
+
     });
 
+    describe('POST', function (done) {
 
-    app.use(koaBody());
-    app.use(usersResource.middleware());
+      var result = null;
 
-    request(http.createServer(app.callback()))
-      .post('/users')
-      .type('application/json')
-      .send({ name: 'json', followers : '313' })
-      .expect(201)
-      .end(function(err, res) {
-        if (err) return done(err);
-
-        var requested = database.users.pop();
-        res.body.should.have.property('name', requested.name);
-        res.body.should.have.property('followers', requested.followers);
-
-        res.body.name.should.equal('json');
-        res.body.followers.should.equal('313');
-
-        res.body.should.have.property('name', 'json');
-        res.body.should.have.property('followers', '313');
-
-        done();
+      beforeEach(function (done) {
+        request(http.createServer(app.callback()))
+          .post('/users')
+          .type('application/json')
+          .send({ name: 'json', followers : '313' })
+          .expect(201)
+          .end(function (err, res) {
+            result = res;
+            done(err);
+          })
       });
+
+      it('should parse the response body', function () {
+        result.body.should.not.equal(null);
+      });
+
+      it('should set the follower count', function () {
+        var requested = database.users.pop();
+        result.body.should.have.property('name', requested.name);
+        result.body.name.should.equal('json');
+      });
+
+    });
+
+    describe('GET', function (done) {
+
+      var result = null;
+
+      beforeEach(function (done) {
+        database.users.push({name: 'foo', followers: 111});
+        request(http.createServer(app.callback()))
+          .get('/users')
+          .type('application/json')
+          .send({ name: 'foo'})
+          .expect(200)
+          .end(function (err, res) {
+            result = res;
+            done(err);
+          })
+      });
+
+      it('should parse the response body', function () {
+        result.body.should.not.equal(null);
+      });
+
+      it('should return the user details', function () {
+        result.body.name.should.equal('foo');
+        result.body.followers.should.equal(111);
+      });
+
+    });
+
+    describe('DELETE', function (done) {
+
+      var result = null;
+
+      beforeEach(function (done) {
+        database.users.push({name: 'foo', followers: 111});
+        database.users.push({name: 'foo', followers: 111});
+        request(http.createServer(app.callback()))
+          .delete('/users/foo')
+          .type('application/json')
+          .send({ multi: true})
+          .expect(204)
+          .end(function (err, res) {
+            result = res;
+            done(err);
+          })
+      });
+
+      it('should delete all the users', function () {
+        assert(_.findWhere(database.users, {name: 'foo'}) === undefined);
+      });
+
+    });
   });
 
 

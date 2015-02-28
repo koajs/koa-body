@@ -38,13 +38,12 @@ function requestbody(opts) {
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
+  opts.strict = 'strict' in opts ? opts.strict : true;
 
   return function *(next){
     var body = {};
-    // GET, HEAD, and DELETE requests have no defined semantics for the request body
-    // (http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
-    // so don't parse the body in those cases.
-    if (["GET", "HEAD", "DELETE"].indexOf(this.method.toUpperCase()) === -1) {
+    // so don't parse the body in strict mode
+    if (!opts.strict || ["GET", "HEAD", "DELETE"].indexOf(this.method.toUpperCase()) === -1) {
       if (this.is('json'))  {
         body = yield buddy.json(this, {encoding: opts.encoding, limit: opts.jsonLimit});
       }

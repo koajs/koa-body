@@ -44,10 +44,11 @@
   },
   "devDependencies": {
     "koa": "*",
-    "koa-router": "*",
     "koa-resource-router": "*",
-    "multiline": "*",
+    "koa-router": "*",
+    "lodash": "^3.3.1",
     "mocha": "*",
+    "multiline": "*",
     "should": "*",
     "supertest": "*"
   },
