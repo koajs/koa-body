@@ -107,7 +107,7 @@ describe('koa-body', function () {
   /**
    * MULTIPART - FILES
    */
-  it('should recieve multiple files via `multipart` on .body.files object', function (done) {
+  it('should recieve multiple fields and files via `multipart` on .body.files object', function (done) {
     var app = koa();
     var usersResource = new Resource('users', {
       // POST /users
@@ -128,6 +128,8 @@ describe('koa-body', function () {
     request(http.createServer(app.callback()))
       .post('/users')
       .type('multipart/form-data')
+      .field('names', 'John')
+      .field('names', 'Paul')
       .attach('firstField', 'package.json')
       .attach('secondField', 'index.js')
       .attach('secondField', 'package.json')
@@ -138,6 +140,9 @@ describe('koa-body', function () {
       .end(function(err, res){
         if (err) return done(err);
 
+        res.body.fields.names.should.be.an.Array.and.have.lengthOf(2);
+        res.body.fields.names[0].should.equal('John');
+        res.body.fields.names[1].should.equal('Paul');
         res.body.files.firstField.should.be.an.Object;
         res.body.files.firstField.name.should.equal('package.json');
         should(fs.statSync(res.body.files.firstField.path)).be.ok;
