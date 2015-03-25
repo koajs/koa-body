@@ -75,7 +75,7 @@ function requestbody(opts) {
  */
 function formy(ctx, opts) {
   return function(done) {
-    var form = new forms.IncomingForm(opts)
+    var form = new forms.IncomingForm(opts);
     var fields = {};
     var files = {};
     form
@@ -86,7 +86,15 @@ function formy(ctx, opts) {
         done(err);
       })
       .on('field', function(field, value) {
-        fields[field] = value;
+        if (fields[field]) {
+          if (Array.isArray(fields[field])) {
+            fields[field].push(value);
+          } else {
+            fields[field] = [fields[field], value];
+          }
+        } else {
+          fields[field] = value;
+        }
       })
       .on('file', function(field, file) {
         if (files[field]) {
