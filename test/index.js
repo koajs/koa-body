@@ -140,7 +140,7 @@ describe('koa-body', function () {
       .end(function(err, res){
         if (err) return done(err);
 
-        res.body.fields.names.should.be.an.Array.and.have.lengthOf(2);
+        res.body.fields.names.should.be.an.Array().and.have.lengthOf(2);
         res.body.fields.names[0].should.equal('John');
         res.body.fields.names[1].should.equal('Paul');
         res.body.files.firstField.should.be.an.Object;
@@ -148,7 +148,7 @@ describe('koa-body', function () {
         should(fs.statSync(res.body.files.firstField.path)).be.ok;
         fs.unlinkSync(res.body.files.firstField.path);
 
-        res.body.files.secondField.should.be.an.Array.and.have.lengthOf(2);
+        res.body.files.secondField.should.be.an.Array().and.have.lengthOf(2);
         res.body.files.secondField[0].name.should.equal('index.js');
         should(fs.statSync(res.body.files.secondField[0].path)).be.ok;
         fs.unlinkSync(res.body.files.secondField[0].path);
@@ -156,7 +156,7 @@ describe('koa-body', function () {
         should(fs.statSync(res.body.files.secondField[1].path)).be.ok;
         fs.unlinkSync(res.body.files.secondField[1].path);
 
-        res.body.files.thirdField.should.be.an.Array.and.have.lengthOf(3);
+        res.body.files.thirdField.should.be.an.Array().and.have.lengthOf(3);
         res.body.files.thirdField[0].name.should.equal('LICENSE');
         should(fs.statSync(res.body.files.thirdField[0].path)).be.ok;
         fs.unlinkSync(res.body.files.thirdField[0].path);
