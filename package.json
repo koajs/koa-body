@@ -4,7 +4,7 @@
   "description": "A koa body parser middleware. Support multipart, urlencoded and json request bodies.",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --harmony-generators",
+    "test": "node_modules/.bin/mocha --harmony",
     "examples-multer": "node --harmony examples/multer.js",
     "examples-koa-router": "node --harmony examples/koa-router.js"
   },
