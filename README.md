@@ -52,19 +52,20 @@ console.log('curl -i http://localhost:3131/ -d "name=test"');
 
 ```js
 var app     = require('koa')(),
-    router  = require('koa-router'),
+    router  = require('koa-router')(),
     koaBody = require('koa-body')();
 
-app.use(router());
-
-app.post('/users', koaBody,
+router.post('/users', koaBody,
   function *(next) {
     console.log(this.request.body);
     // => POST body
     this.body = JSON.stringify(this.request.body);
   }
 );
-app.listen(3131)
+
+app.use(router.routes());
+
+app.listen(3131);
 console.log('curl -i http://localhost:3131/ -d "name=test"');
 ```
 

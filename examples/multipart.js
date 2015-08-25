@@ -8,13 +8,11 @@
  * @api private
  */
 var app       = require('koa')(),
-    router    = require('koa-router'),
+    router    = require('koa-router')(),
     koaBody   = require('../index')({multipart:true});
     multiline = require('multiline');
 
-app.use(router(app));
-
-app.post('/users', koaBody,
+router.post('/users', koaBody,
   function *(next) {
     console.log(this.request.body);
     // => POST body
@@ -22,7 +20,8 @@ app.post('/users', koaBody,
     yield next;
   }
 );
-app.get('/', function *(next) {
+
+router.get('/', function *(next) {
   this.set('Content-Type', 'text/html');
   this.body = multiline.stripIndent(function(){/*
       <!doctype html>
@@ -37,7 +36,8 @@ app.get('/', function *(next) {
       </html>
   */});
 });
-app.post('/', koaBody,
+
+router.post('/', koaBody,
   function *(next) {
     console.log(this.request.body.fields);
     // => {username: ""} - if empty
@@ -64,6 +64,8 @@ app.post('/', koaBody,
    yield next;
   }
 )
+
+app.use(router.routes());
 
 var port = process.env.PORT || 3333;
 app.listen(port);
