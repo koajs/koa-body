@@ -1,17 +1,15 @@
 var log       = console.log,
     app       = require('koa')(),
-    router    = require('koa-router'),
+    router    = require('koa-router')(),
     koaBody   = require('../index'),
     multiline = require('multiline'),
     port      = process.env.PORT || 4291
     host      = process.env.HOST || 'http://localhost';
 
-app.use(router(app));
-
 /*!
  * Accepts only urlencoded and json bodies.
  */
-app.post('/post/users', koaBody(),
+router.post('/post/users', koaBody(),
   function *(next) {
     log(this.request.body);
     // => POST body object
@@ -23,7 +21,7 @@ app.post('/post/users', koaBody(),
 /*!
  * Display HTML page with basic form.
  */
-app.get('/', function *(next) {
+router.get('/', function *(next) {
   this.set('Content-Type', 'text/html');
   this.body = multiline.stripIndent(function(){/*
       <!doctype html>
@@ -42,7 +40,7 @@ app.get('/', function *(next) {
 /*!
  * Accepts `multipart`, `json` and `urlencoded` bodies.
  */
-app.post('/post/upload',
+router.post('/post/upload',
   koaBody({
     multipart: true,
     formidable: {
@@ -75,6 +73,8 @@ app.post('/post/upload',
    yield next;
   }
 )
+
+app.use(router.routes());
 
 var port = process.env.PORT || 4291,
     host = process.env.HOST || 'http://localhost';
