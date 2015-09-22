@@ -38,7 +38,7 @@ function requestbody(opts) {
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
-  opts.textLimit = 'textLimit' in opts ? opts.formLimit : '56kb';
+  opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
 
   return function *(next){

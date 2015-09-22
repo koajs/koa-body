@@ -549,4 +549,30 @@ describe('koa-body', function () {
         .expect(200, {})
         .end(done);
     });
+
+  /**
+   * TEXT LIMIT
+   */
+  it('should request 413 Payload Too Large, because of `textLimit`', function (done) {
+    var app = koa();
+    var usersResource = new Resource('users', {
+      // POST /users
+      create: function *(next) {
+        //suggestions for handling?
+        //what if we want to make body more user-friendly?
+      }
+    });
+
+
+    app.use(koaBody({textLimit: 10 /*bytes*/}));
+    app.use(usersResource.middleware());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('text')
+      .send('String longer than 10 bytes...')
+      .expect(413, 'Payload Too Large')
+      .expect('content-length', 17)
+      .end(done);
+  });
 });
