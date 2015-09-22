@@ -227,6 +227,38 @@ describe('koa-body', function () {
   });
 
 
+  /**
+   * TEXT request body
+   */
+  it('should recieve `text` request bodies', function (done) {
+    var app = koa();
+    var usersResource = new Resource('users', {
+      // POST /users
+      create: function *(next) {
+        database.users.push(this.request.body);
+        this.status = 201;
+        this.body = this.request.body;
+      }
+    });
+
+
+    app.use(koaBody({multipart: true}));
+    app.use(usersResource.middleware());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('text')
+      .send('plain text')
+      .expect(201)
+      .end(function(err, res) {
+        if (err) return done(err);
+
+        var requested = database.users.pop();
+        res.text.should.equal(requested);
+
+        done();
+      });
+  });
 
   describe('strict mode', function (done) {
     var app = null;
