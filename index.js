@@ -38,6 +38,7 @@ function requestbody(opts) {
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
+  opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
 
   return function *(next){
@@ -49,6 +50,9 @@ function requestbody(opts) {
       }
       else if (this.is('urlencoded')) {
         body = yield buddy.form(this, {encoding: opts.encoding, limit: opts.formLimit});
+      }
+      else if (this.is('text')) {
+        body = yield buddy.text(this, {encoding: opts.encoding, limit: opts.textLimit});
       }
       else if (opts.multipart && this.is('multipart')) {
         body = yield formy(this, opts.formidable);

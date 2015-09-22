@@ -227,6 +227,38 @@ describe('koa-body', function () {
   });
 
 
+  /**
+   * TEXT request body
+   */
+  it('should recieve `text` request bodies', function (done) {
+    var app = koa();
+    var usersResource = new Resource('users', {
+      // POST /users
+      create: function *(next) {
+        database.users.push(this.request.body);
+        this.status = 201;
+        this.body = this.request.body;
+      }
+    });
+
+
+    app.use(koaBody({multipart: true}));
+    app.use(usersResource.middleware());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('text')
+      .send('plain text')
+      .expect(201)
+      .end(function(err, res) {
+        if (err) return done(err);
+
+        var requested = database.users.pop();
+        res.text.should.equal(requested);
+
+        done();
+      });
+  });
 
   describe('strict mode', function (done) {
     var app = null;
@@ -517,4 +549,30 @@ describe('koa-body', function () {
         .expect(200, {})
         .end(done);
     });
+
+  /**
+   * TEXT LIMIT
+   */
+  it('should request 413 Payload Too Large, because of `textLimit`', function (done) {
+    var app = koa();
+    var usersResource = new Resource('users', {
+      // POST /users
+      create: function *(next) {
+        //suggestions for handling?
+        //what if we want to make body more user-friendly?
+      }
+    });
+
+
+    app.use(koaBody({textLimit: 10 /*bytes*/}));
+    app.use(usersResource.middleware());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('text')
+      .send('String longer than 10 bytes...')
+      .expect(413, 'Payload Too Large')
+      .expect('content-length', 17)
+      .end(done);
+  });
 });
