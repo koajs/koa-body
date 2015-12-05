@@ -2,7 +2,7 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://trav
 ================
 
 > A full-feature [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
-[`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://felixge/node-formidable).
+[`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://github.com/felixge/node-formidable).
 
 ## Related module
 - [`koa-better-body`](https://github.com/tunnckoCore/koa-better-body)
