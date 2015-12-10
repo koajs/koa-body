@@ -10,6 +10,7 @@
 'use strict';
 
 var fs       = require('fs'),
+    path     = require('path'),
     log      = console.log,
     should   = require('should'),
     koa      = require('koa'),
@@ -179,6 +180,50 @@ describe('koa-body', function () {
         fs.unlinkSync(res.body.files.thirdField[1].path);
         should(fs.statSync(res.body.files.thirdField[2].path)).be.ok;
         fs.unlinkSync(res.body.files.thirdField[2].path);
+
+        done();
+      });
+  });
+
+  it('should can transform file names in multipart requests', function (done) {
+    var app = koa();
+    var usersResource = new Resource('users', {
+      // POST /users
+      create: function *(next) {
+        this.status = 201;
+        this.body = this.request.body;
+      }
+    });
+
+    app.use(koaBody({
+      multipart: true,
+      formidable: {
+        uploadDir: __dirname + '/temp',
+        onFileBegin: function(name, file) {
+          file.name = 'backage.json'
+          var folder = path.dirname(file.path);
+          file.path = path.join(folder, file.name);
+        }
+      }
+    }));
+    app.use(usersResource.middleware());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('multipart/form-data')
+      .field('names', 'John')
+      .field('names', 'Paul')
+      .attach('firstField', 'package.json')
+      .expect(201)
+      .end(function(err, res){
+        if (err) return done(err);
+
+        console.log(res.body.files);
+
+        res.body.files.firstField.should.be.an.Object;
+        res.body.files.firstField.name.should.equal('backage.json');
+        should(fs.statSync(res.body.files.firstField.path)).be.ok;
+        fs.unlinkSync(res.body.files.firstField.path);
 
         done();
       });

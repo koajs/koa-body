@@ -79,9 +79,9 @@ function requestbody(opts) {
  */
 function formy(ctx, opts) {
   return function(done) {
-    var form = new forms.IncomingForm(opts);
     var fields = {};
     var files = {};
+    var form = new forms.IncomingForm(opts)
     form
       .on('end', function() {
         done(null, {fields: fields, files: files});
@@ -111,6 +111,9 @@ function formy(ctx, opts) {
           files[field] = file;
         }
       });
+    if(opts.onFileBegin) {
+      form.on('fileBegin', opts.onFileBegin);
+    }
     form.parse(ctx.req);
   };
 }
