@@ -97,6 +97,7 @@ console.log('curl -i http://localhost:3131/ -d "name=test"');
 - `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `true`
 - `hash` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
 - `multiples` **{Boolean}** Multiple file uploads or no, default `true`
+- `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/felixge/node-formidable#filebegin)
 
 
 **Note**: You can patch request body to Node or Koa in same time if you want.
