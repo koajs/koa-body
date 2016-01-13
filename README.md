@@ -66,7 +66,7 @@ router.post('/users', koaBody,
 app.use(router.routes());
 
 app.listen(3131);
-console.log('curl -i http://localhost:3131/ -d "name=test"');
+console.log('curl -i http://localhost:3131/users -d "name=test"');
 ```
 
 
