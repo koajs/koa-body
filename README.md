@@ -104,7 +104,7 @@ console.log('curl -i http://localhost:3131/users -d "name=test"');
 
 
 ## Tests
-> As usual - `npm test` **or** if you have [mocha][mocha-url] globally - `mocha --harmony-generators`.
+> As usual - `npm test` **or** if you have [mocha](https://mochajs.org) globally - `mocha --harmony-generators`.
 
 ```
 $ npm test
