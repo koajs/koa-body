@@ -91,8 +91,8 @@ console.log('curl -i http://localhost:3131/users -d "name=test"');
 ## Some options for formidable
 > See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options
 - `bytesExpected` **{Integer}** The expected number of bytes in this form, default `null`
-- `maxFields` **{Integer}** Limits the number of fields that the querystring parser will decode, default `10`
-- `maxFieldsSize` **{Integer}** Limits the amount of memory a field (not file) can allocate _in bytes_, default `2mb`
+- `maxFields` **{Integer}** Limits the number of fields that the querystring parser will decode, default `1000`
+- `maxFieldsSize` **{Integer}** Limits the amount of memory all fields together (except files) can allocate in bytes. If this value is exceeded, an 'error' event is emitted, default `2mb (2 * 2 * 1024)`
 - `uploadDir` **{String}** Sets the directory for placing file uploads in, default `os.tmpDir()`
 - `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `false`
 - `hash` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
