@@ -94,7 +94,7 @@ console.log('curl -i http://localhost:3131/users -d "name=test"');
 - `maxFields` **{Integer}** Limits the number of fields that the querystring parser will decode, default `10`
 - `maxFieldsSize` **{Integer}** Limits the amount of memory a field (not file) can allocate _in bytes_, default `2mb`
 - `uploadDir` **{String}** Sets the directory for placing file uploads in, default `os.tmpDir()`
-- `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `true`
+- `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `false`
 - `hash` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
 - `multiples` **{Boolean}** Multiple file uploads or no, default `true`
 - `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/felixge/node-formidable#filebegin)
