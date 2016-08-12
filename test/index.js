@@ -518,7 +518,7 @@ describe('koa-body', function () {
       .type('application/x-www-form-urlencoded')
       .send('user=www-form-urlencoded')
       .expect(413, 'Payload Too Large')
-      .expect('content-length', 17)
+      .expect('content-length', '17')
       .end(done);
   });
 
@@ -546,7 +546,7 @@ describe('koa-body', function () {
       .type('application/json')
       .send({name: 'some-long-name-for-limit'})
       .expect(413, 'Payload Too Large')
-      .expect('content-length', 17)
+      .expect('content-length', '17')
       .end(done);
   });
 
@@ -617,7 +617,7 @@ describe('koa-body', function () {
       .type('text')
       .send('String longer than 10 bytes...')
       .expect(413, 'Payload Too Large')
-      .expect('content-length', 17)
+      .expect('content-length', '17')
       .end(done);
   });
 });
