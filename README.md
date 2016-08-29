@@ -80,6 +80,9 @@ console.log('curl -i http://localhost:3131/users -d "name=test"');
 - `textLimit` **{String|Integer}** The byte (if integer) limit of the text body, default `56kb`
 - `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
 - `multipart` **{Boolean}** Parse multipart bodies, default `false`
+- `urlencoded` **{Boolean}** Parse urlencoded bodies, default `true`
+- `text` **{Boolean}** Parse text bodies, default `true`
+- `json` **{Boolean}** Parse json bodies, default `true`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `strict` **{Boolean}** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
 
