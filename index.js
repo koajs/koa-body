@@ -34,6 +34,9 @@ function requestbody(opts) {
   opts.patchNode = 'patchNode' in opts ? opts.patchNode : false;
   opts.patchKoa  = 'patchKoa'  in opts ? opts.patchKoa  : true;
   opts.multipart = 'multipart' in opts ? opts.multipart : false;
+  opts.urlencoded = 'urlencoded' in opts ? opts.urlencoded : true;
+  opts.json = 'json' in opts ? opts.json : true;
+  opts.text = 'text' in opts ? opts.text : true;
   opts.encoding  = 'encoding'  in opts ? opts.encoding  : 'utf-8';
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
@@ -45,13 +48,13 @@ function requestbody(opts) {
     var body = {};
     // so don't parse the body in strict mode
     if (!opts.strict || ["GET", "HEAD", "DELETE"].indexOf(this.method.toUpperCase()) === -1) {
-      if (this.is('json'))  {
+      if (opts.json && this.is('json'))  {
         body = yield buddy.json(this, {encoding: opts.encoding, limit: opts.jsonLimit});
       }
-      else if (this.is('urlencoded')) {
+      else if (opts.urlencoded && this.is('urlencoded')) {
         body = yield buddy.form(this, {encoding: opts.encoding, limit: opts.formLimit});
       }
-      else if (this.is('text')) {
+      else if (opts.text && this.is('text')) {
         body = yield buddy.text(this, {encoding: opts.encoding, limit: opts.textLimit});
       }
       else if (opts.multipart && this.is('multipart')) {
