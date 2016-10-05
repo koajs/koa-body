@@ -31,6 +31,7 @@ module.exports = requestbody;
  */
 function requestbody(opts) {
   opts = opts || {};
+  opts.onError = 'onError' in opts ? opts.onError : false;
   opts.patchNode = 'patchNode' in opts ? opts.patchNode : false;
   opts.patchKoa  = 'patchKoa'  in opts ? opts.patchKoa  : true;
   opts.multipart = 'multipart' in opts ? opts.multipart : false;
@@ -48,17 +49,26 @@ function requestbody(opts) {
     var body = {};
     // so don't parse the body in strict mode
     if (!opts.strict || ["GET", "HEAD", "DELETE"].indexOf(this.method.toUpperCase()) === -1) {
-      if (opts.json && this.is('json'))  {
-        body = yield buddy.json(this, {encoding: opts.encoding, limit: opts.jsonLimit});
-      }
-      else if (opts.urlencoded && this.is('urlencoded')) {
-        body = yield buddy.form(this, {encoding: opts.encoding, limit: opts.formLimit});
-      }
-      else if (opts.text && this.is('text')) {
-        body = yield buddy.text(this, {encoding: opts.encoding, limit: opts.textLimit});
-      }
-      else if (opts.multipart && this.is('multipart')) {
-        body = yield formy(this, opts.formidable);
+      try {
+        if (opts.json && this.is('json'))  {
+          body = yield buddy.json(this, {encoding: opts.encoding, limit: opts.jsonLimit});
+        }
+        else if (opts.urlencoded && this.is('urlencoded')) {
+          body = yield buddy.form(this, {encoding: opts.encoding, limit: opts.formLimit});
+        }
+        else if (opts.text && this.is('text')) {
+          body = yield buddy.text(this, {encoding: opts.encoding, limit: opts.textLimit});
+        }
+        else if (opts.multipart && this.is('multipart')) {
+          body = yield formy(this, opts.formidable);
+        }
+        
+      } catch(parsingError) {
+        if (typeof(opts.onError) == 'function') {
+          opts.onError(parsingError, this);
+        } else {
+          throw parsingError;
+        }
       }
     }
 

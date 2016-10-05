@@ -84,6 +84,7 @@ console.log('curl -i http://localhost:3131/users -d "name=test"');
 - `text` **{Boolean}** Parse text bodies, default `true`
 - `json` **{Boolean}** Parse json bodies, default `true`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
+- `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `strict` **{Boolean}** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
 
 ## A note about strict mode
