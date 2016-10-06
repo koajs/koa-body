@@ -64,7 +64,7 @@ function requestbody(opts) {
         }
         
       } catch(parsingError) {
-        if (typeof(opts.onError) == 'function') {
+        if (typeof(opts.onError) === 'function') {
           opts.onError(parsingError, this);
         } else {
           throw parsingError;
