@@ -9,17 +9,18 @@
 
 'use strict';
 
-var fs       = require('fs'),
-    path     = require('path'),
-    log      = console.log,
-    should   = require('should'),
-    koa      = require('koa'),
-    http     = require('http'),
-    request  = require('supertest'),
-    koaBody  = require('../index'),
-    Resource = require('koa-resource-router'),
-    assert   = require('assert'),
-    _        = require('lodash');
+var fs = require('fs'),
+  path = require('path'),
+  log = console.log,
+  should = require('should'),
+  Koa = require('koa'),
+  http = require('http'),
+  request = require('supertest'),
+  koaBody = require('../index'),
+  convert = require('koa-convert'),
+  Resource = require('koa-resource-router'),
+  assert = require('assert'),
+  _ = require('lodash');
 
 describe('koa-body', function () {
   var strify = JSON.stringify, database;
@@ -27,8 +28,14 @@ describe('koa-body', function () {
   beforeEach(function (done) {
     database = {
       "users": [
-        {name: 'charlike', followers: 10},
-        {name: 'tunnckocore', followers: 20}
+        {
+          name: 'charlike',
+          followers: 10
+        },
+        {
+          name: 'tunnckocore',
+          followers: 20
+        }
       ]
     };
     done();
@@ -38,24 +45,24 @@ describe('koa-body', function () {
   /**
    * DEFAULTS - multipart: false
    */
-  it('should work with defaults - multipart: false, only `urlencoded` and `json` bodies', function (done) {
-    var app = koa();
+  it.only('should work with defaults - multipart: false, only `urlencoded` and `json` bodies', function (done) {
+    var app = new Koa();
 
     var usersResource = new Resource('users', {
       // GET /users
-      index: function *(next) {
-        this.status = 200;
-        this.body = database;
+      index: function (ctx, next) {
+        ctx.status = 200;
+        ctx.body = database;
       }
     });
 
     app.use(koaBody());
-    app.use(usersResource.middleware());
+    app.use(convert(usersResource.middleware()));
 
     request(http.createServer(app.callback()))
       .get('/users')
       .expect(200, database)
-      .end(function(err, res) {
+      .end(function (err, res) {
         if (err) return done(err);
         done();
       });
@@ -66,26 +73,26 @@ describe('koa-body', function () {
    * MULTIPART - FIELDS
    */
   it('should recieve `multipart` requests - fields on .body.fields object', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
-      create: function *(next) {
-        database.users.push(this.request.body.fields);
-        this.status = 201;
-        this.body = this.request.body;
+      create: function (ctx, next) {
+        database.users.push(ctx.request.body.fields);
+        ctx.status = 201;
+        ctx.body = ctx.request.body;
       }
     });
 
 
-    app.use(koaBody({multipart: true}));
-    app.use(usersResource.middleware());
+    app.use(koaBody({ multipart: true }));
+    app.use(convert(usersResource.middleware()));
 
     request(http.createServer(app.callback()))
       .post('/users')
       .field('name', 'daryl')
       .field('followers', 30)
       .expect(201)
-      .end(function(err, res) {
+      .end(function (err, res) {
         if (err) return done(err);
 
         var requested = database.users.pop();
@@ -103,18 +110,16 @@ describe('koa-body', function () {
   });
 
 
-
-
   /**
    * MULTIPART - FILES
    */
   it('should recieve multiple fields and files via `multipart` on .body.files object', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
-      create: function *(next) {
-        this.status = 201;
-        this.body = this.request.body;
+      create: function (ctx, next) {
+        ctx.status = 201;
+        ctx.body = ctx.request.body;
       }
     });
 
@@ -138,7 +143,7 @@ describe('koa-body', function () {
       .attach('thirdField', 'README.md')
       .attach('thirdField', 'package.json')
       .expect(201)
-      .end(function(err, res){
+      .end(function (err, res) {
         if (err) return done(err);
 
         console.log(res.body.files);
@@ -186,7 +191,7 @@ describe('koa-body', function () {
   });
 
   it('should can transform file names in multipart requests', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
@@ -199,7 +204,7 @@ describe('koa-body', function () {
       multipart: true,
       formidable: {
         uploadDir: __dirname + '/temp',
-        onFileBegin: function(name, file) {
+        onFileBegin: function (name, file) {
           file.name = 'backage.json'
           var folder = path.dirname(file.path);
           file.path = path.join(folder, file.name);
@@ -215,7 +220,7 @@ describe('koa-body', function () {
       .field('names', 'Paul')
       .attach('firstField', 'package.json')
       .expect(201)
-      .end(function(err, res){
+      .end(function (err, res) {
         if (err) return done(err);
 
         console.log(res.body.files);
@@ -230,12 +235,11 @@ describe('koa-body', function () {
   });
 
 
-
   /**
    * URLENCODED request body
    */
   it('should recieve `urlencoded` request bodies', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
@@ -246,15 +250,18 @@ describe('koa-body', function () {
     });
 
 
-    app.use(koaBody({multipart: true}));
+    app.use(koaBody({ multipart: true }));
     app.use(usersResource.middleware());
 
     request(http.createServer(app.callback()))
       .post('/users')
       .type('application/x-www-form-urlencoded')
-      .send({ name : 'example', followers : '41' })
+      .send({
+        name: 'example',
+        followers: '41'
+      })
       .expect(201)
-      .end(function(err, res) {
+      .end(function (err, res) {
         if (err) return done(err);
 
         var requested = database.users.pop();
@@ -276,7 +283,7 @@ describe('koa-body', function () {
    * TEXT request body
    */
   it('should recieve `text` request bodies', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
@@ -287,7 +294,7 @@ describe('koa-body', function () {
     });
 
 
-    app.use(koaBody({multipart: true}));
+    app.use(koaBody({ multipart: true }));
     app.use(usersResource.middleware());
 
     request(http.createServer(app.callback()))
@@ -295,7 +302,7 @@ describe('koa-body', function () {
       .type('text')
       .send('plain text')
       .expect(201)
-      .end(function(err, res) {
+      .end(function (err, res) {
         if (err) return done(err);
 
         var requested = database.users.pop();
@@ -311,19 +318,19 @@ describe('koa-body', function () {
     beforeEach(function () {
       app = koa();
       //push an additional, to test the multi query
-      database.users.push({name: 'charlike'});
+      database.users.push({ name: 'charlike' });
       usersResource = new Resource('users', {
         // DELETE /users
         destroy: function *(next) {
           var user = this.params.user;
           var multi = !!this.request.body.multi;
-          if(multi) {
+          if (multi) {
             database.users = database.users.filter(function (element) {
               return element.name !== user;
             });
           }
           else {
-            var index = _.findIndex(database.users, {name: user});
+            var index = _.findIndex(database.users, { name: user });
             database.users.splice(index, 1);
           }
           this.status = 204;
@@ -332,34 +339,34 @@ describe('koa-body', function () {
       });
     });
 
-    it('can enable strict mode', function(done) {
-      app.use(koaBody({strict: true}));
+    it('can enable strict mode', function (done) {
+      app.use(koaBody({ strict: true }));
       app.use(usersResource.middleware());
 
       request(http.createServer(app.callback()))
         .delete('/users/charlike')
         .type('application/x-www-form-urlencoded')
-        .send({multi: true})
+        .send({ multi: true })
         .expect(204)
-        .end(function(err, res) {
+        .end(function (err, res) {
           if (err) return done(err);
-            assert(_.findWhere(database.users, {name: 'charlike'}) !== undefined);
+          assert(_.findWhere(database.users, { name: 'charlike' }) !== undefined);
           done();
         });
     });
 
-    it('can disable strict mode', function(done) {
-      app.use(koaBody({strict: false}));
+    it('can disable strict mode', function (done) {
+      app.use(koaBody({ strict: false }));
       app.use(usersResource.middleware());
 
       request(http.createServer(app.callback()))
         .delete('/users/charlike')
         .type('application/x-www-form-urlencoded')
-        .send({multi: true})
+        .send({ multi: true })
         .expect(204)
-        .end(function(err, res) {
+        .end(function (err, res) {
           if (err) return done(err);
-            assert(_.findWhere(database.users, {name: 'charlike'}) === undefined);
+          assert(_.findWhere(database.users, { name: 'charlike' }) === undefined);
           done();
         });
     });
@@ -374,7 +381,7 @@ describe('koa-body', function () {
     var result = null;
 
     beforeEach(function () {
-      app = koa();
+      app = new Koa();
 
       var usersResource = new Resource('users', {
         // POST /users
@@ -386,7 +393,7 @@ describe('koa-body', function () {
         // GET /users
         index: function *(next) {
           this.status = 200;
-          this.body = _.findWhere(database.users, {name: this.request.body.name});
+          this.body = _.findWhere(database.users, { name: this.request.body.name });
         },
         // This is a weird example, can't think of a valid use case w/ resource
         // router
@@ -394,13 +401,13 @@ describe('koa-body', function () {
         destroy: function *(next) {
           var user = this.params.user;
           var multi = !!this.request.body.multi;
-          if(multi) {
+          if (multi) {
             database.users = database.users.filter(function (element) {
               return element.name !== user;
             });
           }
           else {
-            var index = _.findIndex(database.users, {name: user});
+            var index = _.findIndex(database.users, { name: user });
             database.users.splice(index, 1);
           }
           this.status = 204;
@@ -408,7 +415,7 @@ describe('koa-body', function () {
         }
       });
 
-      app.use(koaBody({strict: false}));
+      app.use(koaBody({ strict: false }));
       app.use(usersResource.middleware());
 
     });
@@ -421,7 +428,10 @@ describe('koa-body', function () {
         request(http.createServer(app.callback()))
           .post('/users')
           .type('application/json')
-          .send({ name: 'json', followers : '313' })
+          .send({
+            name: 'json',
+            followers: '313'
+          })
           .expect(201)
           .end(function (err, res) {
             result = res;
@@ -446,11 +456,14 @@ describe('koa-body', function () {
       var result = null;
 
       beforeEach(function (done) {
-        database.users.push({name: 'foo', followers: 111});
+        database.users.push({
+          name: 'foo',
+          followers: 111
+        });
         request(http.createServer(app.callback()))
           .get('/users')
           .type('application/json')
-          .send({ name: 'foo'})
+          .send({ name: 'foo' })
           .expect(200)
           .end(function (err, res) {
             result = res;
@@ -474,12 +487,18 @@ describe('koa-body', function () {
       var result = null;
 
       beforeEach(function (done) {
-        database.users.push({name: 'foo', followers: 111});
-        database.users.push({name: 'foo', followers: 111});
+        database.users.push({
+          name: 'foo',
+          followers: 111
+        });
+        database.users.push({
+          name: 'foo',
+          followers: 111
+        });
         request(http.createServer(app.callback()))
           .delete('/users/foo')
           .type('application/json')
-          .send({ multi: true})
+          .send({ multi: true })
           .expect(204)
           .end(function (err, res) {
             result = res;
@@ -488,19 +507,18 @@ describe('koa-body', function () {
       });
 
       it('should delete all the users', function () {
-        assert(_.findWhere(database.users, {name: 'foo'}) === undefined);
+        assert(_.findWhere(database.users, { name: 'foo' }) === undefined);
       });
 
     });
   });
 
 
-
   /**
    * FORM (urlencoded) LIMIT
    */
   it('should request 413 Payload Too Large, because of `formLimit`', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
@@ -510,7 +528,7 @@ describe('koa-body', function () {
     });
 
 
-    app.use(koaBody({formLimit: 10 /*bytes*/}));
+    app.use(koaBody({ formLimit: 10 /*bytes*/ }));
     app.use(usersResource.middleware());
 
     request(http.createServer(app.callback()))
@@ -523,12 +541,11 @@ describe('koa-body', function () {
   });
 
 
-
   /**
    * JSON LIMIT
    */
   it('should request 413 Payload Too Large, because of `jsonLimit`', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
@@ -538,13 +555,13 @@ describe('koa-body', function () {
     });
 
 
-    app.use(koaBody({jsonLimit: 10 /*bytes*/}));
+    app.use(koaBody({ jsonLimit: 10 /*bytes*/ }));
     app.use(usersResource.middleware());
 
     request(http.createServer(app.callback()))
       .post('/users')
       .type('application/json')
-      .send({name: 'some-long-name-for-limit'})
+      .send({ name: 'some-long-name-for-limit' })
       .expect(413, 'Payload Too Large')
       .expect('content-length', '17')
       .end(done);
@@ -552,54 +569,54 @@ describe('koa-body', function () {
 
 
   it('should return empty body object with no content type', function (done) {
-      var app = koa();
-      var usersResource = new Resource('users', {
-        // POST /users
-        create: function *(next) {
-          this.body = this.req.body;
-          this.status = 200;
-        }
-      });
-
-
-      app.use(koaBody());
-      app.use(usersResource.middleware());
-
-      request(http.createServer(app.callback()))
-        .post('/users')
-        .send('Hello <b>invalid</b> content type')
-        .expect(200, {})
-        .end(done);
+    var app = new Koa();
+    var usersResource = new Resource('users', {
+      // POST /users
+      create: function *(next) {
+        this.body = this.req.body;
+        this.status = 200;
+      }
     });
+
+
+    app.use(koaBody());
+    app.use(usersResource.middleware());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .send('Hello <b>invalid</b> content type')
+      .expect(200, {})
+      .end(done);
+  });
 
 
   it('should return empty body object with invalid content type', function (done) {
-      var app = koa();
-      var usersResource = new Resource('users', {
-        // POST /users
-        create: function *(next) {
-          this.body = this.req.body;
-          this.status = 200;
-        }
-      });
-
-
-      app.use(koaBody());
-      app.use(usersResource.middleware());
-
-      request(http.createServer(app.callback()))
-        .post('/users')
-        .type('text/html')
-        .send('Hello <b>invalid</b> content type')
-        .expect(200, {})
-        .end(done);
+    var app = new Koa();
+    var usersResource = new Resource('users', {
+      // POST /users
+      create: function *(next) {
+        this.body = this.req.body;
+        this.status = 200;
+      }
     });
+
+
+    app.use(koaBody());
+    app.use(usersResource.middleware());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('text/html')
+      .send('Hello <b>invalid</b> content type')
+      .expect(200, {})
+      .end(done);
+  });
 
   /**
    * TEXT LIMIT
    */
   it('should request 413 Payload Too Large, because of `textLimit`', function (done) {
-    var app = koa();
+    var app = new Koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
@@ -609,7 +626,7 @@ describe('koa-body', function () {
     });
 
 
-    app.use(koaBody({textLimit: 10 /*bytes*/}));
+    app.use(koaBody({ textLimit: 10 /*bytes*/ }));
     app.use(usersResource.middleware());
 
     request(http.createServer(app.callback()))
