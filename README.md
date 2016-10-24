@@ -1,11 +1,8 @@
 koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body)
 ================
 
-> A full-feature [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
+> A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
 [`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://github.com/felixge/node-formidable).
-
-## Related module
-- [`koa-better-body`](https://github.com/tunnckoCore/koa-better-body)
 
 ## Install
 >Install with [npm](https://github.com/npm/npm)
@@ -15,7 +12,6 @@ $ npm install koa-body
 ```
 
 ## Features
-- 15 tests
 - can handle three type requests
   * **multipart/form-data**
   * **application/x-www-urlencoded**
@@ -23,7 +19,6 @@ $ npm install koa-body
 - option for patch to Koa or Node, or either
 - file uploads
 - body, fields and files limiting
-- 2 dependencies only
 
 
 ## Usage like [multer](https://github.com/expressjs/multer)

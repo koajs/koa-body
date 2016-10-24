@@ -78,23 +78,23 @@ function requestbody(opts) {
     }
 
     bodyPromise = bodyPromise || Promise.resolve({});
-    return bodyPromise.then(body => {
-        if (opts.patchNode) {
-          ctx.req.body = body;
-        }
-        if (opts.patchKoa) {
-          ctx.request.body = body;
-        }
-        return next();
-      })
-      .catch((parsingError) => {
-        if (typeof opts.onError === 'function') {
-          opts.onError(parsingError, ctx);
-        } else {
-          throw parsingError;
-        }
-        return next();
-      })
+    return bodyPromise.then(function(body) {
+      if (opts.patchNode) {
+        ctx.req.body = body;
+      }
+      if (opts.patchKoa) {
+        ctx.request.body = body;
+      }
+      return next();
+    })
+    .catch(function(parsingError) {
+      if (typeof opts.onError === 'function') {
+        opts.onError(parsingError, ctx);
+      } else {
+        throw parsingError;
+      }
+      return next();
+    })
   };
 }
 
