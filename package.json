@@ -43,8 +43,7 @@
     "koa": "^2.0.0"
   },
   "devDependencies": {
-    "koa-resource-router": "*",
-    "koa-router": "*",
+    "koa-router": "^7.0.1",
     "lodash": "^3.3.1",
     "mocha": "*",
     "multiline": "*",
