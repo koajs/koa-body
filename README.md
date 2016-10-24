@@ -29,13 +29,13 @@ var app      = require('koa')(),
     koaBody   = require('koa-body');
 
 app.use(koaBody({formidable:{uploadDir: __dirname}}));
-app.use(function *(next) {
-  if (this.request.method == 'POST') {
-    console.log(this.request.body);
+app.use((ctx, next) => {
+  if (ctx.request.method == 'POST') {
+    console.log(ctx.request.body);
     // => POST body
-    this.body = JSON.stringify(this.request.body);
+    ctx.body = JSON.stringify(ctx.request.body);
   }
-  yield next;
+  next()
 });
 app.listen(3131)
 console.log('curl -i http://localhost:3131/ -d "name=test"');
@@ -51,10 +51,10 @@ var app     = require('koa')(),
     koaBody = require('koa-body')();
 
 router.post('/users', koaBody,
-  function *(next) {
-    console.log(this.request.body);
+  (ctx, next) => {
+    console.log(ctx.request.body);
     // => POST body
-    this.body = JSON.stringify(this.request.body);
+    ctx.body = JSON.stringify(ctx.request.body);
   }
 );
 
