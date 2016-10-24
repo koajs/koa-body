@@ -14,6 +14,11 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://trav
 $ npm install koa-body
 ```
 
+## Koa2 support
+```
+$ npm install koa-body@2
+```
+
 ## Features
 - 15 tests
 - can handle three type requests
