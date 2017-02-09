@@ -41,6 +41,7 @@ function requestbody(opts) {
   opts.encoding = 'encoding' in opts ? opts.encoding : 'utf-8';
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
+  opts.queryString = 'queryString' in opts ? opts.queryString : null;
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
@@ -58,7 +59,8 @@ function requestbody(opts) {
         } else if (opts.urlencoded && ctx.is('urlencoded')) {
           bodyPromise = buddy.form(ctx, {
             encoding: opts.encoding,
-            limit: opts.formLimit
+            limit: opts.formLimit,
+            queryString: opts.queryString
           });
         } else if (opts.text && ctx.is('text')) {
           bodyPromise = buddy.text(ctx, {
