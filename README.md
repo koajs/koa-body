@@ -8,7 +8,7 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](
 >Install with [npm](https://github.com/npm/npm)
 
 ```
-$ npm install koa-body
+$ npm install koa-body@2
 ```
 
 ## Features
