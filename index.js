@@ -63,13 +63,9 @@ function requestbody(opts) {
         else if (opts.multipart && this.is('multipart')) {
           body = yield formy(this, opts.formidable);
         }
-        
       } catch(parsingError) {
-        if (typeof(opts.onError) === 'function') {
-          opts.onError(parsingError, this);
-        } else {
-          throw parsingError;
-        }
+        if (!opts.onError) throw parsingError;
+        opts.onError(parsingError, this);
       }
     }
 
