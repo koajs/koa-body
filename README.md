@@ -11,6 +11,11 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](
 $ npm install koa-body@2
 ```
 
+## Koa2 support
+```
+$ npm install koa-body@2
+```
+
 ## Features
 - can handle three type requests
   * **multipart/form-data**
