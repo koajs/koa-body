@@ -1,11 +1,8 @@
-koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body)
+koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body)
 ================
 
-> A full-feature [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
+> A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
 [`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://github.com/felixge/node-formidable).
-
-## Related module
-- [`koa-better-body`](https://github.com/tunnckoCore/koa-better-body)
 
 ## Install
 >Install with [npm](https://github.com/npm/npm)
@@ -14,13 +11,12 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://trav
 $ npm install koa-body
 ```
 
-## Koa2 support
+## Legacy Koa1 support
 ```
-$ npm install koa-body@2
+$ npm install koa-body@1
 ```
 
 ## Features
-- 15 tests
 - can handle three type requests
   * **multipart/form-data**
   * **application/x-www-urlencoded**
@@ -28,7 +24,6 @@ $ npm install koa-body@2
 - option for patch to Koa or Node, or either
 - file uploads
 - body, fields and files limiting
-- 2 dependencies only
 
 
 ## Usage like [multer](https://github.com/expressjs/multer)
@@ -39,13 +34,13 @@ var app      = require('koa')(),
     koaBody   = require('koa-body');
 
 app.use(koaBody({formidable:{uploadDir: __dirname}}));
-app.use(function *(next) {
-  if (this.request.method == 'POST') {
-    console.log(this.request.body);
+app.use((ctx, next) => {
+  if (ctx.request.method == 'POST') {
+    console.log(ctx.request.body);
     // => POST body
-    this.body = JSON.stringify(this.request.body);
+    ctx.body = JSON.stringify(ctx.request.body);
   }
-  yield next;
+  next()
 });
 app.listen(3131)
 console.log('curl -i http://localhost:3131/ -d "name=test"');
@@ -61,10 +56,10 @@ var app     = require('koa')(),
     koaBody = require('koa-body')();
 
 router.post('/users', koaBody,
-  function *(next) {
-    console.log(this.request.body);
+  (ctx, next) => {
+    console.log(ctx.request.body);
     // => POST body
-    this.body = JSON.stringify(this.request.body);
+    ctx.body = JSON.stringify(ctx.request.body);
   }
 );
 
@@ -113,8 +108,6 @@ console.log('curl -i http://localhost:3131/users -d "name=test"');
 
 
 ## Tests
-> As usual - `npm test` **or** if you have [mocha](https://mochajs.org) globally - `mocha --harmony-generators`.
-
 ```
 $ npm test
 ```

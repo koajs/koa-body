@@ -1,16 +1,16 @@
 {
   "name": "koa-body",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "description": "A koa body parser middleware. Support multipart, urlencoded and json request bodies.",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --harmony",
+    "test": "node_modules/.bin/mocha",
     "examples-multer": "node --harmony examples/multer.js",
     "examples-koa-router": "node --harmony examples/koa-router.js"
   },
   "author": {
     "name": "Daryl Lau",
-    "email": "daryl@weak.io",
+    "email": "dlau00@gmail.com",
     "url": "https://github.com/dlau"
   },
   "repository": {
@@ -39,23 +39,21 @@
   ],
   "dependencies": {
     "co-body": "*",
-    "extend": "1.3.0",
     "formidable": "1.0.17"
   },
   "devDependencies": {
-    "koa": "*",
-    "koa-resource-router": "*",
-    "koa-router": "*",
+    "koa-router": "^7.0.1",
     "lodash": "^3.3.1",
     "mocha": "*",
     "multiline": "*",
     "should": "*",
-    "supertest": "2.0.0"
+    "supertest": "2.0.0",
+    "koa": "^2.0.0"
   },
   "contributors": [
     {
       "name": "Daryl Lau",
-      "email": "daryl@weak.io",
+      "email": "dlau00@gmail.com",
       "url": "https://github.com/dlau"
     },
     {
