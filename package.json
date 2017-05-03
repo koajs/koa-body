@@ -39,8 +39,7 @@
   ],
   "dependencies": {
     "co-body": "*",
-    "formidable": "1.0.17",
-    "koa": "^2.0.0"
+    "formidable": "1.0.17"
   },
   "devDependencies": {
     "koa-router": "^7.0.1",
@@ -48,7 +47,8 @@
     "mocha": "*",
     "multiline": "*",
     "should": "*",
-    "supertest": "2.0.0"
+    "supertest": "2.0.0",
+    "koa": "^2.0.0"
   },
   "contributors": [
     {
