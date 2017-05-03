@@ -25,38 +25,52 @@ $ npm install koa-body@1
 - file uploads
 - body, fields and files limiting
 
-
-## Usage like [multer](https://github.com/expressjs/multer)
-> It's very simple, because you can access the fields and files in the `ctx.request.body` or `ctx.req.body` JSON object
-
-```js
-var app      = require('koa')(),
-    koaBody   = require('koa-body');
-
-app.use(koaBody({formidable:{uploadDir: __dirname}}));
-app.use((ctx, next) => {
-  if (ctx.request.method == 'POST') {
-    console.log(ctx.request.body);
-    // => POST body
-    ctx.body = JSON.stringify(ctx.request.body);
-  }
-  next()
-});
-app.listen(3131)
-console.log('curl -i http://localhost:3131/ -d "name=test"');
+## Hello world
+```sh
+npm install koa
+npm install koa-body
+nvm install v7.9.0 #Note - koa requires node v7.6.0 for ES2015/async support
 ```
+index.js:
+```js
+const Koa = require('koa');
+const koaBody = require('koa-body');
+
+const app = new Koa();
+
+app.use(koaBody());
+app.use(ctx => {
+  ctx.body = `Request Body: ${JSON.stringify(ctx.request.body)}`;
+});
+
+app.listen(3000);
+```
+
+```sh
+$ node index.js
+$ curl -i http://localhost:3000/users -d "name=test"
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Content-Length: 29
+Date: Wed, 03 May 2017 02:09:44 GMT
+Connection: keep-alive
+
+Request Body: {"name":"test"}% 
+```
+
 **For a more comprehensive example, see** `examples/multipart.js`
 
 ## Usage with [koa-router](https://github.com/alexmingoia/koa-router)
 > It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
 
 ```js
-var app     = require('koa')(),
-    router  = require('koa-router')(),
-    koaBody = require('koa-body')();
+const Koa = require('koa');
+const app = new Koa();
+const router = require('koa-router')();
+const koaBody = require('koa-body')();
 
 router.post('/users', koaBody,
-  (ctx, next) => {
+  (ctx) => {
     console.log(ctx.request.body);
     // => POST body
     ctx.body = JSON.stringify(ctx.request.body);
@@ -65,8 +79,8 @@ router.post('/users', koaBody,
 
 app.use(router.routes());
 
-app.listen(3131);
-console.log('curl -i http://localhost:3131/users -d "name=test"');
+app.listen(3000);
+console.log('curl -i http://localhost:3000/users -d "name=test"');
 ```
 
 
