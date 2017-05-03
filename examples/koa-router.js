@@ -1,5 +1,6 @@
 var log       = console.log,
-    app       = require('koa')(),
+    Koa       = require('koa'),
+    app       = new Koa(),
     router    = require('koa-router')(),
     koaBody   = require('../index'),
     multiline = require('multiline'),
@@ -10,20 +11,19 @@ var log       = console.log,
  * Accepts only urlencoded and json bodies.
  */
 router.post('/post/users', koaBody(),
-  function *(next) {
-    log(this.request.body);
+  (ctx) => {
+    log(ctx.request.body);
     // => POST body object
-    this.body = JSON.stringify(this.request.body, null, 2);
-    yield next;
+    ctx.body = JSON.stringify(ctx.request.body, null, 2);
   }
 );
 
 /*!
  * Display HTML page with basic form.
  */
-router.get('/', function *(next) {
-  this.set('Content-Type', 'text/html');
-  this.body = multiline.stripIndent(function(){/*
+router.get('/', (ctx) => {
+  ctx.set('Content-Type', 'text/html');
+  ctx.body = multiline.stripIndent(function(){/*
       <!doctype html>
       <html>
           <body>
@@ -47,11 +47,11 @@ router.post('/post/upload',
       uploadDir: __dirname + '/uploads'
     }
   }),
-  function *(next) {
-    log(this.request.body.fields);
+  (ctx) => {
+    log(ctx.request.body.fields);
     // => {username: ""} - if empty
 
-    log(this.request.body.files);
+    log(ctx.request.body.files);
     /* => {uploads: [
             {
               "size": 748831,
@@ -69,8 +69,7 @@ router.post('/post/upload',
             }
           ]}
     */
-   this.body = JSON.stringify(this.request.body, null, 2)
-   yield next;
+   ctx.body = JSON.stringify(ctx.request.body, null, 2)
   }
 )
 

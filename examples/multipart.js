@@ -7,23 +7,23 @@
  * @author  Daryl Lau (@dlau)
  * @api private
  */
-var app       = require('koa')(),
+var Koa       = require('koa'),
+    app       = new Koa(),
     router    = require('koa-router')(),
     koaBody   = require('../index')({multipart:true});
     multiline = require('multiline');
 
 router.post('/users', koaBody,
-  function *(next) {
-    console.log(this.request.body);
+  (ctx) => {
+    console.log(ctx.request.body);
     // => POST body
-    this.body = JSON.stringify(this.request.body, null, 2);
-    yield next;
+    ctx.body = JSON.stringify(ctx.request.body, null, 2);
   }
 );
 
-router.get('/', function *(next) {
-  this.set('Content-Type', 'text/html');
-  this.body = multiline.stripIndent(function(){/*
+router.get('/', (ctx) => {
+  ctx.set('Content-Type', 'text/html');
+  ctx.body = multiline.stripIndent(function(){/*
       <!doctype html>
       <html>
           <body>
@@ -38,11 +38,11 @@ router.get('/', function *(next) {
 });
 
 router.post('/', koaBody,
-  function *(next) {
-    console.log(this.request.body.fields);
+  (ctx) => {
+    console.log(ctx.request.body.fields);
     // => {username: ""} - if empty
 
-    console.log(this.request.body.files);
+    console.log(ctx.request.body.files);
     /* => {uploads: [
             {
               "size": 748831,
@@ -60,8 +60,7 @@ router.post('/', koaBody,
             }
           ]}
     */
-   this.body = JSON.stringify(this.request.body, null, 2)
-   yield next;
+   ctx.body = JSON.stringify(ctx.request.body, null, 2)
   }
 )
 

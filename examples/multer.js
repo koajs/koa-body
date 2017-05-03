@@ -1,9 +1,9 @@
 var log     = console.log,
-    app     = require('koa')(),
+    Koa     = require('koa'),
+    app     = new Koa(),
     koaBody = require('../index'),
     port    = process.env.PORT || 4290,
     host    = 'http://localhost';
-
 
 app
   .use(koaBody({
@@ -13,13 +13,12 @@ app
       uploadDir: __dirname + '/uploads'
     }
   }))
-  .use(function *(next) {
-    if (this.request.method == 'POST') {
-      log(this.request.body);
+  .use((ctx) => {
+    if (ctx.request.method == 'POST') {
+      log(ctx.request.body);
       // => POST body object
-      this.body = JSON.stringify(this.request.body, null, 2);
+      ctx.body = JSON.stringify(ctx.request.body, null, 2);
     }
-    yield next;
   })
   .listen(port);
 
