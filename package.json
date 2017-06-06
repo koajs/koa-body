@@ -39,7 +39,7 @@
   ],
   "dependencies": {
     "co-body": "*",
-    "formidable": "1.0.17"
+    "formidable": "1.1.1"
   },
   "devDependencies": {
     "koa-router": "^7.0.1",
