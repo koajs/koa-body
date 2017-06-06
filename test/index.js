@@ -401,12 +401,38 @@ describe('koa-body', () => {
       .end(done);
   });
 
+  it('should take a function for `formLimit`',  (done) => {
+    app.use(koaBody({ formLimit: () => 10 /*bytes*/ }));
+    app.use(router.routes());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('application/x-www-form-urlencoded')
+      .send('user=www-form-urlencoded')
+      .expect(413, 'Payload Too Large')
+      .expect('content-length', '17')
+      .end(done);
+  });
+
 
   /**
    * JSON LIMIT
    */
   it('should request 413 Payload Too Large, because of `jsonLimit`',  (done) => {
     app.use(koaBody({ jsonLimit: 10 /*bytes*/ }));
+    app.use(router.routes());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('application/json')
+      .send({ name: 'some-long-name-for-limit' })
+      .expect(413, 'Payload Too Large')
+      .expect('content-length', '17')
+      .end(done);
+  });
+
+  it('should take a function for `jsonLimit`',  (done) => {
+    app.use(koaBody({ jsonLimit: () => 10 /*bytes*/ }));
     app.use(router.routes());
 
     request(http.createServer(app.callback()))
@@ -436,6 +462,19 @@ describe('koa-body', () => {
    */
   it('should request 413 Payload Too Large, because of `textLimit`',  (done) =>  {
     app.use(koaBody({ textLimit: 10 /*bytes*/ }));
+    app.use(router.routes());
+
+    request(http.createServer(app.callback()))
+      .post('/users')
+      .type('text')
+      .send('String longer than 10 bytes...')
+      .expect(413, 'Payload Too Large')
+      .expect('content-length', '17')
+      .end(done);
+  });
+
+  it('should take a function for `textLimit`',  (done) =>  {
+    app.use(koaBody({ textLimit: () => 10 /*bytes*/ }));
     app.use(router.routes());
 
     request(http.createServer(app.callback()))
