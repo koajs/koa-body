@@ -51,21 +51,28 @@ function requestbody(opts) {
     // so don't parse the body in strict mode
     if (!opts.strict || ["GET", "HEAD", "DELETE"].indexOf(ctx.method.toUpperCase()) === -1) {
       try {
+        var limit;
         if (opts.json && ctx.is('json')) {
+          limit = typeof opts.jsonLimit === 'function' ? opts.jsonLimit(ctx) : opts.jsonLimit;
+
           bodyPromise = buddy.json(ctx, {
             encoding: opts.encoding,
-            limit: opts.jsonLimit
+            limit: limit
           });
         } else if (opts.urlencoded && ctx.is('urlencoded')) {
+          limit = typeof opts.formLimit === 'function' ? opts.formLimit(ctx) : opts.formLimit;
+          
           bodyPromise = buddy.form(ctx, {
             encoding: opts.encoding,
-            limit: opts.formLimit,
+            limit: limit,
             queryString: opts.queryString
           });
         } else if (opts.text && ctx.is('text')) {
+          limit = typeof opts.textLimit === 'function' ? opts.textLimit(ctx) : opts.textLimit;
+          
           bodyPromise = buddy.text(ctx, {
             encoding: opts.encoding,
-            limit: opts.textLimit
+            limit: limit
           });
         } else if (opts.multipart && ctx.is('multipart')) {
           bodyPromise = formy(ctx, opts.formidable);

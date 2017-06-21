@@ -89,9 +89,12 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 
 - `patchNode` **{Boolean}** Patch request body to Node's `ctx.req`, default `false`
 - `patchKoa` **{Boolean}** Patch request body to Koa's `ctx.request`, default `true`
-- `jsonLimit` **{String|Integer}** The byte (if integer) limit of the JSON body, default `1mb`
-- `formLimit` **{String|Integer}** The byte (if integer) limit of the form body, default `56kb`
-- `textLimit` **{String|Integer}** The byte (if integer) limit of the text body, default `56kb`
+- `jsonLimit` **{String|Integer|Function}** The byte (if integer) limit of the JSON body, default `1mb`
+  - If this is a `function`, it takes `ctx` as the first argument.
+- `formLimit` **{String|Integer|Function}** The byte (if integer) limit of the form body, default `56kb`
+  - If this is a `function`, it takes `ctx` as the first argument.
+- `textLimit` **{String|Integer|Function}** The byte (if integer) limit of the text body, default `56kb`
+  - If this is a `function`, it takes `ctx` as the first argument.
 - `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
 - `multipart` **{Boolean}** Parse multipart bodies, default `false`
 - `urlencoded` **{Boolean}** Parse urlencoded bodies, default `true`
