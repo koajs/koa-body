@@ -80,20 +80,20 @@ function requestbody(opts) {
     }
 
     bodyPromise = bodyPromise || Promise.resolve({});
-    return bodyPromise.then(function(body) {
+    return bodyPromise.catch(function(parsingError) {
+      if (typeof opts.onError === 'function') {
+        opts.onError(parsingError, ctx);
+      } else {
+        throw parsingError;
+      }
+      return next();
+    })
+    .then(function(body) {
       if (opts.patchNode) {
         ctx.req.body = body;
       }
       if (opts.patchKoa) {
         ctx.request.body = body;
-      }
-      return next();
-    })
-    .catch(function(parsingError) {
-      if (typeof opts.onError === 'function') {
-        opts.onError(parsingError, ctx);
-      } else {
-        throw parsingError;
       }
       return next();
     })
