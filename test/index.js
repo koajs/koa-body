@@ -384,11 +384,12 @@ describe('koa-body', () => {
     });
   });
 
+  const ERR_413_STATUSTEXT = 'request entity too large';
 
   /**
    * FORM (urlencoded) LIMIT
    */
-  it('should request 413 Payload Too Large, because of `formLimit`',  (done) => {
+  it('should request 413 '+ERR_413_STATUSTEXT+', because of `formLimit`',  (done) => {
     app.use(koaBody({ formLimit: 10 /*bytes*/ }));
     app.use(router.routes());
 
@@ -396,8 +397,7 @@ describe('koa-body', () => {
       .post('/users')
       .type('application/x-www-form-urlencoded')
       .send('user=www-form-urlencoded')
-      .expect(413, 'Payload Too Large')
-      .expect('content-length', '17')
+      .expect(413, ERR_413_STATUSTEXT)
       .end(done);
   });
 
@@ -405,7 +405,7 @@ describe('koa-body', () => {
   /**
    * JSON LIMIT
    */
-  it('should request 413 Payload Too Large, because of `jsonLimit`',  (done) => {
+  it('should request 413 '+ERR_413_STATUSTEXT+', because of `jsonLimit`',  (done) => {
     app.use(koaBody({ jsonLimit: 10 /*bytes*/ }));
     app.use(router.routes());
 
@@ -413,8 +413,7 @@ describe('koa-body', () => {
       .post('/users')
       .type('application/json')
       .send({ name: 'some-long-name-for-limit' })
-      .expect(413, 'Payload Too Large')
-      .expect('content-length', '17')
+      .expect(413, ERR_413_STATUSTEXT)
       .end(done);
   });
 
@@ -434,7 +433,7 @@ describe('koa-body', () => {
   /**
    * TEXT LIMIT
    */
-  it('should request 413 Payload Too Large, because of `textLimit`',  (done) =>  {
+  it('should request 413 '+ERR_413_STATUSTEXT+', because of `textLimit`',  (done) =>  {
     app.use(koaBody({ textLimit: 10 /*bytes*/ }));
     app.use(router.routes());
 
@@ -442,8 +441,7 @@ describe('koa-body', () => {
       .post('/users')
       .type('text')
       .send('String longer than 10 bytes...')
-      .expect(413, 'Payload Too Large')
-      .expect('content-length', '17')
+      .expect(413, ERR_413_STATUSTEXT)
       .end(done);
   });
 });
