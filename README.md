@@ -67,7 +67,7 @@ Request Body: {"name":"test"}%
 const Koa = require('koa');
 const app = new Koa();
 const router = require('koa-router')();
-const koaBody = require('koa-body')();
+const koaBody = require('koa-body');
 
 router.post('/users', koaBody(),
   (ctx) => {
