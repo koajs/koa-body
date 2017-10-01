@@ -28,15 +28,11 @@
     "form"
   ],
   "files": [
-    ".gitignore",
-    ".npmignore",
-    ".travis.yml",
     "LICENSE",
-    "Makefile",
     "README.md",
-    "example.js",
     "index.js",
-    "test.js"
+    "index.d.ts",
+    "package.json"
   ],
   "dependencies": {
     "co-body": "^5.1.1",
