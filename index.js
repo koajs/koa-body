@@ -14,7 +14,7 @@
  * Module dependencies.
  */
 
-var buddy = require('co-body')({strict:false});
+var buddy = require('co-body');
 var forms = require('formidable');
 
 /**
@@ -40,6 +40,7 @@ function requestbody(opts) {
   opts.text = 'text' in opts ? opts.text : true;
   opts.encoding = 'encoding' in opts ? opts.encoding : 'utf-8';
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
+  opts.jsonStrict = 'jsonStrict' in opts ? opts.jsonStrict : true;
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
   opts.queryString = 'queryString' in opts ? opts.queryString : null;
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
@@ -54,7 +55,8 @@ function requestbody(opts) {
         if (opts.json && ctx.is('json')) {
           bodyPromise = buddy.json(ctx, {
             encoding: opts.encoding,
-            limit: opts.jsonLimit
+            limit: opts.jsonLimit,
+            strict: opts.jsonStrict
           });
         } else if (opts.urlencoded && ctx.is('urlencoded')) {
           bodyPromise = buddy.form(ctx, {
