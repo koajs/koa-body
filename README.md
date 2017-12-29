@@ -97,6 +97,7 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `urlencoded` **{Boolean}** Parse urlencoded bodies, default `true`
 - `text` **{Boolean}** Parse text bodies, default `true`
 - `json` **{Boolean}** Parse json bodies, default `true`
+- `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `strict` **{Boolean}** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
