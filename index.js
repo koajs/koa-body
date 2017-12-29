@@ -14,7 +14,7 @@
  * Module dependencies.
  */
 
-var buddy = require('co-body');
+var buddy = require('co-body')({strict:false});
 var forms = require('formidable');
 
 /**
