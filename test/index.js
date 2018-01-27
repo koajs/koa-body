@@ -56,13 +56,19 @@ describe('koa-body', () => {
       })
       .post('/users', (ctx, next) => {
         const user = ctx.request.body.fields || ctx.request.body;
+
         if(!user) {
           ctx.status = 400;
           return next();
         }
         database.users.push(user);
         ctx.status = 201;
-        ctx.body = ctx.request.body;
+
+        if(ctx.request.files) {
+          ctx.body = ctx.request.files
+        } else {
+          ctx.body = ctx.request.body
+        }
       })
       .delete('/users/:user', (ctx, next) => {
         const user = ctx.params.user;
@@ -116,6 +122,7 @@ describe('koa-body', () => {
         if (err) return done(err);
 
         var mostRecentUser = _.last(database.users);
+
         res.body.fields.should.have.property('name', mostRecentUser.name);
         res.body.fields.should.have.property('followers', mostRecentUser.followers);
 
@@ -249,7 +256,6 @@ describe('koa-body', () => {
       .expect(201)
       .end( (err, res) => {
         if (err) return done(err);
-
         const mostRecentUser = _.last(database.users);
         res.body.should.have.property('name', mostRecentUser.name);
         res.body.should.have.property('followers', mostRecentUser.followers);
