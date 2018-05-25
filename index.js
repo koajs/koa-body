@@ -90,14 +90,37 @@ function requestbody(opts) {
     })
     .then(function(body) {
       if (opts.patchNode) {
-        ctx.req.body = body;
+        if(isMultiPart(opts, ctx)) {
+          ctx.req.body.fields = body.fields
+          ctx.req.files = body.files;
+        } else {
+          ctx.req.body = body;
+        }
       }
       if (opts.patchKoa) {
-        ctx.request.body = body;
+        if(isMultiPart(opts, ctx)) {
+          ctx.request.body.fields = body.fields;
+          ctx.request.files = body.files;
+        } else {
+          ctx.request.body = body;
+        }
       }
       return next();
     })
   };
+}
+
+/**
+ * Check If It's multipart request
+ *
+ * @param  {Object} ctx
+ * @param  {Object} opts
+ * @return {Boolean}
+ * @api private
+ */
+
+function isMultiPart(ctx, opts) {
+  return (opts.multipart && ctx.is('multipart'))
 }
 
 /**
