@@ -290,7 +290,7 @@ describe('koa-body', () => {
       });
   });
 
-  describe('strict mode', () => {
+  describe('strict mode',  () => {
     beforeEach( () => {
       //push an additional, to test the multi query
       database.users.push({ name: 'charlike' });
@@ -332,7 +332,7 @@ describe('koa-body', () => {
   /**
    * JSON request body
    */
-  describe('POST json request body', () => {
+  describe('POST json request body',  () => {
 
     it('should set the follower count',  (done) => {
       app.use(koaBody({ strict: false }));
