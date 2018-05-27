@@ -90,16 +90,16 @@ function requestbody(opts) {
     })
     .then(function(body) {
       if (opts.patchNode) {
-        if(isMultiPart(opts, ctx)) {
-          ctx.req.body.fields = body.fields
+        if (isMultiPart(ctx, opts)) {
+          ctx.req.body = Object.assign({}, ctx.req.body, { fields: body.fields });
           ctx.req.files = body.files;
         } else {
           ctx.req.body = body;
         }
       }
       if (opts.patchKoa) {
-        if(isMultiPart(opts, ctx)) {
-          ctx.request.body.fields = body.fields;
+        if (isMultiPart(ctx, opts)) {
+          ctx.request.body = Object.assign({}, ctx.request.body, { fields: body.fields });
           ctx.request.files = body.files;
         } else {
           ctx.request.body = body;
@@ -111,16 +111,15 @@ function requestbody(opts) {
 }
 
 /**
- * Check If It's multipart request
+ * Check if multipart handling is enabled and that this is a multipart request
  *
  * @param  {Object} ctx
  * @param  {Object} opts
- * @return {Boolean}
+ * @return {Boolean} true if request is multipart and being treated as so
  * @api private
  */
-
 function isMultiPart(ctx, opts) {
-  return (opts.multipart && ctx.is('multipart'))
+  return opts.multipart && ctx.is('multipart');
 }
 
 /**
@@ -128,7 +127,7 @@ function isMultiPart(ctx, opts) {
  *
  * @param  {Stream} ctx
  * @param  {Object} opts
- * @return {Object}
+ * @return {Promise}
  * @api private
  */
 function formy(ctx, opts) {
