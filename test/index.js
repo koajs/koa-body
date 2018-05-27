@@ -72,7 +72,6 @@ describe('koa-body', () => {
         };
       })
       .post('/echo_body', (ctx, next) => {
-        debugger;
         ctx.status = 200;
         ctx.body = ctx.request.body;
       })
