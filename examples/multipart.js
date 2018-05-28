@@ -39,10 +39,10 @@ router.get('/', (ctx) => {
 
 router.post('/', koaBody,
   (ctx) => {
-    console.log(ctx.request.body.fields);
+    console.log('fields: ', ctx.request.fields);
     // => {username: ""} - if empty
 
-    console.log(ctx.request.body.files);
+    console.log('files: ', ctx.request.files);
     /* => {uploads: [
             {
               "size": 748831,
@@ -60,7 +60,7 @@ router.post('/', koaBody,
             }
           ]}
     */
-   ctx.body = JSON.stringify(ctx.request.body, null, 2)
+    ctx.body = JSON.stringify(ctx.request.body, null, 2);
   }
 )
 
@@ -71,4 +71,3 @@ app.listen(port);
 console.log('Koa server with `koa-body` parser start listening to port %s', port);
 console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
 console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);
-

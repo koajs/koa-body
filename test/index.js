@@ -55,7 +55,7 @@ describe('koa-body', () => {
         ctx.body = user;
       })
       .post('/users', (ctx, next) => {
-        const user = ctx.request.body.fields || ctx.request.body;
+        const user = ctx.request.body;
 
         if(!user) {
           ctx.status = 400;
@@ -66,7 +66,6 @@ describe('koa-body', () => {
 
         // return request contents to validate
         ctx.body = {
-          _fields: ctx.request.body.fields, // fields we populate
           _files: ctx.request.files, // files we populate
           user: user // original request data
         };
@@ -114,7 +113,7 @@ describe('koa-body', () => {
   /**
    * MULTIPART - FIELDS
    */
-  it('should receive `multipart` requests - fields on .body._fields object',  (done) => {
+  it('should receive `multipart` requests - fields on .body object',  (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -128,11 +127,11 @@ describe('koa-body', () => {
 
         let mostRecentUser = _.last(database.users);
 
-        res.body._fields.should.have.property('name', mostRecentUser.name);
-        res.body._fields.should.have.property('followers', mostRecentUser.followers);
+        res.body.user.should.have.property('name', mostRecentUser.name);
+        res.body.user.should.have.property('followers', mostRecentUser.followers);
 
-        res.body._fields.should.have.property('name', 'daryl');
-        res.body._fields.should.have.property('followers', '30');
+        res.body.user.should.have.property('name', 'daryl');
+        res.body.user.should.have.property('followers', '30');
 
         done();
       });
@@ -165,9 +164,9 @@ describe('koa-body', () => {
       .expect(201)
       .end( (err, res) => {
         if (err) return done(err);
-        res.body._fields.names.should.be.an.Array().and.have.lengthOf(2);
-        res.body._fields.names[0].should.equal('John');
-        res.body._fields.names[1].should.equal('Paul');
+        res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
+        res.body.user.names[0].should.equal('John');
+        res.body.user.names[1].should.equal('Paul');
         res.body._files.firstField.should.be.an.Object;
         res.body._files.firstField.name.should.equal('package.json');
         should(fs.statSync(res.body._files.firstField.path)).be.ok;

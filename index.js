@@ -91,7 +91,7 @@ function requestbody(opts) {
     .then(function(body) {
       if (opts.patchNode) {
         if (isMultiPart(ctx, opts)) {
-          ctx.req.body = Object.assign({}, ctx.req.body, { fields: body.fields });
+          ctx.req.body = body.fields;
           ctx.req.files = body.files;
         } else {
           ctx.req.body = body;
@@ -99,7 +99,7 @@ function requestbody(opts) {
       }
       if (opts.patchKoa) {
         if (isMultiPart(ctx, opts)) {
-          ctx.request.body = Object.assign({}, ctx.request.body, { fields: body.fields });
+          ctx.request.body = body.fields;
           ctx.request.files = body.files;
         } else {
           ctx.request.body = body;
