@@ -11,10 +11,15 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](
 $ npm install koa-body
 ```
 
-## Legacy Koa1 support
+## Legacy Koa v1 support
 ```
-$ npm install koa-body@1
+$ npm install koa-body@3
 ```
+
+## Breaking Changes in v3/4
+To address a potential security issue, the `files` property has been moved to `ctx.request.files`. In prior versions, `files` was a property of `ctx.request.body`. If you do not use multipart uploads, no changes to your code need to be made.
+
+Versions 1 and 2 of `koa-body` are deprecated and replaced with versions 3 and 4, respectively.
 
 ## Features
 - can handle three type requests
@@ -29,7 +34,7 @@ $ npm install koa-body@1
 ```sh
 npm install koa
 npm install koa-body
-nvm install v7.9.0 #Note - koa requires node v7.6.0 for ES2015/async support
+nvm install v8.11.2 # Note - Koa requires node v7.6.0+ for async/await support
 ```
 index.js:
 ```js
@@ -55,7 +60,7 @@ Content-Length: 29
 Date: Wed, 03 May 2017 02:09:44 GMT
 Connection: keep-alive
 
-Request Body: {"name":"test"}% 
+Request Body: {"name":"test"}%
 ```
 
 **For a more comprehensive example, see** `examples/multipart.js`
