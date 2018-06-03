@@ -48,7 +48,6 @@
     "koa-router": "^5.4.2",
     "lodash": "^3.3.1",
     "mocha": "^5.2.0",
-    "multiline": "^1.0.2",
     "should": "^13.2.1",
     "supertest": "2.0.0"
   },
