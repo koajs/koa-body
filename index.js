@@ -45,7 +45,7 @@ function requestbody(opts) {
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
-
+  
   return function (ctx, next) {
     var bodyPromise;
     // so don't parse the body in strict mode
@@ -89,6 +89,12 @@ function requestbody(opts) {
       return next();
     })
     .then(function(body) {
+      if (opts.multipart && !ctx.is('multipart')) {
+        body = {
+          fields: body,
+          files: []
+        };
+      }
       if (opts.patchNode) {
         ctx.req.body = body;
       }
