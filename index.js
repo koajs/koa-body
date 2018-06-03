@@ -90,10 +90,20 @@ function requestbody(opts) {
     })
     .then(function(body) {
       if (opts.patchNode) {
-        ctx.req.body = body;
+        if (isMultiPart(ctx, opts)) {
+          ctx.req.body = body.fields;
+          ctx.req.files = body.files;
+        } else {
+          ctx.req.body = body;
+        }
       }
       if (opts.patchKoa) {
-        ctx.request.body = body;
+        if (isMultiPart(ctx, opts)) {
+          ctx.request.body = body.fields;
+          ctx.request.files = body.files;
+        } else {
+          ctx.request.body = body;
+        }
       }
       return next();
     })
@@ -101,11 +111,23 @@ function requestbody(opts) {
 }
 
 /**
+ * Check if multipart handling is enabled and that this is a multipart request
+ *
+ * @param  {Object} ctx
+ * @param  {Object} opts
+ * @return {Boolean} true if request is multipart and being treated as so
+ * @api private
+ */
+function isMultiPart(ctx, opts) {
+  return opts.multipart && ctx.is('multipart');
+}
+
+/**
  * Donable formidable
  *
  * @param  {Stream} ctx
  * @param  {Object} opts
- * @return {Object}
+ * @return {Promise}
  * @api private
  */
 function formy(ctx, opts) {

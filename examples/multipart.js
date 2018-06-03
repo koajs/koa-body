@@ -37,10 +37,10 @@ router.get('/', (ctx) => {
 
 router.post('/', koaBody,
   (ctx) => {
-    console.log(ctx.request.body.fields);
+    console.log('fields: ', ctx.request.fields);
     // => {username: ""} - if empty
 
-    console.log(ctx.request.body.files);
+    console.log('files: ', ctx.request.files);
     /* => {uploads: [
             {
               "size": 748831,
@@ -58,7 +58,7 @@ router.post('/', koaBody,
             }
           ]}
     */
-   ctx.body = JSON.stringify(ctx.request.body, null, 2)
+    ctx.body = JSON.stringify(ctx.request.body, null, 2);
   }
 )
 

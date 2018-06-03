@@ -54,13 +54,23 @@ describe('koa-body', () => {
         ctx.body = user;
       })
       .post('/users', (ctx, next) => {
-        const user = ctx.request.body.fields || ctx.request.body;
+        const user = ctx.request.body;
+
         if(!user) {
           ctx.status = 400;
           return next();
         }
         database.users.push(user);
         ctx.status = 201;
+
+        // return request contents to validate
+        ctx.body = {
+          _files: ctx.request.files, // files we populate
+          user: user // original request data
+        };
+      })
+      .post('/echo_body', (ctx, next) => {
+        ctx.status = 200;
         ctx.body = ctx.request.body;
       })
       .delete('/users/:user', (ctx, next) => {
@@ -100,7 +110,7 @@ describe('koa-body', () => {
   /**
    * MULTIPART - FIELDS
    */
-  it('should receive `multipart` requests - fields on .body.fields object',  (done) => {
+  it('should receive `multipart` requests - fields on .body object',  (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -113,14 +123,12 @@ describe('koa-body', () => {
         if (err) return done(err);
 
         const mostRecentUser = database.users[database.users.length - 1];
-        res.body.fields.should.have.property('name', mostRecentUser.name);
-        res.body.fields.should.have.property('followers', mostRecentUser.followers);
 
-        res.body.fields.name.should.equal('daryl');
-        res.body.fields.followers.should.equal('30');
+        res.body.user.should.have.property('name', mostRecentUser.name);
+        res.body.user.should.have.property('followers', mostRecentUser.followers);
 
-        res.body.fields.should.have.property('name', 'daryl');
-        res.body.fields.should.have.property('followers', '30');
+        res.body.user.should.have.property('name', 'daryl');
+        res.body.user.should.have.property('followers', '30');
 
         done();
       });
@@ -153,43 +161,43 @@ describe('koa-body', () => {
       .expect(201)
       .end( (err, res) => {
         if (err) return done(err);
-        res.body.fields.names.should.be.an.Array().and.have.lengthOf(2);
-        res.body.fields.names[0].should.equal('John');
-        res.body.fields.names[1].should.equal('Paul');
-        res.body.files.firstField.should.be.an.Object;
-        res.body.files.firstField.name.should.equal('package.json');
-        should(fs.statSync(res.body.files.firstField.path)).be.ok;
-        fs.unlinkSync(res.body.files.firstField.path);
+        res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
+        res.body.user.names[0].should.equal('John');
+        res.body.user.names[1].should.equal('Paul');
+        res.body._files.firstField.should.be.an.Object;
+        res.body._files.firstField.name.should.equal('package.json');
+        should(fs.statSync(res.body._files.firstField.path)).be.ok;
+        fs.unlinkSync(res.body._files.firstField.path);
 
-        res.body.files.secondField.should.be.an.Array().and.have.lengthOf(2);
-        res.body.files.secondField.should.containDeep([{
+        res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
+        res.body._files.secondField.should.containDeep([{
           name: 'index.js'
         }]);
-        res.body.files.secondField.should.containDeep([{
+        res.body._files.secondField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body.files.secondField[0].path)).be.ok;
-        should(fs.statSync(res.body.files.secondField[1].path)).be.ok;
-        fs.unlinkSync(res.body.files.secondField[0].path);
-        fs.unlinkSync(res.body.files.secondField[1].path);
+        should(fs.statSync(res.body._files.secondField[0].path)).be.ok;
+        should(fs.statSync(res.body._files.secondField[1].path)).be.ok;
+        fs.unlinkSync(res.body._files.secondField[0].path);
+        fs.unlinkSync(res.body._files.secondField[1].path);
 
-        res.body.files.thirdField.should.be.an.Array().and.have.lengthOf(3);
+        res.body._files.thirdField.should.be.an.Array().and.have.lengthOf(3);
 
-        res.body.files.thirdField.should.containDeep([{
+        res.body._files.thirdField.should.containDeep([{
           name: 'LICENSE'
         }]);
-        res.body.files.thirdField.should.containDeep([{
+        res.body._files.thirdField.should.containDeep([{
           name: 'README.md'
         }]);
-        res.body.files.thirdField.should.containDeep([{
+        res.body._files.thirdField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body.files.thirdField[0].path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField[0].path);
-        should(fs.statSync(res.body.files.thirdField[1].path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField[1].path);
-        should(fs.statSync(res.body.files.thirdField[2].path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField[2].path);
+        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok;
+        fs.unlinkSync(res.body._files.thirdField[0].path);
+        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok;
+        fs.unlinkSync(res.body._files.thirdField[1].path);
+        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok;
+        fs.unlinkSync(res.body._files.thirdField[2].path);
 
         done();
       });
@@ -219,10 +227,10 @@ describe('koa-body', () => {
       .end( (err, res) => {
         if (err) return done(err);
 
-        res.body.files.firstField.should.be.an.Object;
-        res.body.files.firstField.name.should.equal('backage.json');
-        should(fs.statSync(res.body.files.firstField.path)).be.ok;
-        fs.unlinkSync(res.body.files.firstField.path);
+        res.body._files.firstField.should.be.an.Object;
+        res.body._files.firstField.name.should.equal('backage.json');
+        should(fs.statSync(res.body._files.firstField.path)).be.ok;
+        fs.unlinkSync(res.body._files.firstField.path);
 
         done();
       });
@@ -248,14 +256,9 @@ describe('koa-body', () => {
         if (err) return done(err);
 
         const mostRecentUser = database.users[database.users.length - 1];
-        res.body.should.have.property('name', mostRecentUser.name);
-        res.body.should.have.property('followers', mostRecentUser.followers);
 
-        res.body.name.should.equal('example');
-        res.body.followers.should.equal('41');
-
-        res.body.should.have.property('name', 'example');
-        res.body.should.have.property('followers', '41');
+        res.body.user.should.have.properties(mostRecentUser);
+        res.body.user.should.have.properties({ name: 'example', followers: '41' });
 
         done();
       });
@@ -270,15 +273,15 @@ describe('koa-body', () => {
     app.use(router.routes());
 
     request(http.createServer(app.callback()))
-      .post('/users')
+      .post('/echo_body')
       .type('text')
       .send('plain text')
-      .expect(201)
+      .expect(200)
       .end( (err, res) => {
         if (err) return done(err);
 
-        const mostRecentUser = database.users[database.users.length - 1];
-        res.text.should.equal(mostRecentUser);
+        res.type.should.equal('text/plain');
+        res.text.should.equal('plain text');
 
         done();
       });
@@ -343,9 +346,9 @@ describe('koa-body', () => {
         .expect(201)
         .end((err, res) => {
           const mostRecentUser = database.users[database.users.length - 1];
-          res.body.should.have.property('name', mostRecentUser.name);
-          res.body.name.should.equal('json');
-          done(err);
+          res.body.user.should.have.properties({ followers: "313", name: "json" });
+
+        done(err);
         });
     });
   });

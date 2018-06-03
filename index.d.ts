@@ -1,11 +1,9 @@
 import * as Koa from "koa";
+import '@types/koa';
 
 declare module "koa" {
-    interface Request {
-        body: any;
-    }
-    interface Context {
-        body: any;
+    interface Request extends BaseRequest {
+        files?: Array<any>;
     }
 }
 
@@ -15,39 +13,39 @@ declare namespace koaBody {
          * {Integer} The expected number of bytes in this form, default null
          */
         bytesExpected?: number
-  
+
         /**
          * {Integer} Limits the number of fields that the querystring parser will decode, default 1000
          */
         maxFields?: number;
-        
+
         /**
-         * {Integer} Limits the amount of memory all fields together (except files) can allocate in bytes. 
+         * {Integer} Limits the amount of memory all fields together (except files) can allocate in bytes.
          * If this value is exceeded, an 'error' event is emitted, default 2mb (2 * 1024 * 1024)
          */
         maxFieldsSize?: number;
-        
+
         /**
          * {String} Sets the directory for placing file uploads in, default os.tmpDir()
          */
         uploadDir?: string;
-        
+
         /**
          * {Boolean} Files written to uploadDir will include the extensions of the original files, default false
          */
         keepExtensions?: boolean;
-        
+
         /**
          * {String} If you want checksums calculated for incoming files, set this to either 'sha1' or 'md5', default false
          */
         hash?: string;
-        
+
         /**
          * {Boolean} Multiple file uploads or no, default true
          */
         multiples?: boolean;
         /**
-         * {Function} Special callback on file begin. The function is executed directly by formidable. 
+         * {Function} Special callback on file begin. The function is executed directly by formidable.
          * It can be used to rename files before saving them to disk. See https://github.com/felixge/node-formidable#filebegin
          */
         onFileBegin?: (name: string, file: any) => void;
@@ -55,14 +53,14 @@ declare namespace koaBody {
     interface IKoaBodyOptions {
         /**
          * {Boolean} Patch request body to Node's ctx.req, default false
-         * 
+         *
          * Note: You can patch request body to Node or Koa in same time if you want.
          */
         patchNode?: boolean;
 
         /**
          * {Boolean} Patch request body to Koa's ctx.request, default true
-         * 
+         *
          * Note: You can patch request body to Node or Koa in same time if you want.
          */
         patchKoa?: boolean;
@@ -119,17 +117,17 @@ declare namespace koaBody {
 
         /**
          * {Boolean} If enabled, don't parse GET, HEAD, DELETE requests, default true
-         * 
-         * GET, HEAD, and DELETE requests have no defined semantics for the request body, 
-         * but this doesn't mean they may not be valid in certain use cases. 
+         *
+         * GET, HEAD, and DELETE requests have no defined semantics for the request body,
+         * but this doesn't mean they may not be valid in certain use cases.
          * koa-body is strict by default
-         * 
+         *
          * see http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3
          */
         strict?: boolean;
     }
 }
-        
+
 declare function koaBody (options?: koaBody.IKoaBodyOptions): Koa.Middleware;
 
 export = koaBody;
