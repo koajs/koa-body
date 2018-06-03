@@ -2,7 +2,6 @@ var log       = console.log,
     app       = require('koa')(),
     router    = require('koa-router')(),
     koaBody   = require('../index'),
-    multiline = require('multiline'),
     port      = process.env.PORT || 4291
     host      = process.env.HOST || 'http://localhost';
 
@@ -23,18 +22,17 @@ router.post('/post/users', koaBody(),
  */
 router.get('/', function *(next) {
   this.set('Content-Type', 'text/html');
-  this.body = multiline.stripIndent(function(){/*
-      <!doctype html>
-      <html>
-          <body>
-              <form action="/post/upload" enctype="multipart/form-data" method="post">
-              <input type="text" name="username" placeholder="username"><br>
-              <input type="text" name="title" placeholder="title of file"><br>
-              <input type="file" name="uploads" multiple="multiple"><br>
-              <button type="submit">Upload</button>
-          </body>
-      </html>
-  */});
+  this.body = `
+<!doctype html>
+<html>
+  <body>
+    <form action="/post/upload" enctype="multipart/form-data" method="post">
+    <input type="text" name="username" placeholder="username"><br>
+    <input type="text" name="title" placeholder="title of file"><br>
+    <input type="file" name="uploads" multiple="multiple"><br>
+    <button type="submit">Upload</button>
+  </body>
+</html>`;
 });
 
 /*!
