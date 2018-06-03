@@ -11,7 +11,6 @@ var Koa       = require('koa'),
     app       = new Koa(),
     router    = require('koa-router')(),
     koaBody   = require('../index')({multipart:true});
-    multiline = require('multiline');
 
 router.post('/users', koaBody,
   (ctx) => {
@@ -23,18 +22,17 @@ router.post('/users', koaBody,
 
 router.get('/', (ctx) => {
   ctx.set('Content-Type', 'text/html');
-  ctx.body = multiline.stripIndent(function(){/*
-      <!doctype html>
-      <html>
-          <body>
-              <form action="/" enctype="multipart/form-data" method="post">
-              <input type="text" name="username" placeholder="username"><br>
-              <input type="text" name="title" placeholder="tile of film"><br>
-              <input type="file" name="uploads" multiple="multiple"><br>
-              <button type="submit">Upload</button>
-          </body>
-      </html>
-  */});
+  ctx.body = `
+<!doctype html>
+<html>
+  <body>
+    <form action="/" enctype="multipart/form-data" method="post">
+    <input type="text" name="username" placeholder="username"><br>
+    <input type="text" name="title" placeholder="tile of film"><br>
+    <input type="file" name="uploads" multiple="multiple"><br>
+    <button type="submit">Upload</button>
+  </body>
+</html>`;
 });
 
 router.post('/', koaBody,
@@ -71,4 +69,3 @@ app.listen(port);
 console.log('Koa server with `koa-body` parser start listening to port %s', port);
 console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
 console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);
-
