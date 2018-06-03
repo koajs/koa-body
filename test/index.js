@@ -9,7 +9,6 @@
 
 'use strict';
 
-const _ = require('lodash');
 const assert = require('assert');
 const fs = require('fs');
 const http = require('http');
@@ -28,7 +27,7 @@ describe('koa-body', () => {
   beforeEach((done) => {
     app = new Koa();
     database = {
-      "users": [
+      users: [
         {
           name: 'charlike',
           followers: 10
@@ -42,7 +41,7 @@ describe('koa-body', () => {
     router = Router()
       .get('/users', (ctx, next) => {
         if(ctx.request.body && ctx.request.body.name) {
-          ctx.body = _.findWhere(database.users, { name: ctx.request.body.name });
+          ctx.body = database.users.find(element => element.name === ctx.request.body.name);
           ctx.status = 200;
           return next();
         }
@@ -50,7 +49,7 @@ describe('koa-body', () => {
         ctx.body = database;
       })
       .get('/users/:user', (ctx, next) => {
-        user = _.findWhere(database.users, { name: ctx.request.body.name });
+        user = database.users.find(element => element.name === ctx.request.body.name);
         ctx.status = 200;
         ctx.body = user;
       })
@@ -68,12 +67,10 @@ describe('koa-body', () => {
         const user = ctx.params.user;
         const multi = !!ctx.request.body.multi;
         if (multi) {
-          database.users = database.users.filter( (element) => {
-            return element.name !== user;
-          });
+          database.users = database.users.filter(element => element.name !== user);
         }
         else {
-          const index = _.findIndex(database.users, { name: user });
+          const index = database.users.findIndex(element => element === user);
           database.users.splice(index, 1);
         }
         ctx.status = 204;
@@ -115,7 +112,7 @@ describe('koa-body', () => {
       .end( (err, res) => {
         if (err) return done(err);
 
-        var mostRecentUser = _.last(database.users);
+        const mostRecentUser = database.users[database.users.length - 1];
         res.body.fields.should.have.property('name', mostRecentUser.name);
         res.body.fields.should.have.property('followers', mostRecentUser.followers);
 
@@ -250,7 +247,7 @@ describe('koa-body', () => {
       .end( (err, res) => {
         if (err) return done(err);
 
-        const mostRecentUser = _.last(database.users);
+        const mostRecentUser = database.users[database.users.length - 1];
         res.body.should.have.property('name', mostRecentUser.name);
         res.body.should.have.property('followers', mostRecentUser.followers);
 
@@ -280,7 +277,7 @@ describe('koa-body', () => {
       .end( (err, res) => {
         if (err) return done(err);
 
-        const mostRecentUser = _.last(database.users);
+        const mostRecentUser = database.users[database.users.length - 1];
         res.text.should.equal(mostRecentUser);
 
         done();
@@ -304,7 +301,7 @@ describe('koa-body', () => {
         .expect(204)
         .end( (err, res) => {
           if (err) return done(err);
-          assert(_.findWhere(database.users, { name: 'charlike' }) !== undefined);
+          assert(database.users.find(element => element.name === 'charlike') !== undefined);
           done();
         });
     });
@@ -320,7 +317,7 @@ describe('koa-body', () => {
         .expect(204)
         .end( (err, res) => {
           if (err) return done(err);
-          assert(_.findWhere(database.users, { name: 'charlike' }) === undefined);
+          assert(database.users.find(element => element.name === 'charlike') === undefined);
           done();
         });
     });
@@ -345,7 +342,7 @@ describe('koa-body', () => {
         })
         .expect(201)
         .end((err, res) => {
-          const mostRecentUser = _.last(database.users);
+          const mostRecentUser = database.users[database.users.length - 1];
           res.body.should.have.property('name', mostRecentUser.name);
           res.body.name.should.equal('json');
           done(err);
