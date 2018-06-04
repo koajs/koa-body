@@ -14,10 +14,15 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.png)](https://trav
 $ npm install koa-body
 ```
 
-## Koa2 support
+## Legacy Koa v1 support
 ```
-$ npm install koa-body@2
+$ npm install koa-body@3
 ```
+
+## Breaking Changes in v3/4
+To address a potential security issue, the `files` property has been moved to `ctx.request.files`. In prior versions, `files` was a property of `ctx.request.body`. If you do not use multipart uploads, no changes to your code need to be made.
+
+Versions 1 and 2 of `koa-body` are deprecated and replaced with versions 3 and 4, respectively.
 
 ## Features
 - 15 tests

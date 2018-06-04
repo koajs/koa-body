@@ -2,7 +2,7 @@
  * koa-body <https://github.com/dlau/koa-body>
  * A koa body parser middleware with support for `multipart/form-data`,
  * `application/json` or `application/x-www-form-urlencoded` request bodies.
- * 
+ *
  * Copyright (c) 2014 Charlike Mike Reagent, Daryl Lau, contributors.
  * Released under the MIT license.
  */
@@ -65,12 +65,12 @@ describe('koa-body', function () {
   /**
    * MULTIPART - FIELDS
    */
-  it('should recieve `multipart` requests - fields on .body.fields object', function (done) {
+  it('should recieve `multipart` requests - fields on .body object', function (done) {
     var app = koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
-        database.users.push(this.request.body.fields);
+        database.users.push(this.request.body);
         this.status = 201;
         this.body = this.request.body;
       }
@@ -89,14 +89,14 @@ describe('koa-body', function () {
         if (err) return done(err);
 
         var requested = database.users.pop();
-        res.body.fields.should.have.property('name', requested.name);
-        res.body.fields.should.have.property('followers', requested.followers);
+        res.body.should.have.property('name', requested.name);
+        res.body.should.have.property('followers', requested.followers);
 
-        res.body.fields.name.should.equal('daryl');
-        res.body.fields.followers.should.equal('30');
+        res.body.name.should.equal('daryl');
+        res.body.followers.should.equal('30');
 
-        res.body.fields.should.have.property('name', 'daryl');
-        res.body.fields.should.have.property('followers', '30');
+        res.body.should.have.property('name', 'daryl');
+        res.body.should.have.property('followers', '30');
 
         done();
       });
@@ -108,13 +108,16 @@ describe('koa-body', function () {
   /**
    * MULTIPART - FILES
    */
-  it('should recieve multiple fields and files via `multipart` on .body.files object', function (done) {
+  it('should recieve multiple fields and files via `multipart` on .files object', function (done) {
     var app = koa();
     var usersResource = new Resource('users', {
       // POST /users
       create: function *(next) {
         this.status = 201;
-        this.body = this.request.body;
+        this.body = {
+          _files: this.request.files, // files we populate
+          names: this.request.body.names // names from request data
+        };
       }
     });
 
@@ -141,45 +144,43 @@ describe('koa-body', function () {
       .end(function(err, res){
         if (err) return done(err);
 
-        console.log(res.body.files);
+        res.body.names.should.be.an.Array().and.have.lengthOf(2);
+        res.body.names[0].should.equal('John');
+        res.body.names[1].should.equal('Paul');
+        res.body._files.firstField.should.be.an.Object;
+        res.body._files.firstField.name.should.equal('package.json');
+        should(fs.statSync(res.body._files.firstField.path)).be.ok;
+        fs.unlinkSync(res.body._files.firstField.path);
 
-        res.body.fields.names.should.be.an.Array().and.have.lengthOf(2);
-        res.body.fields.names[0].should.equal('John');
-        res.body.fields.names[1].should.equal('Paul');
-        res.body.files.firstField.should.be.an.Object;
-        res.body.files.firstField.name.should.equal('package.json');
-        should(fs.statSync(res.body.files.firstField.path)).be.ok;
-        fs.unlinkSync(res.body.files.firstField.path);
-
-        res.body.files.secondField.should.be.an.Array().and.have.lengthOf(2);
-        res.body.files.secondField.should.containDeep([{
+        res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
+        res.body._files.secondField.should.containDeep([{
           name: 'index.js'
         }]);
-        res.body.files.secondField.should.containDeep([{
+        res.body._files.secondField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body.files.secondField[0].path)).be.ok;
-        should(fs.statSync(res.body.files.secondField[1].path)).be.ok;
-        fs.unlinkSync(res.body.files.secondField[0].path);
-        fs.unlinkSync(res.body.files.secondField[1].path);
+        should(fs.statSync(res.body._files.secondField[0].path)).be.ok;
+        should(fs.statSync(res.body._files.secondField[1].path)).be.ok;
+        fs.unlinkSync(res.body._files.secondField[0].path);
+        fs.unlinkSync(res.body._files.secondField[1].path);
 
-        res.body.files.thirdField.should.be.an.Array().and.have.lengthOf(3);
+        res.body._files.thirdField.should.be.an.Array().and.have.lengthOf(3);
 
-        res.body.files.thirdField.should.containDeep([{
+        res.body._files.thirdField.should.containDeep([{
           name: 'LICENSE'
         }]);
-        res.body.files.thirdField.should.containDeep([{
+        res.body._files.thirdField.should.containDeep([{
           name: 'README.md'
         }]);
-        res.body.files.thirdField.should.containDeep([{
+        res.body._files.thirdField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body.files.thirdField[0].path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField[0].path);
-        should(fs.statSync(res.body.files.thirdField[1].path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField[1].path);
-        should(fs.statSync(res.body.files.thirdField[2].path)).be.ok;
-        fs.unlinkSync(res.body.files.thirdField[2].path);
+        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok;
+        fs.unlinkSync(res.body._files.thirdField[0].path);
+        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok;
+        fs.unlinkSync(res.body._files.thirdField[1].path);
+        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok;
+        fs.unlinkSync(res.body._files.thirdField[2].path);
 
         done();
       });
@@ -191,7 +192,10 @@ describe('koa-body', function () {
       // POST /users
       create: function *(next) {
         this.status = 201;
-        this.body = this.request.body;
+        this.body = {
+          _files: this.request.files, // files we populate
+          body: this.request.body // original request data
+        };
       }
     });
 
@@ -218,12 +222,10 @@ describe('koa-body', function () {
       .end(function(err, res){
         if (err) return done(err);
 
-        console.log(res.body.files);
-
-        res.body.files.firstField.should.be.an.Object;
-        res.body.files.firstField.name.should.equal('backage.json');
-        should(fs.statSync(res.body.files.firstField.path)).be.ok;
-        fs.unlinkSync(res.body.files.firstField.path);
+        res.body._files.firstField.should.be.an.Object;
+        res.body._files.firstField.name.should.equal('backage.json');
+        should(fs.statSync(res.body._files.firstField.path)).be.ok;
+        fs.unlinkSync(res.body._files.firstField.path);
 
         done();
       });
