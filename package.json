@@ -1,10 +1,10 @@
 {
   "name": "koa-body",
-  "version": "1.6.0",
-  "description": "A koa body parser middleware. Support multipart, urlencoded and json request bodies.",
+  "version": "3.0.0",
+  "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha",
+    "test": "mocha",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
