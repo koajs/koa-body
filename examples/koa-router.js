@@ -49,7 +49,7 @@ router.post('/post/upload',
     log(this.request.body.fields);
     // => {username: ""} - if empty
 
-    log(this.request.body.files);
+    log(this.request.files);
     /* => {uploads: [
             {
               "size": 748831,
@@ -67,7 +67,7 @@ router.post('/post/upload',
             }
           ]}
     */
-   this.body = JSON.stringify(this.request.body, null, 2)
+   this.body = JSON.stringify({ body: this.request.body, files: this.request.files }, null, 2);
    yield next;
   }
 )

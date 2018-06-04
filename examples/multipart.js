@@ -40,7 +40,7 @@ router.post('/', koaBody,
     console.log(this.request.body.fields);
     // => {username: ""} - if empty
 
-    console.log(this.request.body.files);
+    console.log(this.request.files);
     /* => {uploads: [
             {
               "size": 748831,

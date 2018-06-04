@@ -4,9 +4,9 @@
   "description": "A koa body parser middleware. Support multipart, urlencoded and json request bodies.",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --harmony",
-    "examples-multer": "node --harmony examples/multer.js",
-    "examples-koa-router": "node --harmony examples/koa-router.js"
+    "test": "node_modules/.bin/mocha",
+    "examples-multer": "node examples/multer.js",
+    "examples-koa-router": "node examples/koa-router.js"
   },
   "author": {
     "name": "Daryl Lau",
@@ -27,15 +27,11 @@
     "form"
   ],
   "files": [
-    ".gitignore",
-    ".npmignore",
-    ".travis.yml",
     "LICENSE",
-    "Makefile",
     "README.md",
-    "example.js",
     "index.js",
-    "test.js"
+    "index.d.ts",
+    "package.json"
   ],
   "dependencies": {
     "co-body": "^5.1.1",
