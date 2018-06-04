@@ -1,13 +1,13 @@
 {
   "name": "koa-body",
-  "version": "2.6.0",
-  "description": "A koa body parser middleware. Support multipart, urlencoded and json request bodies.",
+  "version": "4.0.0",
+  "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
   "main": "index.js",
   "types": "./index.d.ts",
   "scripts": {
-    "test": "node_modules/.bin/mocha",
-    "examples-multer": "node --harmony examples/multer.js",
-    "examples-koa-router": "node --harmony examples/koa-router.js"
+    "test": "mocha",
+    "examples-multer": "node examples/multer.js",
+    "examples-koa-router": "node examples/koa-router.js"
   },
   "author": {
     "name": "Daryl Lau",
