@@ -108,6 +108,11 @@ declare namespace koaBody {
         json?: boolean;
 
         /**
+         * Toggles co-body strict mode; if true, only parses arrays or objects, default true
+         */
+        jsonStrict?: boolean;
+
+        /**
          * {Object} Options to pass to the formidable multipart parser
          */
         formidable?: IKoaBodyFormidableOptions;
