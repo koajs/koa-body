@@ -11,9 +11,10 @@ var log       = console.log,
  */
 router.post('/post/users', koaBody(),
   (ctx) => {
-    log(ctx.request.body);
+    const body = ctx.request.body;
+    log('body', body);
     // => POST body object
-    ctx.body = JSON.stringify(ctx.request.body, null, 2);
+    ctx.body = JSON.stringify(body, null, 2);
   }
 );
 
@@ -46,10 +47,12 @@ router.post('/post/upload',
     }
   }),
   (ctx) => {
-    log(ctx.request.body.fields);
+    const fields = ctx.request.body.fields;
+    const files = ctx.request.files;
+    log('fields', fields);
     // => {username: ""} - if empty
 
-    log(ctx.request.body.files);
+    log('files', files);
     /* => {uploads: [
             {
               "size": 748831,
@@ -67,7 +70,12 @@ router.post('/post/upload',
             }
           ]}
     */
-   ctx.body = JSON.stringify(ctx.request.body, null, 2)
+
+    // respond with the fields and files for example purposes
+    ctx.body = JSON.stringify({
+      requestFields: fields || null,
+      requestFiles: files || null
+    }, null, 2)
   }
 )
 
