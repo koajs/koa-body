@@ -39,6 +39,7 @@
     "formidable": "^1.1.1"
   },
   "devDependencies": {
+    "@types/formidable": "^1.0.31",
     "@types/koa": "^2.0.39",
     "koa": "^2.0.0",
     "koa-router": "^7.0.1",
