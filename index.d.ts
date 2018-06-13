@@ -1,9 +1,8 @@
 import * as Koa from "koa";
-import { BaseRequest } from '@types/koa';
-import { Files } from '@types/formidable';
+import { Files } from 'formidable';
 
 declare module "koa" {
-    interface Request extends BaseRequest {
+    interface Request extends Koa.BaseRequest {
         body?: any;
         files?: Files;
     }
