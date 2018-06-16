@@ -80,6 +80,7 @@ function requestbody(opts) {
         } else if (opts.xml && (ctx.is('xml') || ctx.is('text/xml'))) {
           bodyPromise = new Promise((resolve, reject) => {
             getRawBody(ctx.req).then(buf => {
+              console.log(`request xml body: ${buf}`);
               parseString(buf, (err, result) => {
                 if (err) reject(err);
                 resolve(result);
