@@ -1,65 +1,65 @@
 {
-  "name": "koa-body",
-  "version": "4.0.3",
-  "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
-  "main": "index.js",
-  "types": "./index.d.ts",
-  "scripts": {
-    "test": "mocha",
-    "examples-multer": "node examples/multer.js",
-    "examples-koa-router": "node examples/koa-router.js"
-  },
-  "author": {
-    "name": "Daryl Lau",
-    "email": "dlau00@gmail.com",
-    "url": "https://github.com/dlau"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dlau/koa-body.git"
-  },
-  "keywords": [
-    "koa",
-    "urlencoded",
-    "multipart",
-    "json",
-    "body",
-    "parser",
-    "form"
-  ],
-  "files": [
-    "LICENSE",
-    "README.md",
-    "index.js",
-    "index.d.ts",
-    "package.json"
-  ],
-  "dependencies": {
-    "co-body": "^5.1.1",
-    "formidable": "^1.1.1",
-    "raw-body": "^2.3.3",
-    "xml2js": "^0.4.19"
-  },
-  "devDependencies": {
-    "@types/formidable": "^1.0.31",
-    "@types/koa": "^2.0.39",
-    "koa": "^2.0.0",
-    "koa-router": "^7.0.1",
-    "mocha": "5.2.0",
-    "should": "13.2.1",
-    "supertest": "3.1.0"
-  },
-  "contributors": [
-    {
-      "name": "Daryl Lau",
-      "email": "dlau00@gmail.com",
-      "url": "https://github.com/dlau"
+    "author": {
+        "email": "dlau00@gmail.com",
+        "name": "Daryl Lau",
+        "url": "https://github.com/dlau"
     },
-    {
-      "name": "Charlike Mike Reagent",
-      "email": "mameto_100@mail.bg",
-      "url": "https://github.com/tunnckoCore"
-    }
-  ],
-  "license": "MIT"
+    "contributors": [
+        {
+            "email": "dlau00@gmail.com",
+            "name": "Daryl Lau",
+            "url": "https://github.com/dlau"
+        },
+        {
+            "email": "mameto_100@mail.bg",
+            "name": "Charlike Mike Reagent",
+            "url": "https://github.com/tunnckoCore"
+        }
+    ],
+    "dependencies": {
+        "co-body": "^5.1.1",
+        "formidable": "^1.1.1",
+        "raw-body": "^2.3.3",
+        "xml2js": "^0.4.19"
+    },
+    "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
+    "devDependencies": {
+        "@types/formidable": "^1.0.31",
+        "@types/koa": "^2.0.39",
+        "koa": "^2.0.0",
+        "koa-router": "^7.0.1",
+        "mocha": "5.2.0",
+        "should": "13.2.1",
+        "supertest": "3.1.0"
+    },
+    "files": [
+        "LICENSE",
+        "README.md",
+        "index.js",
+        "index.d.ts",
+        "package.json"
+    ],
+    "keywords": [
+        "koa",
+        "urlencoded",
+        "multipart",
+        "json",
+        "body",
+        "parser",
+        "form"
+    ],
+    "license": "MIT",
+    "main": "index.js",
+    "name": "koa-body",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/dlau/koa-body.git"
+    },
+    "scripts": {
+        "examples-koa-router": "node examples/koa-router.js",
+        "examples-multer": "node examples/multer.js",
+        "test": "mocha"
+    },
+    "types": "./index.d.ts",
+    "version": "5.0"
 }
