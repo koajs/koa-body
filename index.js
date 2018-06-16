@@ -16,6 +16,8 @@
 
 var buddy = require('co-body');
 var forms = require('formidable');
+var parseString = require('xml2js').parseString;
+var getRawBody = require('raw-body');
 
 /**
  * Expose `requestbody()`.
@@ -38,6 +40,7 @@ function requestbody(opts) {
   opts.urlencoded = 'urlencoded' in opts ? opts.urlencoded : true;
   opts.json = 'json' in opts ? opts.json : true;
   opts.text = 'text' in opts ? opts.text : true;
+  opts.xml = true;
   opts.encoding = 'encoding' in opts ? opts.encoding : 'utf-8';
   opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
   opts.jsonStrict = 'jsonStrict' in opts ? opts.jsonStrict : true;
@@ -47,10 +50,13 @@ function requestbody(opts) {
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
 
-  return function (ctx, next) {
+  return function(ctx, next) {
     var bodyPromise;
     // so don't parse the body in strict mode
-    if (!opts.strict || ["GET", "HEAD", "DELETE"].indexOf(ctx.method.toUpperCase()) === -1) {
+    if (
+      !opts.strict ||
+      ['GET', 'HEAD', 'DELETE'].indexOf(ctx.method.toUpperCase()) === -1
+    ) {
       try {
         if (opts.json && ctx.is('json')) {
           bodyPromise = buddy.json(ctx, {
@@ -71,6 +77,16 @@ function requestbody(opts) {
           });
         } else if (opts.multipart && ctx.is('multipart')) {
           bodyPromise = formy(ctx, opts.formidable);
+        } else if (opts.xml && (ctx.is('xml') || ctx.is('text/xml'))) {
+          bodyPromise = new Promise((resolve, reject) => {
+            getRawBody(ctx.req).then(buf => {
+              console.log(`request xml body: ${buf}`);
+              parseString(buf, (err, result) => {
+                if (err) reject(err);
+                resolve(result);
+              });
+            });
+          });
         }
       } catch (parsingError) {
         if (typeof opts.onError === 'function') {
@@ -82,33 +98,34 @@ function requestbody(opts) {
     }
 
     bodyPromise = bodyPromise || Promise.resolve({});
-    return bodyPromise.catch(function(parsingError) {
-      if (typeof opts.onError === 'function') {
-        opts.onError(parsingError, ctx);
-      } else {
-        throw parsingError;
-      }
-      return next();
-    })
-    .then(function(body) {
-      if (opts.patchNode) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.req.body = body.fields;
-          ctx.req.files = body.files;
+    return bodyPromise
+      .catch(function(parsingError) {
+        if (typeof opts.onError === 'function') {
+          opts.onError(parsingError, ctx);
         } else {
-          ctx.req.body = body;
+          throw parsingError;
         }
-      }
-      if (opts.patchKoa) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.request.body = body.fields;
-          ctx.request.files = body.files;
-        } else {
-          ctx.request.body = body;
+        return next();
+      })
+      .then(function(body) {
+        if (opts.patchNode) {
+          if (isMultiPart(ctx, opts)) {
+            ctx.req.body = body.fields;
+            ctx.req.files = body.files;
+          } else {
+            ctx.req.body = body;
+          }
         }
-      }
-      return next();
-    })
+        if (opts.patchKoa) {
+          if (isMultiPart(ctx, opts)) {
+            ctx.request.body = body.fields;
+            ctx.request.files = body.files;
+          } else {
+            ctx.request.body = body;
+          }
+        }
+        return next();
+      });
   };
 }
 
@@ -133,38 +150,42 @@ function isMultiPart(ctx, opts) {
  * @api private
  */
 function formy(ctx, opts) {
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     var fields = {};
     var files = {};
     var form = new forms.IncomingForm(opts);
-    form.on('end', function () {
-      return resolve({
-        fields: fields,
-        files: files
+    form
+      .on('end', function() {
+        return resolve({
+          fields: fields,
+          files: files
+        });
+      })
+      .on('error', function(err) {
+        return reject(err);
+      })
+      .on('field', function(field, value) {
+        if (fields[field]) {
+          if (Array.isArray(fields[field])) {
+            fields[field].push(value);
+          } else {
+            fields[field] = [fields[field], value];
+          }
+        } else {
+          fields[field] = value;
+        }
+      })
+      .on('file', function(field, file) {
+        if (files[field]) {
+          if (Array.isArray(files[field])) {
+            files[field].push(file);
+          } else {
+            files[field] = [files[field], file];
+          }
+        } else {
+          files[field] = file;
+        }
       });
-    }).on('error', function (err) {
-      return reject(err);
-    }).on('field', function (field, value) {
-      if (fields[field]) {
-        if (Array.isArray(fields[field])) {
-          fields[field].push(value);
-        } else {
-          fields[field] = [fields[field], value];
-        }
-      } else {
-        fields[field] = value;
-      }
-    }).on('file', function (field, file) {
-      if (files[field]) {
-        if (Array.isArray(files[field])) {
-          files[field].push(file);
-        } else {
-          files[field] = [files[field], file];
-        }
-      } else {
-        files[field] = file;
-      }
-    });
     if (opts.onFileBegin) {
       form.on('fileBegin', opts.onFileBegin);
     }
