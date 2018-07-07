@@ -1,10 +1,12 @@
-var log       = console.log,
-    Koa       = require('koa'),
-    app       = new Koa(),
-    router    = require('koa-router')(),
-    koaBody   = require('../index'),
-    port      = process.env.PORT || 4291
-    host      = process.env.HOST || 'http://localhost';
+'use strict';
+
+const log       = console.log;
+const Koa       = require('koa');
+const app       = new Koa();
+const router    = require('koa-router')();
+const koaBody   = require('../index');
+const port      = process.env.PORT || 429;
+const host      = process.env.HOST || 'http://localhost';
 
 /*!
  * Accepts only urlencoded and json bodies.
@@ -50,26 +52,19 @@ router.post('/post/upload',
     const fields = ctx.request.body.fields;
     const files = ctx.request.files;
     log('fields', fields);
-    // => {username: ""} - if empty
-
     log('files', files);
-    /* => {uploads: [
-            {
-              "size": 748831,
-              "path": "/tmp/f7777b4269bf6e64518f96248537c0ab.png",
-              "name": "some-image.png",
-              "type": "image/png",
-              "mtime": "2014-06-17T11:08:52.816Z"
-            },
-            {
-              "size": 379749,
-              "path": "/tmp/83b8cf0524529482d2f8b5d0852f49bf.jpeg",
-              "name": "nodejs_rulz.jpeg",
-              "type": "image/jpeg",
-              "mtime": "2014-06-17T11:08:52.830Z"
-            }
-          ]}
-    */
+    /*{
+      "requestFields": null,
+      "requestFiles": {
+        "source": {
+          "size": 748831,
+          "path": "/some-dir/upload_cc1e0c49b97af0b9ef17b7b2f96b307d",
+          "name": "avatar.png",
+          "type": "image/png",
+          "mtime": "2018-07-07T14:16:22.576Z"
+        }
+      }
+    }*/
 
     // respond with the fields and files for example purposes
     ctx.body = JSON.stringify({
@@ -80,10 +75,6 @@ router.post('/post/upload',
 )
 
 app.use(router.routes());
-
-var port = process.env.PORT || 4291,
-    host = process.env.HOST || 'http://localhost';
-
 app.listen(port);
 
 log('Visit %s:%s/ in browser.', host, port);

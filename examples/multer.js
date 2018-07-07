@@ -1,9 +1,11 @@
-var log     = console.log,
-    Koa     = require('koa'),
-    app     = new Koa(),
-    koaBody = require('../index'),
-    port    = process.env.PORT || 4290,
-    host    = 'http://localhost';
+'use strict';
+
+const log     = console.log;
+const Koa     = require('koa');
+const app     = new Koa();
+const koaBody = require('../index');
+const port    = process.env.PORT || 4290;
+const host    = 'http://localhost';
 
 app
   .use(koaBody({
@@ -14,7 +16,7 @@ app
     }
   }))
   .use((ctx) => {
-    if (ctx.request.method == 'POST') {
+    if (ctx.request.method === 'POST') {
       log(ctx.request.body);
       // => POST body object
       ctx.body = JSON.stringify(ctx.request.body, null, 2);
