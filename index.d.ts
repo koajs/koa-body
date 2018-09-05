@@ -112,6 +112,13 @@ declare namespace koaBody {
          * Toggles co-body strict mode; if true, only parses arrays or objects, default true
          */
         jsonStrict?: boolean;
+        
+        /**
+         * Toggles co-body returnRawBody mode; if true, 
+         * the return value of co-body will be an object with two properties: { parsed: parsed value,  raw: raw body}.
+         * default true
+         */
+        returnRawBody?: boolean;
 
         /**
          * {Object} Options to pass to the formidable multipart parser
