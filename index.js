@@ -44,7 +44,7 @@ function requestbody(opts) {
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
   opts.queryString = 'queryString' in opts ? opts.queryString : null;
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
-  opts.returnRawBody = 'returnRawBody' in opts ? opts.returnRawBody : true
+  opts.returnRawBody = 'returnRawBody' in opts ? opts.returnRawBody : false
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
 
