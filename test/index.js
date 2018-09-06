@@ -293,9 +293,6 @@ describe('koa-body', () => {
       });
   });
 
-
-
-
   /**
    * TEXT request body
    */
