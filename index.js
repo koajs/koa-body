@@ -57,7 +57,8 @@ function requestbody(opts) {
           bodyPromise = buddy.json(ctx, {
             encoding: opts.encoding,
             limit: opts.jsonLimit,
-            strict: opts.jsonStrict
+            strict: opts.jsonStrict,
+            returnRawBody: opts.returnRawBody
           });
         } else if (opts.urlencoded && ctx.is('urlencoded')) {
           bodyPromise = buddy.form(ctx, {
@@ -69,7 +70,8 @@ function requestbody(opts) {
         } else if (opts.text && ctx.is('text')) {
           bodyPromise = buddy.text(ctx, {
             encoding: opts.encoding,
-            limit: opts.textLimit
+            limit: opts.textLimit,
+            returnRawBody: opts.returnRawBody
           });
         } else if (opts.multipart && ctx.is('multipart')) {
           bodyPromise = formy(ctx, opts.formidable);
