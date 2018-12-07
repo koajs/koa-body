@@ -1,16 +1,9 @@
-/**
- * koa-body - example.js
- * Copyright(c) 2014
- * MIT Licensed
- *
- * @author  Charlike Mike Reagent (@tunnckoCore)
- * @author  Daryl Lau (@dlau)
- * @api private
- */
-var Koa       = require('koa'),
-    app       = new Koa(),
-    router    = require('koa-router')(),
-    koaBody   = require('../index')({multipart:true});
+'use strict';
+
+const Koa       = require('koa');
+const app       = new Koa();
+const router    = require('koa-router')();
+const koaBody   = require('../index')({multipart:true});
 
 router.post('/users', koaBody,
   (ctx) => {
@@ -64,7 +57,7 @@ router.post('/', koaBody,
 
 app.use(router.routes());
 
-var port = process.env.PORT || 3333;
+const port = process.env.PORT || 3333;
 app.listen(port);
 console.log('Koa server with `koa-body` parser start listening to port %s', port);
 console.log('curl -i http://localhost:%s/users -d "user=admin"', port);

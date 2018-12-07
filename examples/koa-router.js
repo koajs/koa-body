@@ -5,7 +5,7 @@ const Koa       = require('koa');
 const app       = new Koa();
 const router    = require('koa-router')();
 const koaBody   = require('../index');
-const port      = process.env.PORT || 429;
+const port      = process.env.PORT || 4290;
 const host      = process.env.HOST || 'http://localhost';
 
 /*!
@@ -49,10 +49,9 @@ router.post('/post/upload',
     }
   }),
   (ctx) => {
-    const fields = ctx.request.body.fields;
+    const fields = ctx.request.body.fields; // this will be undefined for file uploads
     const files = ctx.request.files;
-    log('fields', fields);
-    log('files', files);
+    log('files', JSON.stringify(files, null, 2));
     /*{
       "requestFields": null,
       "requestFiles": {
