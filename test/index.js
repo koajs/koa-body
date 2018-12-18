@@ -267,30 +267,81 @@ describe('koa-body', () => {
   /**
    * URLENCODED request body with returnRawBody
    */
+  describe('returnRawBody tests', () => {
 
-  it('should recieve `urlencoded` request bodies with the returnRawBody option',  (done) => {
-    app.use(koaBody({ multipart: true, returnRawBody: true}));
-    app.use(router.routes());
+    beforeEach(() => {
+      app.use(koaBody({ returnRawBody: true}));
+      app.use(router.routes());
+    });
 
-    request(http.createServer(app.callback()))
-      .post('/users')
-      .type('application/x-www-form-urlencoded')
-      .send({
-        name: 'Test',
-        followers: '97'
-      })
-      .expect(201)
-      .end( (err, res) => {
-        if (err) return done(err);
+    it('should recieve `urlencoded` request bodies with the returnRawBody option',  (done) => {
+      request(http.createServer(app.callback()))
+        .post('/users')
+        .type('application/x-www-form-urlencoded')
+        .send({
+          name: 'Test',
+          followers: '97'
+        })
+        .expect(201)
+        .end( (err, res) => {
+          if (err) return done(err);
+  
+          const mostRecentUser = database.users[database.users.length - 1];
+          res.body.user.should.have.properties('parsed');
+          res.body.user.should.have.properties('raw');
+          res.body.user.parsed.should.have.properties({ name: 'Test', followers: '97' });
+          res.body.user.parsed.should.have.properties(mostRecentUser.parsed);
+          res.body.user.raw.should.equal('name=Test&followers=97')
+          done();
+        });
+    });
 
-        const mostRecentUser = database.users[database.users.length - 1];
-        res.body.user.should.have.properties('parsed');
-        res.body.user.should.have.properties('raw');
-        res.body.user.parsed.should.have.properties({ name: 'Test', followers: '97' });
-        res.body.user.parsed.should.have.properties(mostRecentUser.parsed);
-        res.body.user.raw.should.equal('name=Test&followers=97')
-        done();
-      });
+    it('should receive JSON request bodies as strings with the returnRawBody option', (done) => {
+      request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('application/json')
+        .send({
+          hello: 'world',
+          number: 42
+        })
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          res.body.should.have.properties('parsed');
+          res.body.should.have.properties('raw');
+                  
+          res.body.raw.should.be.a.String;
+          res.body.raw.should.equal(JSON.stringify({hello: 'world', number: 42}));
+
+          res.body.parsed.should.have.properties({ hello: 'world', number: 42 });
+
+          done();
+        });
+    });
+    
+    it('should receive text as strings with returnRawBody option', (done) => {
+      request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('text')
+        .send('plain text content')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          res.body.should.have.properties('parsed');
+          res.body.should.have.properties('raw');
+
+          res.body.raw.should.be.a.String;
+          res.body.parsed.should.be.a.String;
+
+          res.body.parsed.should.equal('plain text content');
+          res.body.raw.should.equal(res.body.parsed);
+
+          done();
+        });
+    });
+
   });
 
   /**
