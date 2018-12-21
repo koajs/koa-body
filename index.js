@@ -14,8 +14,9 @@
  * Module dependencies.
  */
 
-var buddy = require('co-body');
-var forms = require('formidable');
+const buddy = require('co-body');
+const forms = require('formidable');
+const symbolUnparsed = require('./unparsed.js');
 
 /**
  * Expose `requestbody()`.
@@ -47,11 +48,6 @@ function requestbody(opts) {
   opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
-
-  if (opts.includeUnparsed) {
-    // Only load the symbol if includeUnparsed is truthy
-    const symbolUnparsed = require('./unparsed.js');
-  }
 
   return function (ctx, next) {
     var bodyPromise;
