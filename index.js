@@ -49,8 +49,8 @@ function requestbody(opts) {
   opts.strict = 'strict' in opts ? opts.strict : true;
 
   if (opts.includeUnparsed) {
-    // Only load the symbol if includeUnparsed is true
-    var symbolUnparsed = require('./unparsed.js');
+    // Only load the symbol if includeUnparsed is truthy
+    const symbolUnparsed = require('./unparsed.js');
   }
 
   return function (ctx, next) {
