@@ -32,7 +32,8 @@
     "README.md",
     "index.js",
     "index.d.ts",
-    "package.json"
+    "package.json",
+    "unparsed.js"
   ],
   "dependencies": {
     "@types/formidable": "^1.0.31",
