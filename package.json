@@ -1,6 +1,6 @@
 {
   "name": "koa-body",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
   "main": "index.js",
   "types": "./index.d.ts",
@@ -32,7 +32,8 @@
     "README.md",
     "index.js",
     "index.d.ts",
-    "package.json"
+    "package.json",
+    "unparsed.js"
   ],
   "dependencies": {
     "@types/formidable": "^1.0.31",
