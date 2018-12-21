@@ -14,8 +14,9 @@
  * Module dependencies.
  */
 
-var buddy = require('co-body');
-var forms = require('formidable');
+const buddy = require('co-body');
+const forms = require('formidable');
+const symbolUnparsed = require('./unparsed.js');
 
 /**
  * Expose `requestbody()`.
@@ -44,6 +45,7 @@ function requestbody(opts) {
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
   opts.queryString = 'queryString' in opts ? opts.queryString : null;
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
+  opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
   opts.strict = 'strict' in opts ? opts.strict : true;
 
@@ -56,18 +58,21 @@ function requestbody(opts) {
           bodyPromise = buddy.json(ctx, {
             encoding: opts.encoding,
             limit: opts.jsonLimit,
-            strict: opts.jsonStrict
+            strict: opts.jsonStrict,
+            returnRawBody: opts.includeUnparsed
           });
         } else if (opts.urlencoded && ctx.is('urlencoded')) {
           bodyPromise = buddy.form(ctx, {
             encoding: opts.encoding,
             limit: opts.formLimit,
-            queryString: opts.queryString
+            queryString: opts.queryString,
+            returnRawBody: opts.includeUnparsed
           });
         } else if (opts.text && ctx.is('text')) {
           bodyPromise = buddy.text(ctx, {
             encoding: opts.encoding,
-            limit: opts.textLimit
+            limit: opts.textLimit,
+            returnRawBody: opts.includeUnparsed
           });
         } else if (opts.multipart && ctx.is('multipart')) {
           bodyPromise = formy(ctx, opts.formidable);
@@ -95,6 +100,11 @@ function requestbody(opts) {
         if (isMultiPart(ctx, opts)) {
           ctx.req.body = body.fields;
           ctx.req.files = body.files;
+        } else if (opts.includeUnparsed) {
+          ctx.req.body = body.parsed;
+          if (! ctx.is('text')) {
+            ctx.request.body[symbolUnparsed] = body.raw;  
+          }
         } else {
           ctx.req.body = body;
         }
@@ -103,6 +113,11 @@ function requestbody(opts) {
         if (isMultiPart(ctx, opts)) {
           ctx.request.body = body.fields;
           ctx.request.files = body.files;
+        } else if (opts.includeUnparsed) {
+          ctx.request.body = body.parsed;
+          if (! ctx.is('text')) {
+            ctx.request.body[symbolUnparsed] = body.raw;
+          }
         } else {
           ctx.request.body = body;
         }

@@ -107,6 +107,7 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `text` **{Boolean}** Parse text bodies, default `true`
 - `json` **{Boolean}** Parse json bodies, default `true`
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
+- `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encodedand and JSON requests the raw, unparsed requesty body will be attached to `ctx.reqeust.body` using a `Symbol`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `strict` **{Boolean}** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
@@ -115,6 +116,9 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 > see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
 - GET, HEAD, and DELETE requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
 - koa-body is strict by default
+
+## A note about unparsed request bodies
+Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
 
 ## Some options for formidable
 > See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options
@@ -128,7 +132,6 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 
 
 **Note**: You can patch request body to Node or Koa in same time if you want.
-
 
 ## Tests
 ```

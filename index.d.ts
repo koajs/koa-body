@@ -112,6 +112,22 @@ declare namespace koaBody {
          * Toggles co-body strict mode; if true, only parses arrays or objects, default true
          */
         jsonStrict?: boolean;
+        
+        /**
+         * Toggles co-body returnRawBody mode; if true, 
+         * the raw body will be available using a Symbol for 'unparsedBody'.
+         * 
+         * ```
+         // Either: 
+         const unparsed = require('koa-body/unparsed.js');
+         const unparsed = Symbol.for('unparsedBody');
+          
+         // Then later, to access: 
+         ctx.request.body[unparsed]
+         ```
+         * default false
+         */
+        includeUnparsed?: boolean;
 
         /**
          * {Object} Options to pass to the formidable multipart parser

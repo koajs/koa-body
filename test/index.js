@@ -18,6 +18,9 @@ const request = require('supertest');
 const should = require('should');
 const Koa = require('koa');
 const Router = require('koa-router');
+const sinon = require('sinon');
+
+const unparsed = require('../unparsed.js');
 
 describe('koa-body', () => {
   let database;
@@ -264,6 +267,113 @@ describe('koa-body', () => {
       });
   });
 
+  /**
+   * Inclusion of unparsed body when opts.includeUnparsed is true
+   */
+  describe('includeUnparsed tests', () => {
+
+    let requestSpy;
+
+    beforeEach(() => {
+      app.use(koaBody({ includeUnparsed: true}));
+      app.use(router.routes());
+    });
+
+    afterEach(() => {
+      requestSpy.restore();
+      requestSpy = undefined;
+    });
+
+    it('should recieve `urlencoded` request bodies with the `includeUnparsed` option',  (done) => {
+
+      const userRouterLayer = router.stack.filter(layer => layer.path === "/users" && layer.methods.includes('POST'));
+      requestSpy = sinon.spy(userRouterLayer[0].stack, '0');
+
+      request(http.createServer(app.callback()))
+        .post('/users')
+        .type('application/x-www-form-urlencoded')
+        .send({
+          name: 'Test',
+          followers: '97'
+        })
+        .expect(201)
+        .end( (err, res) => {
+          if (err) return done(err);
+  
+          const mostRecentUser = database.users[database.users.length - 1];
+
+          assert(requestSpy.calledOnce, 'Spy for /users not called');
+          const req = requestSpy.firstCall.args[0].request;
+          req.body[unparsed].should.not.be.undefined;
+          req.body[unparsed].should.be.a.String;
+          req.body[unparsed].should.equal('name=Test&followers=97');
+          
+          res.body.user.should.have.properties({ name: 'Test', followers: '97' });
+          res.body.user.should.have.properties(mostRecentUser);
+          done();
+        });
+    });
+
+    it('should receive JSON request bodies as strings with the `includeUnparsed` option', (done) => {
+
+      const echoRouterLayer = router.stack.filter(layer => layer.path === "/echo_body");
+      requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
+
+      request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('application/json')
+        .send({
+          hello: 'world',
+          number: 42
+        })
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
+          const req = requestSpy.firstCall.args[0].request;
+          req.body[unparsed].should.not.be.undefined;
+          req.body[unparsed].should.be.a.String;
+          req.body[unparsed].should.equal(JSON.stringify({
+            hello: 'world',
+            number: 42
+          }));
+
+          res.body.should.have.properties({ hello: 'world', number: 42 });
+
+          done();
+        });
+    });
+    
+    it('should receive text as strings with `includeUnparsed` option', (done) => {
+
+      const echoRouterLayer = router.stack.filter(layer => layer.path === "/echo_body");
+      requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
+
+      request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('text')
+        .send('plain text content')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
+          const req = requestSpy.firstCall.args[0].request;
+          req.body.should.equal('plain text content');
+
+          // Raw text requests are still just text
+          assert.equal(req.body[unparsed], undefined);
+         
+          // Text response is just text
+          res.body.should.have.properties({});
+          res.text.should.equal('plain text content');
+
+          done();
+        });
+    });
+
+  });
 
   /**
    * TEXT request body
