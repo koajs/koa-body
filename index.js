@@ -101,9 +101,9 @@ function requestbody(opts) {
           ctx.req.body = body.fields;
           ctx.req.files = body.files;
         } else if (opts.includeUnparsed) {
-          ctx.req.body = body.parsed;
+          ctx.req.body = body.parsed || {};
           if (! ctx.is('text')) {
-            ctx.request.body[symbolUnparsed] = body.raw;  
+            ctx.req.body[symbolUnparsed] = body.raw;  
           }
         } else {
           ctx.req.body = body;
@@ -114,7 +114,7 @@ function requestbody(opts) {
           ctx.request.body = body.fields;
           ctx.request.files = body.files;
         } else if (opts.includeUnparsed) {
-          ctx.request.body = body.parsed;
+          ctx.request.body = body.parsed || {};
           if (! ctx.is('text')) {
             ctx.request.body[symbolUnparsed] = body.raw;
           }

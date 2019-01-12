@@ -275,13 +275,39 @@ describe('koa-body', () => {
     let requestSpy;
 
     beforeEach(() => {
-      app.use(koaBody({ includeUnparsed: true}));
+      app.use(koaBody({ includeUnparsed: true }));
       app.use(router.routes());
     });
 
     afterEach(() => {
       requestSpy.restore();
       requestSpy = undefined;
+    });
+
+    it('should not fail when no request body is provided', (done) => {
+      const echoRouterLayer = router.stack.filter(layer => layer.path === "/echo_body");
+      requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
+
+      request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('application/json')
+        .send(undefined)
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
+          const req = requestSpy.firstCall.args[0].request;
+
+          req.body.should.be.null;
+          res.body.should.have.properties({});
+
+          req.body[unparsed].should.not.be.undefined;
+          req.body[unparsed].should.be.a.String;
+          req.body[unparsed].should.have.length(0);
+
+          done();
+        });
     });
 
     it('should recieve `urlencoded` request bodies with the `includeUnparsed` option',  (done) => {
