@@ -167,7 +167,7 @@ describe('koa-body', () => {
         res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
         res.body.user.names[0].should.equal('John');
         res.body.user.names[1].should.equal('Paul');
-        res.body._files.firstField.should.be.an.Object;
+        res.body._files.firstField.should.be.an.Object();
         res.body._files.firstField.name.should.equal('package.json');
         should(fs.statSync(res.body._files.firstField.path)).be.ok;
         fs.unlinkSync(res.body._files.firstField.path);
@@ -230,9 +230,9 @@ describe('koa-body', () => {
       .end( (err, res) => {
         if (err) return done(err);
 
-        res.body._files.firstField.should.be.an.Object;
+        res.body._files.firstField.should.be.an.Object();
         res.body._files.firstField.name.should.equal('backage.json');
-        should(fs.statSync(res.body._files.firstField.path)).be.ok;
+        should(fs.statSync(res.body._files.firstField.path)).be.ok();
         fs.unlinkSync(res.body._files.firstField.path);
 
         done();
@@ -299,11 +299,11 @@ describe('koa-body', () => {
           assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
           const req = requestSpy.firstCall.args[0].request;
 
-          req.body.should.be.null;
+          req.body.should.not.be.Undefined();
           res.body.should.have.properties({});
 
-          req.body[unparsed].should.not.be.undefined;
-          req.body[unparsed].should.be.a.String;
+          req.body[unparsed].should.not.be.Undefined();
+          req.body[unparsed].should.be.a.String();
           req.body[unparsed].should.have.length(0);
 
           done();
@@ -330,8 +330,8 @@ describe('koa-body', () => {
 
           assert(requestSpy.calledOnce, 'Spy for /users not called');
           const req = requestSpy.firstCall.args[0].request;
-          req.body[unparsed].should.not.be.undefined;
-          req.body[unparsed].should.be.a.String;
+          req.body[unparsed].should.not.be.Undefined();
+          req.body[unparsed].should.be.a.String();
           req.body[unparsed].should.equal('name=Test&followers=97');
           
           res.body.user.should.have.properties({ name: 'Test', followers: '97' });
@@ -358,8 +358,8 @@ describe('koa-body', () => {
 
           assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
           const req = requestSpy.firstCall.args[0].request;
-          req.body[unparsed].should.not.be.undefined;
-          req.body[unparsed].should.be.a.String;
+          req.body[unparsed].should.not.be.Undefined();
+          req.body[unparsed].should.be.a.String();
           req.body[unparsed].should.equal(JSON.stringify({
             hello: 'world',
             number: 42
@@ -386,14 +386,14 @@ describe('koa-body', () => {
 
           assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
           const req = requestSpy.firstCall.args[0].request;
-          req.body.should.equal('plain text content');
+          should(req.body).equal('plain text content');
 
           // Raw text requests are still just text
           assert.equal(req.body[unparsed], undefined);
          
           // Text response is just text
-          res.body.should.have.properties({});
-          res.text.should.equal('plain text content');
+          should(res.body).have.properties({});
+          should(res.text).equal('plain text content');
 
           done();
         });
