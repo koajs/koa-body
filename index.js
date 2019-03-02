@@ -47,12 +47,28 @@ function requestbody(opts) {
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
   opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
-  opts.strict = 'strict' in opts ? opts.strict : true;
+
+  // @todo: next major version, opts.strict support should be removed
+  if (opts.strict && opts.parsedMethods) {
+    throw new Error('Cannot use strict and parsedMethods options at the same time.')
+  }
+
+  if ('strict' in opts) {
+    console.warn('DEPRECATED: opts.strict has been deprecated in favor of opts.parsedMethods.')
+    if (opts.strict) {
+      opts.parsedMethods = ['POST', 'PUT', 'PATCH']
+    } else {
+      opts.parsedMethods = ['POST', 'PUT', 'PATCH', 'GET', 'HEAD', 'DELETE']
+    }
+  }
+
+  opts.parsedMethods = 'parsedMethods' in opts ? opts.parsedMethods : ['POST', 'PUT', 'PATCH']
+  opts.parsedMethods = opts.parsedMethods.map(function (method) { return method.toUpperCase() })
 
   return function (ctx, next) {
     var bodyPromise;
-    // so don't parse the body in strict mode
-    if (!opts.strict || ["GET", "HEAD", "DELETE"].indexOf(ctx.method.toUpperCase()) === -1) {
+    // only parse the body on specifically chosen methods
+    if (opts.parsedMethods.includes(ctx.method.toUpperCase())) {
       try {
         if (opts.json && ctx.is('json')) {
           bodyPromise = buddy.json(ctx, {
@@ -103,7 +119,7 @@ function requestbody(opts) {
         } else if (opts.includeUnparsed) {
           ctx.req.body = body.parsed || {};
           if (! ctx.is('text')) {
-            ctx.req.body[symbolUnparsed] = body.raw;  
+            ctx.req.body[symbolUnparsed] = body.raw;
           }
         } else {
           ctx.req.body = body;

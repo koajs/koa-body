@@ -325,7 +325,7 @@ describe('koa-body', () => {
         .expect(201)
         .end( (err, res) => {
           if (err) return done(err);
-  
+
           const mostRecentUser = database.users[database.users.length - 1];
 
           assert(requestSpy.calledOnce, 'Spy for /users not called');
@@ -333,7 +333,7 @@ describe('koa-body', () => {
           req.body[unparsed].should.not.be.Undefined();
           req.body[unparsed].should.be.a.String();
           req.body[unparsed].should.equal('name=Test&followers=97');
-          
+
           res.body.user.should.have.properties({ name: 'Test', followers: '97' });
           res.body.user.should.have.properties(mostRecentUser);
           done();
@@ -370,7 +370,7 @@ describe('koa-body', () => {
           done();
         });
     });
-    
+
     it('should receive text as strings with `includeUnparsed` option', (done) => {
 
       const echoRouterLayer = router.stack.filter(layer => layer.path === "/echo_body");
@@ -390,7 +390,7 @@ describe('koa-body', () => {
 
           // Raw text requests are still just text
           assert.equal(req.body[unparsed], undefined);
-         
+
           // Text response is just text
           should(res.body).have.properties({});
           should(res.text).equal('plain text content');
@@ -460,8 +460,63 @@ describe('koa-body', () => {
           done();
         });
     });
-
   });
+
+  describe('parsedMethods options',  () => {
+    beforeEach( () => {
+      //push an additional, to test the multi query
+      database.users.push({ name: 'charlike' });
+    });
+
+    it('methods declared are parsed',  (done) => {
+      app.use(koaBody({ parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'] }));
+      app.use(router.routes());
+
+      request(http.createServer(app.callback()))
+        .delete('/users/charlike')
+        .type('application/x-www-form-urlencoded')
+        .send({ multi: true })
+        .expect(204)
+        .end( (err, res) => {
+          if (err) return done(err);
+          assert(database.users.find(element => element.name === 'charlike') === undefined);
+          done();
+        });
+    });
+
+    it('methods do not get parsed if not declared',  (done) => {
+      app.use(koaBody({ parsedMethods: ['POST', 'PUT', 'PATCH'] }));
+      app.use(router.routes());
+
+      request(http.createServer(app.callback()))
+        .delete('/users/charlike')
+        .type('application/x-www-form-urlencoded')
+        .send({ multi: true })
+        .expect(204)
+        .end( (err, res) => {
+          if (err) return done(err);
+          assert(database.users.find(element => element.name === 'charlike') !== undefined);
+          done();
+        });
+    });
+
+    it('cannot use strict mode and parsedMethods options at the same time', (done) => {
+      let err;
+      try {
+        app.use(koaBody({
+          parsedMethods: ['POST', 'PUT', 'PATCH'],
+          strict: true
+        }));
+      } catch (_err) {
+        err = _err;
+      }
+
+      assert(err && err.message === 'Cannot use strict and parsedMethods options at the same time.');
+
+      done();
+    })
+  });
+
   /**
    * JSON request body
    */
