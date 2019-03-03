@@ -111,7 +111,7 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `strict` **{Boolean}** ***DEPRECATED*** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
-- `parsedMethods` **{String[]}** If specified, declares the methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH', 'DELETE']`
+- `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`. Replaces `strict` option.
 
 ## A note about strict mode
 > see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
