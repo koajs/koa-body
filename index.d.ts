@@ -112,17 +112,17 @@ declare namespace koaBody {
          * Toggles co-body strict mode; if true, only parses arrays or objects, default true
          */
         jsonStrict?: boolean;
-        
+
         /**
-         * Toggles co-body returnRawBody mode; if true, 
+         * Toggles co-body returnRawBody mode; if true,
          * the raw body will be available using a Symbol for 'unparsedBody'.
-         * 
+         *
          * ```
-         // Either: 
+         // Either:
          const unparsed = require('koa-body/unparsed.js');
          const unparsed = Symbol.for('unparsedBody');
-          
-         // Then later, to access: 
+
+         // Then later, to access:
          ctx.request.body[unparsed]
          ```
          * default false
@@ -140,7 +140,7 @@ declare namespace koaBody {
         onError?: (err: Error, ctx: Koa.Context) => void;
 
         /**
-         * {Boolean} If enabled, don't parse GET, HEAD, DELETE requests, default true
+         * {Boolean} If enabled, don't parse GET, HEAD, DELETE requests; deprecated.
          *
          * GET, HEAD, and DELETE requests have no defined semantics for the request body,
          * but this doesn't mean they may not be valid in certain use cases.
@@ -149,6 +149,17 @@ declare namespace koaBody {
          * see http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3
          */
         strict?: boolean;
+
+        /**
+         * {String[]} What HTTP methods to enable body parsing for; should be used in preference to strict mode.
+         *
+         * GET, HEAD, and DELETE requests have no defined semantics for the request body,
+         * but this doesn't mean they may not be valid in certain use cases.
+         * koa-body will only parse HTTP request bodies for POST, PUT, and PATCH by default
+         *
+         * see http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3
+         */
+        parsedMethods?: string[];
     }
 }
 
