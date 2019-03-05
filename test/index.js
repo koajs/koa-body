@@ -514,7 +514,7 @@ describe('koa-body', () => {
       assert(err && err.message === 'Cannot use strict and parsedMethods options at the same time.');
 
       done();
-    })
+    });
   });
 
   /**
