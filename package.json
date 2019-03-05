@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "./index.d.ts",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha && eslint ./test",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
@@ -42,12 +42,15 @@
   },
   "devDependencies": {
     "@types/koa": "^2.0.39",
+    "eslint": "5.15.1",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "2.16.0",
     "koa": "^2.0.0",
     "koa-router": "^7.0.1",
     "mocha": "5.2.0",
     "should": "13.2.1",
     "sinon": "^7.2.2",
-    "supertest": "3.1.0"
+    "supertest": "3.4.2"
   },
   "contributors": [
     {
