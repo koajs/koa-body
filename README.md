@@ -1,29 +1,14 @@
 koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body) [![KoaJs Slack](https://img.shields.io/badge/Koa.Js-Slack%20Channel-Slack.svg?longCache=true)](https://communityinviter.com/apps/koa-js/koajs)
 ================
 
-> A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Support `multipart`, `urlencoded` and `json` request bodies. Provides same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer). And all that is wrapped only around
-[`co-body`](https://github.com/visionmedia/co-body) and [`formidable`](https://github.com/felixge/node-formidable).
+> A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Supports `multipart`, `urlencoded`, and `json` request bodies. Provides the same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer).
 
 ## Install
 >Install with [npm](https://github.com/npm/npm)
 
 ```
-$ npm install koa-body
+npm install koa-body
 ```
-
-## Legacy Koa v1 support
-```
-$ npm install koa-body@3
-```
-
-## Breaking Changes in v3/4
-To address a potential security issue:
-  - The `files` property has been moved to `ctx.request.files`. In prior versions, `files` was a property of `ctx.request.body`.
-  - The `fields` property is flatten (merged) into `ctx.request.body`. In prior versions, `fields` was a property of `ctx.request.body`.
-
-If you do not use multipart uploads, no changes to your code need to be made.
-
-Versions 1 and 2 of `koa-body` are deprecated and replaced with versions 3 and 4, respectively.
 
 ## Features
 - can handle three type requests
@@ -32,14 +17,14 @@ Versions 1 and 2 of `koa-body` are deprecated and replaced with versions 3 and 4
   * **application/json**
 - option for patch to Koa or Node, or either
 - file uploads
-- body, fields and files limiting
+- body, fields and files size limiting
 
-## Hello world
+## Hello World - Quickstart
+
 ```sh
-npm install koa
-npm install koa-body
-nvm install v8.11.2 # Note - Koa requires node v7.6.0+ for async/await support
+npm install koa koa-body # Note that Koa requires Node.js 7.6.0+ for async/await support
 ```
+
 index.js:
 ```js
 const Koa = require('koa');
@@ -56,8 +41,12 @@ app.listen(3000);
 ```
 
 ```sh
-$ node index.js
-$ curl -i http://localhost:3000/users -d "name=test"
+node index.js
+curl -i http://localhost:3000/users -d "name=test"
+```
+
+Output:
+```text
 HTTP/1.1 200 OK
 Content-Type: text/plain; charset=utf-8
 Content-Length: 29
@@ -113,10 +102,10 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `strict` **{Boolean}** ***DEPRECATED*** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
 - `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`. Replaces `strict` option.
 
-## A note about strict mode
+## A note about `parsedMethods`
 > see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
-- GET, HEAD, and DELETE requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
-- koa-body is strict by default
+- `GET`, `HEAD`, and `DELETE` requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
+- koa-body is strict by default, parsing only `POST`, `PUT`, and `PATCH` requests
 
 ## A note about unparsed request bodies
 Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
@@ -131,8 +120,8 @@ Some applications require crytopgraphic verification of request bodies, for exam
 - `multiples` **{Boolean}** Multiple file uploads or no, default `true`
 - `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/felixge/node-formidable#filebegin)
 
-
-**Note**: You can patch request body to Node or Koa in same time if you want.
+## Changelog
+Please see the [Changelog](./CHANGELOG.md) for a summary of changes.
 
 ## Tests
 ```
