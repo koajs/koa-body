@@ -18,7 +18,7 @@ $ npm install koa-body@3
 
 ## Breaking Changes in v3/4
 To address a potential security issue:
-  - The `files` property has been moved to `ctx.request.files`. In prior versions, `files` was a property of `ctx.request.body`. 
+  - The `files` property has been moved to `ctx.request.files`. In prior versions, `files` was a property of `ctx.request.body`.
   - The `fields` property is flatten (merged) into `ctx.request.body`. In prior versions, `fields` was a property of `ctx.request.body`.
 
 If you do not use multipart uploads, no changes to your code need to be made.
@@ -110,7 +110,8 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encodedand and JSON requests the raw, unparsed requesty body will be attached to `ctx.reqeust.body` using a `Symbol`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
-- `strict` **{Boolean}** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
+- `strict` **{Boolean}** ***DEPRECATED*** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
+- `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`. Replaces `strict` option.
 
 ## A note about strict mode
 > see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
