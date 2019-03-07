@@ -3,3 +3,14 @@ node_js:
   - "8"
   - "10"
   - "11"
+matrix:
+  include:
+    - node_js: '10'
+      env: COVERAGE=true # c8 only works on Node.js 10+
+script: |
+  if [ -z "$COVERAGE" ]
+  then
+    npm test
+  else
+    npm run coverage
+  fi

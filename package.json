@@ -6,6 +6,7 @@
   "types": "./index.d.ts",
   "scripts": {
     "test": "mocha && eslint ./test",
+    "coverage": "c8 --check-coverage --lines 85 --functions 100 --branches 70 mocha",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@types/koa": "^2.0.39",
+    "c8": "3.4.0",
     "eslint": "5.15.1",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.16.0",
