@@ -30,7 +30,7 @@ router.get('/', (ctx) => {
 
 router.post('/', koaBody,
   (ctx) => {
-    console.log('fields: ', ctx.request.fields);
+    console.log('fields: ', ctx.request.body);
     // => {username: ""} - if empty
 
     console.log('files: ', ctx.request.files);
