@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 
-const assert = require('assert');
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
@@ -269,7 +268,7 @@ describe('koa-body', async () => {
         .send({ multi: true })
         .expect(204)
         .then(() => {
-          assert(database.users.find(element => element.name === 'charlike') !== undefined);
+          should.notEqual(database.users.find(element => element.name === 'charlike'), undefined);
         });
     });
 
@@ -283,7 +282,7 @@ describe('koa-body', async () => {
         .send({ multi: true })
         .expect(204)
         .then(() => {
-          assert(database.users.find(element => element.name === 'charlike') === undefined);
+          should.equal(database.users.find(element => element.name === 'charlike'), undefined);
         });
     });
   });
@@ -304,7 +303,7 @@ describe('koa-body', async () => {
         .send({ multi: true })
         .expect(204)
         .then(() => {
-          assert(database.users.find(element => element.name === 'charlike') === undefined);
+          should.equal(database.users.find(element => element.name === 'charlike'), undefined);
         });
     });
 
@@ -318,7 +317,7 @@ describe('koa-body', async () => {
         .send({ multi: true })
         .expect(204)
         .then(() => {
-          assert(database.users.find(element => element.name === 'charlike') !== undefined);
+          should.notEqual(database.users.find(element => element.name === 'charlike'), undefined);
         });
     });
 
@@ -333,7 +332,7 @@ describe('koa-body', async () => {
         err = _err;
       }
 
-      assert(err && err.message === 'Cannot use strict and parsedMethods options at the same time.');
+      should.equal(err.message, 'Cannot use strict and parsedMethods options at the same time.');
     });
   });
 
