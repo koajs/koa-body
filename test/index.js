@@ -98,20 +98,19 @@ describe('koa-body', async () => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/users')
       .field('name', 'daryl')
       .field('followers', 30)
-      .expect(201)
-      .then((res) => {
-        const mostRecentUser = database.users[database.users.length - 1];
+      .expect(201);
 
-        res.body.user.should.have.property('name', mostRecentUser.name);
-        res.body.user.should.have.property('followers', mostRecentUser.followers);
+    const mostRecentUser = database.users[database.users.length - 1];
 
-        res.body.user.should.have.property('name', 'daryl');
-        res.body.user.should.have.property('followers', '30');
-      });
+    res.body.user.should.have.property('name', mostRecentUser.name);
+    res.body.user.should.have.property('followers', mostRecentUser.followers);
+
+    res.body.user.should.have.property('name', 'daryl');
+    res.body.user.should.have.property('followers', '30');
   });
 
 
@@ -127,7 +126,7 @@ describe('koa-body', async () => {
     }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/users')
       .type('multipart/form-data')
       .field('names', 'John')
@@ -138,46 +137,45 @@ describe('koa-body', async () => {
       .attach('thirdField', 'LICENSE')
       .attach('thirdField', 'README.md')
       .attach('thirdField', 'package.json')
-      .expect(201)
-      .then((res) => {
-        res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
-        res.body.user.names[0].should.equal('John');
-        res.body.user.names[1].should.equal('Paul');
-        res.body._files.firstField.should.be.an.Object();
-        res.body._files.firstField.name.should.equal('package.json');
-        should(fs.statSync(res.body._files.firstField.path)).be.ok();
-        fs.unlinkSync(res.body._files.firstField.path);
+      .expect(201);
 
-        res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
-        res.body._files.secondField.should.containDeep([{
-          name: 'index.js',
-        }]);
-        res.body._files.secondField.should.containDeep([{
-          name: 'package.json',
-        }]);
-        should(fs.statSync(res.body._files.secondField[0].path)).be.ok();
-        should(fs.statSync(res.body._files.secondField[1].path)).be.ok();
-        fs.unlinkSync(res.body._files.secondField[0].path);
-        fs.unlinkSync(res.body._files.secondField[1].path);
+    res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
+    res.body.user.names[0].should.equal('John');
+    res.body.user.names[1].should.equal('Paul');
+    res.body._files.firstField.should.be.an.Object();
+    res.body._files.firstField.name.should.equal('package.json');
+    should(fs.statSync(res.body._files.firstField.path)).be.ok();
+    fs.unlinkSync(res.body._files.firstField.path);
 
-        res.body._files.thirdField.should.be.an.Array().and.have.lengthOf(3);
+    res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
+    res.body._files.secondField.should.containDeep([{
+      name: 'index.js',
+    }]);
+    res.body._files.secondField.should.containDeep([{
+      name: 'package.json',
+    }]);
+    should(fs.statSync(res.body._files.secondField[0].path)).be.ok();
+    should(fs.statSync(res.body._files.secondField[1].path)).be.ok();
+    fs.unlinkSync(res.body._files.secondField[0].path);
+    fs.unlinkSync(res.body._files.secondField[1].path);
 
-        res.body._files.thirdField.should.containDeep([{
-          name: 'LICENSE',
-        }]);
-        res.body._files.thirdField.should.containDeep([{
-          name: 'README.md',
-        }]);
-        res.body._files.thirdField.should.containDeep([{
-          name: 'package.json',
-        }]);
-        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok();
-        fs.unlinkSync(res.body._files.thirdField[0].path);
-        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok();
-        fs.unlinkSync(res.body._files.thirdField[1].path);
-        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok();
-        fs.unlinkSync(res.body._files.thirdField[2].path);
-      });
+    res.body._files.thirdField.should.be.an.Array().and.have.lengthOf(3);
+
+    res.body._files.thirdField.should.containDeep([{
+      name: 'LICENSE',
+    }]);
+    res.body._files.thirdField.should.containDeep([{
+      name: 'README.md',
+    }]);
+    res.body._files.thirdField.should.containDeep([{
+      name: 'package.json',
+    }]);
+    should(fs.statSync(res.body._files.thirdField[0].path)).be.ok();
+    fs.unlinkSync(res.body._files.thirdField[0].path);
+    should(fs.statSync(res.body._files.thirdField[1].path)).be.ok();
+    fs.unlinkSync(res.body._files.thirdField[1].path);
+    should(fs.statSync(res.body._files.thirdField[2].path)).be.ok();
+    fs.unlinkSync(res.body._files.thirdField[2].path);
   });
 
   it('can transform file names in multipart requests', async () => {
@@ -195,19 +193,17 @@ describe('koa-body', async () => {
     }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/users')
       .type('multipart/form-data')
       .field('names', 'John')
       .field('names', 'Paul')
       .attach('firstField', 'package.json')
-      .expect(201)
-      .then((res) => {
-        res.body._files.firstField.should.be.an.Object();
-        res.body._files.firstField.name.should.equal('backage.json');
-        should(fs.statSync(res.body._files.firstField.path)).be.ok();
-        fs.unlinkSync(res.body._files.firstField.path);
-      });
+      .expect(201);
+    res.body._files.firstField.should.be.an.Object();
+    res.body._files.firstField.name.should.equal('backage.json');
+    should(fs.statSync(res.body._files.firstField.path)).be.ok();
+    fs.unlinkSync(res.body._files.firstField.path);
   });
 
 
@@ -218,20 +214,18 @@ describe('koa-body', async () => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/users')
       .type('application/x-www-form-urlencoded')
       .send({
         name: 'example',
         followers: '41',
       })
-      .expect(201)
-      .then((res) => {
-        const mostRecentUser = database.users[database.users.length - 1];
+      .expect(201);
+    const mostRecentUser = database.users[database.users.length - 1];
 
-        res.body.user.should.have.properties(mostRecentUser);
-        res.body.user.should.have.properties({ name: 'example', followers: '41' });
-      });
+    res.body.user.should.have.properties(mostRecentUser);
+    res.body.user.should.have.properties({ name: 'example', followers: '41' });
   });
 
   /**
@@ -241,15 +235,13 @@ describe('koa-body', async () => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/echo_body')
       .type('text')
       .send('plain text')
-      .expect(200)
-      .then((res) => {
-        res.type.should.equal('text/plain');
-        res.text.should.equal('plain text');
-      });
+      .expect(200);
+    res.type.should.equal('text/plain');
+    res.text.should.equal('plain text');
   });
 
   describe('strict mode', async () => {
@@ -344,17 +336,15 @@ describe('koa-body', async () => {
       app.use(koaBody({ strict: false }));
       app.use(router.routes());
 
-      return request(http.createServer(app.callback()))
+      const res = await request(http.createServer(app.callback()))
         .post('/users')
         .type('application/json')
         .send({
           name: 'json',
           followers: '313',
         })
-        .expect(201)
-        .then((res) => {
-          res.body.user.should.have.properties({ followers: '313', name: 'json' });
-        });
+        .expect(201);
+      res.body.user.should.have.properties({ followers: '313', name: 'json' });
     });
   });
 
@@ -368,14 +358,11 @@ describe('koa-body', async () => {
         name: 'foo',
         followers: 111,
       });
-      return request(http.createServer(app.callback()))
+      response = await request(http.createServer(app.callback()))
         .get('/users')
         .type('application/json')
         .send({ name: 'foo' })
-        .expect(200)
-        .then((res) => {
-          response = res;
-        });
+        .expect(200);
     });
 
     it('should parse the response body', async () => {
