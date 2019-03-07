@@ -85,7 +85,7 @@ describe('koa-body', async () => {
     app.use(koaBody());
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    await request(http.createServer(app.callback()))
       .get('/users')
       .expect(200, database);
   });
@@ -254,7 +254,7 @@ describe('koa-body', async () => {
       app.use(koaBody({ strict: true }));
       app.use(router.routes());
 
-      return request(http.createServer(app.callback()))
+      await request(http.createServer(app.callback()))
         .delete('/users/charlike')
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
@@ -268,14 +268,13 @@ describe('koa-body', async () => {
       app.use(koaBody({ strict: false }));
       app.use(router.routes());
 
-      return request(http.createServer(app.callback()))
+      await request(http.createServer(app.callback()))
         .delete('/users/charlike')
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
-        .expect(204)
-        .then(() => {
-          should.equal(database.users.find(element => element.name === 'charlike'), undefined);
-        });
+        .expect(204);
+
+      should.equal(database.users.find(element => element.name === 'charlike'), undefined);
     });
   });
 
@@ -289,28 +288,26 @@ describe('koa-body', async () => {
       app.use(koaBody({ parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'] }));
       app.use(router.routes());
 
-      return request(http.createServer(app.callback()))
+      await request(http.createServer(app.callback()))
         .delete('/users/charlike')
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
-        .expect(204)
-        .then(() => {
-          should.equal(database.users.find(element => element.name === 'charlike'), undefined);
-        });
+        .expect(204);
+
+      should.equal(database.users.find(element => element.name === 'charlike'), undefined);
     });
 
     it('methods do not get parsed if not declared', async () => {
       app.use(koaBody({ parsedMethods: ['POST', 'PUT', 'PATCH'] }));
       app.use(router.routes());
 
-      return request(http.createServer(app.callback()))
+      await request(http.createServer(app.callback()))
         .delete('/users/charlike')
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
-        .expect(204)
-        .then(() => {
-          should.notEqual(database.users.find(element => element.name === 'charlike'), undefined);
-        });
+        .expect(204);
+
+      should.notEqual(database.users.find(element => element.name === 'charlike'), undefined);
     });
 
     it('cannot use strict mode and parsedMethods options at the same time', async () => {
@@ -379,7 +376,7 @@ describe('koa-body', async () => {
     app.use(koaBody());
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    await request(http.createServer(app.callback()))
       .post('/users')
       .send('Hello <b>invalid</b> content type')
       .expect(201);
