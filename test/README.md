@@ -11,8 +11,7 @@ To run coverage, you must be using [c8's supported version](https://github.com/b
 
 To get an HTML coverage report, run the following commands:
 ```sh
-npm run coverage
-./node_modules/.bin/c8 report --reporter=html
+npm run coverage:html
 ```
 
 CI will fail if a line, function, and branch coverage percentage is not met. This is set in `package.json` in the `coverage` script.

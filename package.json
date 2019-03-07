@@ -7,6 +7,7 @@
   "scripts": {
     "test": "mocha && eslint ./test",
     "coverage": "c8 --check-coverage --lines 85 --functions 100 --branches 70 mocha",
+    "coverage:html" : "npm run coverage && c8 report --reporter=html && echo 'Coverage report generated, open coverage/index.html in your browser'",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
