@@ -8,9 +8,7 @@ const request = require('supertest');
 const should = require('should');
 const Koa = require('koa');
 const Router = require('koa-router');
-const sinon = require('sinon');
 const koaBody = require('../index');
-const unparsed = require('../unparsed.js');
 
 describe('koa-body', async () => {
   let database;
@@ -238,120 +236,6 @@ describe('koa-body', async () => {
   });
 
   /**
-   * Inclusion of unparsed body when opts.includeUnparsed is true
-   */
-  describe('includeUnparsed tests', async () => {
-    let requestSpy;
-
-    beforeEach(async () => {
-      app.use(koaBody({ includeUnparsed: true }));
-      app.use(router.routes());
-    });
-
-    afterEach(() => {
-      requestSpy.restore();
-      requestSpy = undefined;
-    });
-
-    it('should not fail when no request body is provided', async () => {
-      const echoRouterLayer = router.stack.filter(layer => layer.path === '/echo_body');
-      requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
-
-      return request(http.createServer(app.callback()))
-        .post('/echo_body')
-        .type('application/json')
-        .send(undefined)
-        .expect(200)
-        .then((res) => {
-          assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
-          const req = requestSpy.firstCall.args[0].request;
-
-          req.body.should.not.be.Undefined();
-          res.body.should.have.properties({});
-
-          req.body[unparsed].should.not.be.Undefined();
-          req.body[unparsed].should.be.a.String();
-          req.body[unparsed].should.have.length(0);
-        });
-    });
-
-    it('should recieve `urlencoded` request bodies with the `includeUnparsed` option', async () => {
-      const userRouterLayer = router.stack.filter(layer => layer.path === '/users' && layer.methods.includes('POST'));
-      requestSpy = sinon.spy(userRouterLayer[0].stack, '0');
-
-      return request(http.createServer(app.callback()))
-        .post('/users')
-        .type('application/x-www-form-urlencoded')
-        .send({
-          name: 'Test',
-          followers: '97',
-        })
-        .expect(201)
-        .then((res) => {
-          const mostRecentUser = database.users[database.users.length - 1];
-
-          assert(requestSpy.calledOnce, 'Spy for /users not called');
-          const req = requestSpy.firstCall.args[0].request;
-          req.body[unparsed].should.not.be.Undefined();
-          req.body[unparsed].should.be.a.String();
-          req.body[unparsed].should.equal('name=Test&followers=97');
-
-          res.body.user.should.have.properties({ name: 'Test', followers: '97' });
-          res.body.user.should.have.properties(mostRecentUser);
-        });
-    });
-
-    it('should receive JSON request bodies as strings with the `includeUnparsed` option', async () => {
-      const echoRouterLayer = router.stack.filter(layer => layer.path === '/echo_body');
-      requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
-
-      return request(http.createServer(app.callback()))
-        .post('/echo_body')
-        .type('application/json')
-        .send({
-          hello: 'world',
-          number: 42,
-        })
-        .expect(200)
-        .then((res) => {
-          assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
-          const req = requestSpy.firstCall.args[0].request;
-          req.body[unparsed].should.not.be.Undefined();
-          req.body[unparsed].should.be.a.String();
-          req.body[unparsed].should.equal(JSON.stringify({
-            hello: 'world',
-            number: 42,
-          }));
-
-          res.body.should.have.properties({ hello: 'world', number: 42 });
-        });
-    });
-
-    it('should receive text as strings with `includeUnparsed` option', async () => {
-      const echoRouterLayer = router.stack.filter(layer => layer.path === '/echo_body');
-      requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
-
-      return request(http.createServer(app.callback()))
-        .post('/echo_body')
-        .type('text')
-        .send('plain text content')
-        .expect(200)
-        .then((res) => {
-          assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
-          const req = requestSpy.firstCall.args[0].request;
-          should(req.body).equal('plain text content');
-
-          // Raw text requests are still just text
-          assert.equal(req.body[unparsed], undefined);
-
-          // Text response is just text
-          should(res.body).have.properties({});
-          should(res.text).equal('plain text content');
-        });
-    });
-  });
-
-  /**
    * TEXT request body
    */
   it('should recieve `text` request bodies', async () => {
@@ -505,38 +389,6 @@ describe('koa-body', async () => {
     });
   });
 
-  const ERR_413_STATUSTEXT = 'request entity too large';
-
-  /**
-   * FORM (urlencoded) LIMIT
-   */
-  it(`should request 413 ${ERR_413_STATUSTEXT}, because of \`formLimit\``, async () => {
-    app.use(koaBody({ formLimit: 10 /* bytes */ }));
-    app.use(router.routes());
-
-    return request(http.createServer(app.callback()))
-      .post('/users')
-      .type('application/x-www-form-urlencoded')
-      .send('user=www-form-urlencoded')
-      .expect(413, ERR_413_STATUSTEXT);
-  });
-
-
-  /**
-   * JSON LIMIT
-   */
-  it(`should request 413 ${ERR_413_STATUSTEXT}, because of \`jsonLimit\``, async () => {
-    app.use(koaBody({ jsonLimit: 10 /* bytes */ }));
-    app.use(router.routes());
-
-    return request(http.createServer(app.callback()))
-      .post('/users')
-      .type('application/json')
-      .send({ name: 'some-long-name-for-limit' })
-      .expect(413, ERR_413_STATUSTEXT);
-  });
-
-
   it('should tolerate no content type', async () => {
     app.use(koaBody());
     app.use(router.routes());
@@ -545,20 +397,5 @@ describe('koa-body', async () => {
       .post('/users')
       .send('Hello <b>invalid</b> content type')
       .expect(201);
-  });
-
-
-  /**
-   * TEXT LIMIT
-   */
-  it(`should request 413 ${ERR_413_STATUSTEXT}, because of \`textLimit\``, async () => {
-    app.use(koaBody({ textLimit: 10 /* bytes */ }));
-    app.use(router.routes());
-
-    return request(http.createServer(app.callback()))
-      .post('/users')
-      .type('text')
-      .send('String longer than 10 bytes...')
-      .expect(413, ERR_413_STATUSTEXT);
   });
 });
