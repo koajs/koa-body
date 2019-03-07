@@ -47,7 +47,7 @@
     "eslint-plugin-import": "2.16.0",
     "koa": "^2.0.0",
     "koa-router": "^7.0.1",
-    "mocha": "5.2.0",
+    "mocha": "6.0.2",
     "should": "13.2.1",
     "sinon": "^7.2.2",
     "supertest": "3.4.2"
