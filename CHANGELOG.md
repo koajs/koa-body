@@ -1,3 +1,11 @@
+## 5.0.0 (Unreleased)
+
+### Breaking Changes
+- drops support for Node.js 6
+
+### Non-Breaking Changes
+- TODO
+
 ## 4.1.0
 - adds `parsedMethods` option to specify which request methods will be parsed
 - deprecates `strict` option, which will be removed in koa-body 5.0.0
