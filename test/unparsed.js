@@ -1,8 +1,8 @@
 const http = require('http');
 const Koa = require('koa');
 const request = require('supertest');
+const { expect } = require('chai');
 const Router = require('koa-router');
-const should = require('should');
 const sinon = require('sinon');
 const unparsed = require('../unparsed.js');
 const koaBody = require('../index');
@@ -34,15 +34,11 @@ describe('includeUnparsed tests', async () => {
       .send(undefined)
       .expect(200);
 
-    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    expect(requestSpy.calledOnce).to.equal(true, 'Spy for /echo_body not called');
     const req = requestSpy.firstCall.args[0].request;
 
-    req.body.should.not.be.Undefined();
-    res.body.should.deepEqual({});
-
-    req.body[unparsed].should.not.be.Undefined();
-    req.body[unparsed].should.be.a.String();
-    req.body[unparsed].should.have.length(0);
+    expect(res.body).to.eql({});
+    expect(req.body[unparsed]).to.equal('');
   });
 
   it('should recieve `urlencoded` request bodies with the `includeUnparsed` option', async () => {
@@ -58,13 +54,11 @@ describe('includeUnparsed tests', async () => {
       })
       .expect(200);
 
-    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    expect(requestSpy.calledOnce).to.equal(true, 'Spy for /echo_body not called');
     const req = requestSpy.firstCall.args[0].request;
-    req.body[unparsed].should.not.be.Undefined();
-    req.body[unparsed].should.be.a.String();
-    req.body[unparsed].should.equal('name=Test&followers=97');
+    expect(req.body[unparsed]).to.equal('name=Test&followers=97');
 
-    res.body.should.deepEqual({ name: 'Test', followers: '97' });
+    expect(res.body).to.eql({ name: 'Test', followers: '97' });
   });
 
   it('should receive JSON request bodies as strings with the `includeUnparsed` option', async () => {
@@ -80,16 +74,14 @@ describe('includeUnparsed tests', async () => {
       })
       .expect(200);
 
-    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    expect(requestSpy.calledOnce).to.equal(true, 'Spy for /echo_body not called');
     const req = requestSpy.firstCall.args[0].request;
-    req.body[unparsed].should.not.be.Undefined();
-    req.body[unparsed].should.be.a.String();
-    req.body[unparsed].should.equal(JSON.stringify({
+    expect(req.body[unparsed]).to.eql(JSON.stringify({
       hello: 'world',
       number: 42,
     }));
 
-    res.body.should.deepEqual({ hello: 'world', number: 42 });
+    expect(res.body).to.eql({ hello: 'world', number: 42 });
   });
 
   it('should receive text as strings with `includeUnparsed` option', async () => {
@@ -102,15 +94,15 @@ describe('includeUnparsed tests', async () => {
       .send('plain text content')
       .expect(200);
 
-    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    expect(requestSpy.calledOnce).to.equal(true, 'Spy for /echo_body not called');
     const req = requestSpy.firstCall.args[0].request;
-    should(req.body).equal('plain text content');
+    expect(req.body).to.equal('plain text content');
 
     // Raw text requests are still just text
-    should.equal(req.body[unparsed], undefined);
+    expect(req.body[unparsed]).to.be.an('undefined');
 
     // Text response is just text
-    should(res.body).have.properties({});
-    should(res.text).equal('plain text content');
+    expect(res.body).eql({});
+    expect(res.text).to.equal('plain text content');
   });
 });

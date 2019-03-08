@@ -7,7 +7,7 @@
   "scripts": {
     "test": "mocha && eslint ./test",
     "coverage": "c8 --check-coverage --lines 85 --functions 100 --branches 70 mocha",
-    "coverage:html" : "npm run coverage && c8 report --reporter=html && echo 'Coverage report generated, open coverage/index.html in your browser'",
+    "coverage:html": "npm run coverage && c8 report --reporter=html && echo 'Coverage report generated, open coverage/index.html in your browser'",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
@@ -45,13 +45,13 @@
   "devDependencies": {
     "@types/koa": "^2.0.39",
     "c8": "3.4.0",
+    "chai": "4.2.0",
     "eslint": "5.15.1",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.16.0",
     "koa": "^2.0.0",
     "koa-router": "^7.0.1",
     "mocha": "6.0.2",
-    "should": "13.2.1",
     "sinon": "^7.2.2",
     "supertest": "3.4.2"
   },

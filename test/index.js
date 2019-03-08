@@ -4,7 +4,7 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const request = require('supertest');
-const should = require('should');
+const { expect } = require('chai');
 const Koa = require('koa');
 const Router = require('koa-router');
 const koaBody = require('../index');
@@ -106,11 +106,15 @@ describe('koa-body', async () => {
 
     const mostRecentUser = database.users[database.users.length - 1];
 
-    res.body.user.should.have.property('name', mostRecentUser.name);
-    res.body.user.should.have.property('followers', mostRecentUser.followers);
+    expect(res.body.user).to.eql({
+      name: 'daryl',
+      followers: '30',
+    });
 
-    res.body.user.should.have.property('name', 'daryl');
-    res.body.user.should.have.property('followers', '30');
+    expect(mostRecentUser).to.eql({
+      name: 'daryl',
+      followers: '30',
+    });
   });
 
 
@@ -139,43 +143,39 @@ describe('koa-body', async () => {
       .attach('thirdField', 'package.json')
       .expect(201);
 
-    res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
-    res.body.user.names[0].should.equal('John');
-    res.body.user.names[1].should.equal('Paul');
-    res.body._files.firstField.should.be.an.Object();
-    res.body._files.firstField.name.should.equal('package.json');
-    should(fs.statSync(res.body._files.firstField.path)).be.ok();
+    expect(res.body.user.names).to.eql(['John', 'Paul']);
+
+    expect(res.body._files.firstField).to.be.an('object');
+    expect(res.body._files.firstField.name).to.equal('package.json');
+    expect(fs.statSync(res.body._files.firstField.path)).to.not.be.a('null');
     fs.unlinkSync(res.body._files.firstField.path);
 
-    res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
-    res.body._files.secondField.should.containDeep([{
-      name: 'index.js',
-    }]);
-    res.body._files.secondField.should.containDeep([{
-      name: 'package.json',
-    }]);
-    should(fs.statSync(res.body._files.secondField[0].path)).be.ok();
-    should(fs.statSync(res.body._files.secondField[1].path)).be.ok();
-    fs.unlinkSync(res.body._files.secondField[0].path);
-    fs.unlinkSync(res.body._files.secondField[1].path);
+    expect(res.body._files.secondField).to.be.an('array');
+    expect(res.body._files.secondField).have.lengthOf(2);
 
-    res.body._files.thirdField.should.be.an.Array().and.have.lengthOf(3);
+    const fileNames = files => files.map(f => f.name).sort();
 
-    res.body._files.thirdField.should.containDeep([{
-      name: 'LICENSE',
-    }]);
-    res.body._files.thirdField.should.containDeep([{
-      name: 'README.md',
-    }]);
-    res.body._files.thirdField.should.containDeep([{
-      name: 'package.json',
-    }]);
-    should(fs.statSync(res.body._files.thirdField[0].path)).be.ok();
-    fs.unlinkSync(res.body._files.thirdField[0].path);
-    should(fs.statSync(res.body._files.thirdField[1].path)).be.ok();
-    fs.unlinkSync(res.body._files.thirdField[1].path);
-    should(fs.statSync(res.body._files.thirdField[2].path)).be.ok();
-    fs.unlinkSync(res.body._files.thirdField[2].path);
+    { // start block scope
+      const names = fileNames(res.body._files.secondField);
+      expect(names).to.eql(['index.js', 'package.json']);
+
+      expect(fs.statSync(res.body._files.secondField[0].path)).to.not.be.a('null');
+      expect(fs.statSync(res.body._files.secondField[1].path)).to.not.be.a('null');
+      fs.unlinkSync(res.body._files.secondField[0].path);
+      fs.unlinkSync(res.body._files.secondField[1].path);
+    } // end block scope
+
+    { // start block scope
+      const names = fileNames(res.body._files.thirdField);
+      expect(names).to.eql(['LICENSE', 'README.md', 'package.json']);
+
+      expect(fs.statSync(res.body._files.thirdField[0].path)).to.not.be.a('null');
+      fs.unlinkSync(res.body._files.thirdField[0].path);
+      expect(fs.statSync(res.body._files.thirdField[1].path)).to.not.be.a('null');
+      fs.unlinkSync(res.body._files.thirdField[1].path);
+      expect(fs.statSync(res.body._files.thirdField[2].path)).to.not.be.a('null');
+      fs.unlinkSync(res.body._files.thirdField[2].path);
+    } // end block scope
   });
 
   it('can transform file names in multipart requests', async () => {
@@ -200,9 +200,10 @@ describe('koa-body', async () => {
       .field('names', 'Paul')
       .attach('firstField', 'package.json')
       .expect(201);
-    res.body._files.firstField.should.be.an.Object();
-    res.body._files.firstField.name.should.equal('backage.json');
-    should(fs.statSync(res.body._files.firstField.path)).be.ok();
+
+    expect(res.body._files.firstField).to.be.an('object');
+    expect(res.body._files.firstField.name).to.equal('backage.json');
+    expect(fs.statSync(res.body._files.firstField.path)).to.not.be.a('null');
     fs.unlinkSync(res.body._files.firstField.path);
   });
 
@@ -224,8 +225,8 @@ describe('koa-body', async () => {
       .expect(201);
     const mostRecentUser = database.users[database.users.length - 1];
 
-    res.body.user.should.have.properties(mostRecentUser);
-    res.body.user.should.have.properties({ name: 'example', followers: '41' });
+    expect(res.body.user).to.eql(mostRecentUser);
+    expect(res.body.user).to.eql({ name: 'example', followers: '41' });
   });
 
   /**
@@ -240,8 +241,8 @@ describe('koa-body', async () => {
       .type('text')
       .send('plain text')
       .expect(200);
-    res.type.should.equal('text/plain');
-    res.text.should.equal('plain text');
+    expect(res.type).to.equal('text/plain');
+    expect(res.text).to.equal('plain text');
   });
 
   describe('strict mode', async () => {
@@ -258,10 +259,9 @@ describe('koa-body', async () => {
         .delete('/users/charlike')
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
-        .expect(204)
-        .then(() => {
-          should.notEqual(database.users.find(element => element.name === 'charlike'), undefined);
-        });
+        .expect(204);
+
+      expect(database.users.find(element => element.name === 'charlike')).to.not.be.a('undefined');
     });
 
     it('can disable strict mode', async () => {
@@ -274,7 +274,7 @@ describe('koa-body', async () => {
         .send({ multi: true })
         .expect(204);
 
-      should.equal(database.users.find(element => element.name === 'charlike'), undefined);
+      expect(database.users.find(element => element.name === 'charlike')).to.be.a('undefined');
     });
   });
 
@@ -294,7 +294,7 @@ describe('koa-body', async () => {
         .send({ multi: true })
         .expect(204);
 
-      should.equal(database.users.find(element => element.name === 'charlike'), undefined);
+      expect(database.users.find(element => element.name === 'charlike')).to.be.a('undefined');
     });
 
     it('methods do not get parsed if not declared', async () => {
@@ -307,7 +307,7 @@ describe('koa-body', async () => {
         .send({ multi: true })
         .expect(204);
 
-      should.notEqual(database.users.find(element => element.name === 'charlike'), undefined);
+      expect(database.users.find(element => element.name === 'charlike')).to.not.be.a('undefined');
     });
 
     it('cannot use strict mode and parsedMethods options at the same time', async () => {
@@ -321,7 +321,7 @@ describe('koa-body', async () => {
         err = _err;
       }
 
-      should.equal(err.message, 'Cannot use strict and parsedMethods options at the same time.');
+      expect(err.message).to.equal('Cannot use strict and parsedMethods options at the same time.');
     });
   });
 
@@ -341,7 +341,7 @@ describe('koa-body', async () => {
           followers: '313',
         })
         .expect(201);
-      res.body.user.should.have.properties({ followers: '313', name: 'json' });
+      expect(res.body.user).to.eql({ followers: '313', name: 'json' });
     });
   });
 
@@ -363,12 +363,14 @@ describe('koa-body', async () => {
     });
 
     it('should parse the response body', async () => {
-      response.body.should.not.equal(null);
+      expect(response.body).to.not.be.a('null');
     });
 
     it('should return the user details', async () => {
-      response.body.name.should.equal('foo');
-      response.body.followers.should.equal(111);
+      expect(response.body).to.eql({
+        name: 'foo',
+        followers: 111,
+      });
     });
   });
 
