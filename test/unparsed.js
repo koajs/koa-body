@@ -28,93 +28,89 @@ describe('includeUnparsed tests', async () => {
     const echoRouterLayer = router.stack.find(layer => layer.path === '/echo_body');
     const requestSpy = sinon.spy(echoRouterLayer.stack, '0');
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/echo_body')
       .type('application/json')
       .send(undefined)
-      .expect(200)
-      .then((res) => {
-        should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
-        const req = requestSpy.firstCall.args[0].request;
+      .expect(200);
 
-        req.body.should.not.be.Undefined();
-        res.body.should.deepEqual({});
+    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    const req = requestSpy.firstCall.args[0].request;
 
-        req.body[unparsed].should.not.be.Undefined();
-        req.body[unparsed].should.be.a.String();
-        req.body[unparsed].should.have.length(0);
-      });
+    req.body.should.not.be.Undefined();
+    res.body.should.deepEqual({});
+
+    req.body[unparsed].should.not.be.Undefined();
+    req.body[unparsed].should.be.a.String();
+    req.body[unparsed].should.have.length(0);
   });
 
   it('should recieve `urlencoded` request bodies with the `includeUnparsed` option', async () => {
     const echoRouterLayer = router.stack.find(layer => layer.path === '/echo_body');
     const requestSpy = sinon.spy(echoRouterLayer.stack, '0');
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/echo_body')
       .type('application/x-www-form-urlencoded')
       .send({
         name: 'Test',
         followers: '97',
       })
-      .expect(200)
-      .then((res) => {
-        should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
-        const req = requestSpy.firstCall.args[0].request;
-        req.body[unparsed].should.not.be.Undefined();
-        req.body[unparsed].should.be.a.String();
-        req.body[unparsed].should.equal('name=Test&followers=97');
+      .expect(200);
 
-        res.body.should.deepEqual({ name: 'Test', followers: '97' });
-      });
+    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    const req = requestSpy.firstCall.args[0].request;
+    req.body[unparsed].should.not.be.Undefined();
+    req.body[unparsed].should.be.a.String();
+    req.body[unparsed].should.equal('name=Test&followers=97');
+
+    res.body.should.deepEqual({ name: 'Test', followers: '97' });
   });
 
   it('should receive JSON request bodies as strings with the `includeUnparsed` option', async () => {
     const echoRouterLayer = router.stack.find(layer => layer.path === '/echo_body');
     const requestSpy = sinon.spy(echoRouterLayer.stack, '0');
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/echo_body')
       .type('application/json')
       .send({
         hello: 'world',
         number: 42,
       })
-      .expect(200)
-      .then((res) => {
-        should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
-        const req = requestSpy.firstCall.args[0].request;
-        req.body[unparsed].should.not.be.Undefined();
-        req.body[unparsed].should.be.a.String();
-        req.body[unparsed].should.equal(JSON.stringify({
-          hello: 'world',
-          number: 42,
-        }));
+      .expect(200);
 
-        res.body.should.deepEqual({ hello: 'world', number: 42 });
-      });
+    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    const req = requestSpy.firstCall.args[0].request;
+    req.body[unparsed].should.not.be.Undefined();
+    req.body[unparsed].should.be.a.String();
+    req.body[unparsed].should.equal(JSON.stringify({
+      hello: 'world',
+      number: 42,
+    }));
+
+    res.body.should.deepEqual({ hello: 'world', number: 42 });
   });
 
   it('should receive text as strings with `includeUnparsed` option', async () => {
     const echoRouterLayer = router.stack.find(layer => layer.path === '/echo_body');
     const requestSpy = sinon.spy(echoRouterLayer.stack, '0');
 
-    return request(http.createServer(app.callback()))
+    const res = await request(http.createServer(app.callback()))
       .post('/echo_body')
       .type('text')
       .send('plain text content')
-      .expect(200)
-      .then((res) => {
-        should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
-        const req = requestSpy.firstCall.args[0].request;
-        should(req.body).equal('plain text content');
+      .expect(200);
 
-        // Raw text requests are still just text
-        should.equal(req.body[unparsed], undefined);
+    should.equal(requestSpy.calledOnce, true, 'Spy for /echo_body not called');
+    const req = requestSpy.firstCall.args[0].request;
+    should(req.body).equal('plain text content');
 
-        // Text response is just text
-        should(res.body).have.properties({});
-        should(res.text).equal('plain text content');
-      });
+    // Raw text requests are still just text
+    should.equal(req.body[unparsed], undefined);
+
+    // Text response is just text
+    should(res.body).have.properties({});
+    should(res.text).equal('plain text content');
   });
 });

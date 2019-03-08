@@ -15,7 +15,7 @@ describe('limits', () => {
     app.use(koaBody({ formLimit: 10 /* bytes */ }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    await request(http.createServer(app.callback()))
       .post('/')
       .type('application/x-www-form-urlencoded')
       .send('user=www-form-urlencoded')
@@ -30,7 +30,7 @@ describe('limits', () => {
     app.use(koaBody({ jsonLimit: 10 /* bytes */ }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    await request(http.createServer(app.callback()))
       .post('/')
       .type('application/json')
       .send({ name: 'some-long-name-for-limit' })
@@ -45,7 +45,7 @@ describe('limits', () => {
     app.use(koaBody({ textLimit: 10 /* bytes */ }));
     app.use(router.routes());
 
-    return request(http.createServer(app.callback()))
+    await request(http.createServer(app.callback()))
       .post('/')
       .type('text')
       .send('String longer than 10 bytes...')
