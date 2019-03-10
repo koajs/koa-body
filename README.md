@@ -123,10 +123,8 @@ Some applications require crytopgraphic verification of request bodies, for exam
 ## Changelog
 Please see the [Changelog](./CHANGELOG.md) for a summary of changes.
 
-## Tests
-```
-$ npm test
-```
+## Tests/Coverage
+See the [testing readme](./test/README.md).
 
 ## License
 The MIT License, 2014 [Charlike Mike Reagent](https://github.com/tunnckoCore) ([@tunnckoCore](https://twitter.com/tunnckoCore)) and [Daryl Lau](https://github.com/dlau) ([@daryllau](https://twitter.com/daryllau))
