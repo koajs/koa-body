@@ -7,11 +7,17 @@ const koaBody = require('../index');
 const ERR_413_STATUSTEXT = 'request entity too large';
 
 describe('limits', () => {
-  it(`hitting formLimit should respond with 413 ${ERR_413_STATUSTEXT}`, async () => {
-    const app = new Koa();
-    const router = Router().post('/users', (ctx) => {
+  let router;
+  let app;
+
+  beforeEach(async () => {
+    app = new Koa();
+    router = Router().post('/users', (ctx) => {
       ctx.status = 200;
     });
+  });
+
+  it(`hitting formLimit should respond with 413 ${ERR_413_STATUSTEXT}`, async () => {
     app.use(koaBody({ formLimit: 10 /* bytes */ }));
     app.use(router.routes());
 
@@ -23,10 +29,6 @@ describe('limits', () => {
   });
 
   it(`hitting jsonLimit should respond with 413 ${ERR_413_STATUSTEXT}`, async () => {
-    const app = new Koa();
-    const router = Router().post('/users', (ctx) => {
-      ctx.status = 200;
-    });
     app.use(koaBody({ jsonLimit: 10 /* bytes */ }));
     app.use(router.routes());
 
@@ -38,10 +40,6 @@ describe('limits', () => {
   });
 
   it(`hitting textLimit should respond with a 413 ${ERR_413_STATUSTEXT}`, async () => {
-    const app = new Koa();
-    const router = Router().post('/users', (ctx) => {
-      ctx.status = 200;
-    });
     app.use(koaBody({ textLimit: 10 /* bytes */ }));
     app.use(router.routes());
 
