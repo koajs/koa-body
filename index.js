@@ -8,8 +8,6 @@
  * @api private
  */
 
-'use strict';
-
 /**
  * Module dependencies.
  */
@@ -17,131 +15,6 @@
 const buddy = require('co-body');
 const forms = require('formidable');
 const symbolUnparsed = require('./unparsed.js');
-
-/**
- * Expose `requestbody()`.
- */
-
-module.exports = requestbody;
-
-/**
- *
- * @param {Object} options
- * @see https://github.com/dlau/koa-body
- * @api public
- */
-function requestbody(opts) {
-  opts = opts || {};
-  opts.onError = 'onError' in opts ? opts.onError : false;
-  opts.patchNode = 'patchNode' in opts ? opts.patchNode : false;
-  opts.patchKoa = 'patchKoa' in opts ? opts.patchKoa : true;
-  opts.multipart = 'multipart' in opts ? opts.multipart : false;
-  opts.urlencoded = 'urlencoded' in opts ? opts.urlencoded : true;
-  opts.json = 'json' in opts ? opts.json : true;
-  opts.text = 'text' in opts ? opts.text : true;
-  opts.encoding = 'encoding' in opts ? opts.encoding : 'utf-8';
-  opts.jsonLimit = 'jsonLimit' in opts ? opts.jsonLimit : '1mb';
-  opts.jsonStrict = 'jsonStrict' in opts ? opts.jsonStrict : true;
-  opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
-  opts.queryString = 'queryString' in opts ? opts.queryString : null;
-  opts.formidable = 'formidable' in opts ? opts.formidable : {};
-  opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false
-  opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
-
-  // @todo: next major version, opts.strict support should be removed
-  if (opts.strict && opts.parsedMethods) {
-    throw new Error('Cannot use strict and parsedMethods options at the same time.')
-  }
-
-  if ('strict' in opts) {
-    console.warn('DEPRECATED: opts.strict has been deprecated in favor of opts.parsedMethods.')
-    if (opts.strict) {
-      opts.parsedMethods = ['POST', 'PUT', 'PATCH']
-    } else {
-      opts.parsedMethods = ['POST', 'PUT', 'PATCH', 'GET', 'HEAD', 'DELETE']
-    }
-  }
-
-  opts.parsedMethods = 'parsedMethods' in opts ? opts.parsedMethods : ['POST', 'PUT', 'PATCH']
-  opts.parsedMethods = opts.parsedMethods.map(function (method) { return method.toUpperCase() })
-
-  return function (ctx, next) {
-    var bodyPromise;
-    // only parse the body on specifically chosen methods
-    if (opts.parsedMethods.includes(ctx.method.toUpperCase())) {
-      try {
-        if (opts.json && ctx.is('json')) {
-          bodyPromise = buddy.json(ctx, {
-            encoding: opts.encoding,
-            limit: opts.jsonLimit,
-            strict: opts.jsonStrict,
-            returnRawBody: opts.includeUnparsed
-          });
-        } else if (opts.urlencoded && ctx.is('urlencoded')) {
-          bodyPromise = buddy.form(ctx, {
-            encoding: opts.encoding,
-            limit: opts.formLimit,
-            queryString: opts.queryString,
-            returnRawBody: opts.includeUnparsed
-          });
-        } else if (opts.text && ctx.is('text')) {
-          bodyPromise = buddy.text(ctx, {
-            encoding: opts.encoding,
-            limit: opts.textLimit,
-            returnRawBody: opts.includeUnparsed
-          });
-        } else if (opts.multipart && ctx.is('multipart')) {
-          bodyPromise = formy(ctx, opts.formidable);
-        }
-      } catch (parsingError) {
-        if (typeof opts.onError === 'function') {
-          opts.onError(parsingError, ctx);
-        } else {
-          throw parsingError;
-        }
-      }
-    }
-
-    bodyPromise = bodyPromise || Promise.resolve({});
-    return bodyPromise.catch(function(parsingError) {
-      if (typeof opts.onError === 'function') {
-        opts.onError(parsingError, ctx);
-      } else {
-        throw parsingError;
-      }
-      return next();
-    })
-    .then(function(body) {
-      if (opts.patchNode) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.req.body = body.fields;
-          ctx.req.files = body.files;
-        } else if (opts.includeUnparsed) {
-          ctx.req.body = body.parsed || {};
-          if (! ctx.is('text')) {
-            ctx.req.body[symbolUnparsed] = body.raw;
-          }
-        } else {
-          ctx.req.body = body;
-        }
-      }
-      if (opts.patchKoa) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.request.body = body.fields;
-          ctx.request.files = body.files;
-        } else if (opts.includeUnparsed) {
-          ctx.request.body = body.parsed || {};
-          if (! ctx.is('text')) {
-            ctx.request.body[symbolUnparsed] = body.raw;
-          }
-        } else {
-          ctx.request.body = body;
-        }
-      }
-      return next();
-    })
-  };
-}
 
 /**
  * Check if multipart handling is enabled and that this is a multipart request
@@ -164,18 +37,14 @@ function isMultiPart(ctx, opts) {
  * @api private
  */
 function formy(ctx, opts) {
-  return new Promise(function (resolve, reject) {
-    var fields = {};
-    var files = {};
-    var form = new forms.IncomingForm(opts);
-    form.on('end', function () {
-      return resolve({
-        fields: fields,
-        files: files
-      });
-    }).on('error', function (err) {
-      return reject(err);
-    }).on('field', function (field, value) {
+  return new Promise(((resolve, reject) => {
+    const fields = {};
+    const files = {};
+    const form = new forms.IncomingForm(opts);
+    form.on('end', () => resolve({
+      fields,
+      files,
+    })).on('error', err => reject(err)).on('field', (field, value) => {
       if (fields[field]) {
         if (Array.isArray(fields[field])) {
           fields[field].push(value);
@@ -185,7 +54,7 @@ function formy(ctx, opts) {
       } else {
         fields[field] = value;
       }
-    }).on('file', function (field, file) {
+    }).on('file', (field, file) => {
       if (files[field]) {
         if (Array.isArray(files[field])) {
           files[field].push(file);
@@ -200,5 +69,130 @@ function formy(ctx, opts) {
       form.on('fileBegin', opts.onFileBegin);
     }
     form.parse(ctx.req);
-  });
+  }));
 }
+
+/**
+ *
+ * @param {Object} options
+ * @see https://github.com/dlau/koa-body
+ * @api public
+ */
+function requestbody(opts) {
+  const mergedOpts = opts || {};
+  mergedOpts.onError = 'onError' in mergedOpts ? mergedOpts.onError : false;
+  mergedOpts.patchNode = 'patchNode' in mergedOpts ? mergedOpts.patchNode : false;
+  mergedOpts.patchKoa = 'patchKoa' in mergedOpts ? mergedOpts.patchKoa : true;
+  mergedOpts.multipart = 'multipart' in mergedOpts ? mergedOpts.multipart : false;
+  mergedOpts.urlencoded = 'urlencoded' in mergedOpts ? mergedOpts.urlencoded : true;
+  mergedOpts.json = 'json' in mergedOpts ? mergedOpts.json : true;
+  mergedOpts.text = 'text' in mergedOpts ? mergedOpts.text : true;
+  mergedOpts.encoding = 'encoding' in mergedOpts ? mergedOpts.encoding : 'utf-8';
+  mergedOpts.jsonLimit = 'jsonLimit' in mergedOpts ? mergedOpts.jsonLimit : '1mb';
+  mergedOpts.jsonStrict = 'jsonStrict' in mergedOpts ? mergedOpts.jsonStrict : true;
+  mergedOpts.formLimit = 'formLimit' in mergedOpts ? mergedOpts.formLimit : '56kb';
+  mergedOpts.queryString = 'queryString' in mergedOpts ? mergedOpts.queryString : null;
+  mergedOpts.formidable = 'formidable' in mergedOpts ? mergedOpts.formidable : {};
+  mergedOpts.includeUnparsed = 'includeUnparsed' in mergedOpts ? mergedOpts.includeUnparsed : false;
+  mergedOpts.textLimit = 'textLimit' in mergedOpts ? mergedOpts.textLimit : '56kb';
+
+  // @todo: next major version, opts.strict support should be removed
+  if (mergedOpts.strict && mergedOpts.parsedMethods) {
+    throw new Error('Cannot use strict and parsedMethods options at the same time.');
+  }
+
+  if ('strict' in mergedOpts) {
+    console.warn('DEPRECATED: opts.strict has been deprecated in favor of opts.parsedMethods.');
+    if (mergedOpts.strict) {
+      mergedOpts.parsedMethods = ['POST', 'PUT', 'PATCH'];
+    } else {
+      mergedOpts.parsedMethods = ['POST', 'PUT', 'PATCH', 'GET', 'HEAD', 'DELETE'];
+    }
+  }
+
+  mergedOpts.parsedMethods = 'parsedMethods' in mergedOpts ? mergedOpts.parsedMethods : ['POST', 'PUT', 'PATCH'];
+  mergedOpts.parsedMethods = mergedOpts.parsedMethods.map(method => method.toUpperCase());
+
+  return function closure(ctx, next) {
+    let bodyPromise;
+    // only parse the body on specifically chosen methods
+    if (mergedOpts.parsedMethods.includes(ctx.method.toUpperCase())) {
+      try {
+        if (mergedOpts.json && ctx.is('json')) {
+          bodyPromise = buddy.json(ctx, {
+            encoding: mergedOpts.encoding,
+            limit: mergedOpts.jsonLimit,
+            strict: mergedOpts.jsonStrict,
+            returnRawBody: mergedOpts.includeUnparsed,
+          });
+        } else if (mergedOpts.urlencoded && ctx.is('urlencoded')) {
+          bodyPromise = buddy.form(ctx, {
+            encoding: mergedOpts.encoding,
+            limit: mergedOpts.formLimit,
+            queryString: mergedOpts.queryString,
+            returnRawBody: mergedOpts.includeUnparsed,
+          });
+        } else if (mergedOpts.text && ctx.is('text')) {
+          bodyPromise = buddy.text(ctx, {
+            encoding: mergedOpts.encoding,
+            limit: mergedOpts.textLimit,
+            returnRawBody: mergedOpts.includeUnparsed,
+          });
+        } else if (mergedOpts.multipart && ctx.is('multipart')) {
+          bodyPromise = formy(ctx, mergedOpts.formidable);
+        }
+      } catch (parsingError) {
+        if (typeof mergedOpts.onError === 'function') {
+          mergedOpts.onError(parsingError, ctx);
+        } else {
+          throw parsingError;
+        }
+      }
+    }
+
+    bodyPromise = bodyPromise || Promise.resolve({});
+    return bodyPromise.catch((parsingError) => {
+      if (typeof mergedOpts.onError === 'function') {
+        mergedOpts.onError(parsingError, ctx);
+      } else {
+        throw parsingError;
+      }
+      return next();
+    })
+      .then((body) => {
+        if (mergedOpts.patchNode) {
+          if (isMultiPart(ctx, mergedOpts)) {
+            ctx.req.body = body.fields;
+            ctx.req.files = body.files;
+          } else if (mergedOpts.includeUnparsed) {
+            ctx.req.body = body.parsed || {};
+            if (!ctx.is('text')) {
+              ctx.req.body[symbolUnparsed] = body.raw;
+            }
+          } else {
+            ctx.req.body = body;
+          }
+        }
+        if (mergedOpts.patchKoa) {
+          if (isMultiPart(ctx, mergedOpts)) {
+            ctx.request.body = body.fields;
+            ctx.request.files = body.files;
+          } else if (mergedOpts.includeUnparsed) {
+            ctx.request.body = body.parsed || {};
+            if (!ctx.is('text')) {
+              ctx.request.body[symbolUnparsed] = body.raw;
+            }
+          } else {
+            ctx.request.body = body;
+          }
+        }
+        return next();
+      });
+  };
+}
+
+/**
+ * Expose `requestbody()`.
+ */
+
+module.exports = requestbody;
