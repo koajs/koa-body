@@ -96,20 +96,6 @@ function requestbody(opts) {
   mergedOpts.includeUnparsed = 'includeUnparsed' in mergedOpts ? mergedOpts.includeUnparsed : false;
   mergedOpts.textLimit = 'textLimit' in mergedOpts ? mergedOpts.textLimit : '56kb';
 
-  // @todo: next major version, opts.strict support should be removed
-  if (mergedOpts.strict && mergedOpts.parsedMethods) {
-    throw new Error('Cannot use strict and parsedMethods options at the same time.');
-  }
-
-  if ('strict' in mergedOpts) {
-    console.warn('DEPRECATED: opts.strict has been deprecated in favor of opts.parsedMethods.');
-    if (mergedOpts.strict) {
-      mergedOpts.parsedMethods = ['POST', 'PUT', 'PATCH'];
-    } else {
-      mergedOpts.parsedMethods = ['POST', 'PUT', 'PATCH', 'GET', 'HEAD', 'DELETE'];
-    }
-  }
-
   mergedOpts.parsedMethods = 'parsedMethods' in mergedOpts ? mergedOpts.parsedMethods : ['POST', 'PUT', 'PATCH'];
   mergedOpts.parsedMethods = mergedOpts.parsedMethods.map(method => method.toUpperCase());
 

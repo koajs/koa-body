@@ -140,17 +140,6 @@ declare namespace koaBody {
         onError?: (err: Error, ctx: Koa.Context) => void;
 
         /**
-         * {Boolean} If enabled, don't parse GET, HEAD, DELETE requests; deprecated.
-         *
-         * GET, HEAD, and DELETE requests have no defined semantics for the request body,
-         * but this doesn't mean they may not be valid in certain use cases.
-         * koa-body is strict by default
-         *
-         * see http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3
-         */
-        strict?: boolean;
-
-        /**
          * {String[]} What HTTP methods to enable body parsing for; should be used in preference to strict mode.
          *
          * GET, HEAD, and DELETE requests have no defined semantics for the request body,
