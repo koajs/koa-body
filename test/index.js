@@ -245,39 +245,6 @@ describe('koa-body', async () => {
     expect(res.text).to.equal('plain text');
   });
 
-  describe('strict mode', async () => {
-    beforeEach(async () => {
-      // push an additional, to test the multi query
-      database.users.push({ name: 'charlike' });
-    });
-
-    it('can enable strict mode', async () => {
-      app.use(koaBody({ strict: true }));
-      app.use(router.routes());
-
-      await request(http.createServer(app.callback()))
-        .delete('/users/charlike')
-        .type('application/x-www-form-urlencoded')
-        .send({ multi: true })
-        .expect(204);
-
-      expect(database.users.find(element => element.name === 'charlike')).to.not.be.a('undefined');
-    });
-
-    it('can disable strict mode', async () => {
-      app.use(koaBody({ strict: false }));
-      app.use(router.routes());
-
-      await request(http.createServer(app.callback()))
-        .delete('/users/charlike')
-        .type('application/x-www-form-urlencoded')
-        .send({ multi: true })
-        .expect(204);
-
-      expect(database.users.find(element => element.name === 'charlike')).to.be.a('undefined');
-    });
-  });
-
   describe('parsedMethods options', async () => {
     beforeEach(async () => {
       // push an additional, to test the multi query
@@ -309,20 +276,6 @@ describe('koa-body', async () => {
 
       expect(database.users.find(element => element.name === 'charlike')).to.not.be.a('undefined');
     });
-
-    it('cannot use strict mode and parsedMethods options at the same time', async () => {
-      let err;
-      try {
-        app.use(koaBody({
-          parsedMethods: ['POST', 'PUT', 'PATCH'],
-          strict: true,
-        }));
-      } catch (_err) {
-        err = _err;
-      }
-
-      expect(err.message).to.equal('Cannot use strict and parsedMethods options at the same time.');
-    });
   });
 
   /**
@@ -330,7 +283,7 @@ describe('koa-body', async () => {
    */
   describe('POST json request body', async () => {
     it('should set the follower count', async () => {
-      app.use(koaBody({ strict: false }));
+      app.use(koaBody());
       app.use(router.routes());
 
       const res = await request(http.createServer(app.callback()))
@@ -349,7 +302,7 @@ describe('koa-body', async () => {
     let response;
 
     beforeEach(async () => {
-      app.use(koaBody({ strict: false }));
+      app.use(koaBody({ parsedMethods: ['POST', 'PUT', 'PATCH', 'GET'] }));
       app.use(router.routes());
       database.users.push({
         name: 'foo',

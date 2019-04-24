@@ -2,6 +2,7 @@
 
 ### Breaking Changes
 - drops support for Node.js 6
+- deprecated `strict` option removed
 
 ### Non-Breaking Changes
 - TODO
