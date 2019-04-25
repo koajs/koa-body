@@ -81,8 +81,6 @@ function formy(ctx, opts) {
 function requestbody(opts) {
   const mergedOpts = opts || {};
   mergedOpts.onError = 'onError' in mergedOpts ? mergedOpts.onError : false;
-  mergedOpts.patchNode = 'patchNode' in mergedOpts ? mergedOpts.patchNode : false;
-  mergedOpts.patchKoa = 'patchKoa' in mergedOpts ? mergedOpts.patchKoa : true;
   mergedOpts.multipart = 'multipart' in mergedOpts ? mergedOpts.multipart : false;
   mergedOpts.urlencoded = 'urlencoded' in mergedOpts ? mergedOpts.urlencoded : true;
   mergedOpts.json = 'json' in mergedOpts ? mergedOpts.json : true;
@@ -146,31 +144,16 @@ function requestbody(opts) {
       return next();
     })
       .then((body) => {
-        if (mergedOpts.patchNode) {
-          if (isMultiPart(ctx, mergedOpts)) {
-            ctx.req.body = body.fields;
-            ctx.req.files = body.files;
-          } else if (mergedOpts.includeUnparsed) {
-            ctx.req.body = body.parsed || {};
-            if (!ctx.is('text')) {
-              ctx.req.body[symbolUnparsed] = body.raw;
-            }
-          } else {
-            ctx.req.body = body;
+        if (isMultiPart(ctx, mergedOpts)) {
+          ctx.request.body = body.fields;
+          ctx.request.files = body.files;
+        } else if (mergedOpts.includeUnparsed) {
+          ctx.request.body = body.parsed || {};
+          if (!ctx.is('text')) {
+            ctx.request.body[symbolUnparsed] = body.raw;
           }
-        }
-        if (mergedOpts.patchKoa) {
-          if (isMultiPart(ctx, mergedOpts)) {
-            ctx.request.body = body.fields;
-            ctx.request.files = body.files;
-          } else if (mergedOpts.includeUnparsed) {
-            ctx.request.body = body.parsed || {};
-            if (!ctx.is('text')) {
-              ctx.request.body[symbolUnparsed] = body.raw;
-            }
-          } else {
-            ctx.request.body = body;
-          }
+        } else {
+          ctx.request.body = body;
         }
         return next();
       });

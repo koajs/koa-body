@@ -55,20 +55,6 @@ declare namespace koaBody {
     }
     interface IKoaBodyOptions {
         /**
-         * {Boolean} Patch request body to Node's ctx.req, default false
-         *
-         * Note: You can patch request body to Node or Koa in same time if you want.
-         */
-        patchNode?: boolean;
-
-        /**
-         * {Boolean} Patch request body to Koa's ctx.request, default true
-         *
-         * Note: You can patch request body to Node or Koa in same time if you want.
-         */
-        patchKoa?: boolean;
-
-        /**
          * {String|Integer} The byte (if integer) limit of the JSON body, default 1mb
          */
         jsonLimit?: string|number;

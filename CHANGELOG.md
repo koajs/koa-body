@@ -3,6 +3,10 @@
 ### Breaking Changes
 - drops support for Node.js 6
 - deprecated `strict` option removed
+- drops `patchNode` option
+  - there is not longer an option to add body to the node `request` object
+- drops `patchKoa` option
+  - body is always added to Koa's `ctx.request` object
 
 ### Non-Breaking Changes
 - TODO
