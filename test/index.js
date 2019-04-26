@@ -280,7 +280,7 @@ describe('koa-body', async () => {
 
   describe('onError option', () => {
     it('onError should not capture errors thrown in downstream middleware', async () => {
-      let koaBodyError
+      let koaBodyError;
       app.use(async (ctx, next) => {
         try {
           await next();
@@ -290,7 +290,7 @@ describe('koa-body', async () => {
       });
       app.use(koaBody({
         onError: (err, ctx) => {
-          koaBodyError = err
+          koaBodyError = err;
         }
       }));
       app.use(async (ctx, next) => {
