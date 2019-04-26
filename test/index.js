@@ -278,6 +278,34 @@ describe('koa-body', async () => {
     });
   });
 
+  describe('onError option', () => {
+    it('onError should not capture errors thrown in downstream middleware', async () => {
+      let koaBodyError
+      app.use(async (ctx, next) => {
+        try {
+          await next();
+        } catch (err) {
+          ctx.status = 201;
+        }
+      });
+      app.use(koaBody({
+        onError: (err, ctx) => {
+          koaBodyError = err
+        }
+      }));
+      app.use(async (ctx, next) => {
+        ctx.status = 200;
+        throw new Error();
+      });
+
+      await request(http.createServer(app.callback()))
+        .get('/test')
+        .expect(201);
+
+      expect(koaBodyError).to.be.undefined;
+    });
+  });
+
   /**
    * JSON request body
    */
