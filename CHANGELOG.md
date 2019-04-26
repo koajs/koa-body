@@ -7,9 +7,12 @@
   - there is not longer an option to add body to the node `request` object
 - drops `patchKoa` option
   - body is always added to Koa's `ctx.request` object
+- `ctx.request.body` is not modified if another body parser has run
+- `ctx.request.body`, if `koa-body` executes, is always defined
+- `onError` option now throws an error if provided something other than a function
 
 ### Non-Breaking Changes
-- TODO
+- internally refactored to use async/await
 
 ## 4.1.0
 - adds `parsedMethods` option to specify which request methods will be parsed

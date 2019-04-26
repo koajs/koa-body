@@ -304,6 +304,20 @@ describe('koa-body', async () => {
 
       expect(koaBodyError).to.be.undefined;
     });
+
+    it('onError should throw when provided something other than a function', () => {
+      let err;
+      try {
+        app.use(koaBody({
+          onError: 10
+        }));
+      } catch (_err) {
+        err = _err;
+      }
+
+      expect(err).to.be.an('Error');
+      expect(err.message).to.equal('opts.onError must be provided a function');
+    });
   });
 
   /**
