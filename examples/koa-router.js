@@ -1,24 +1,31 @@
-'use strict';
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-console */
 
-const log       = console.log;
-const Koa       = require('koa');
-const app       = new Koa();
-const router    = require('koa-router')();
-const koaBody   = require('../index');
-const port      = process.env.PORT || 4290;
-const host      = process.env.HOST || 'http://localhost';
+//
+// This example demonstrates running koa-body with koa-router.
+//
+// To run this example, please be sure to run `npm install`.
+//
+
+const Koa = require('koa');
+
+const app = new Koa();
+const router = require('koa-router')();
+const koaBody = require('../index');
+
+const port = process.env.PORT || 4290;
+const host = process.env.HOST || 'http://localhost';
 
 /*!
  * Accepts only urlencoded and json bodies.
  */
 router.post('/post/users', koaBody(),
   (ctx) => {
-    const body = ctx.request.body;
-    log('body', body);
+    const { body } = ctx.request;
+    console.log('body', body);
     // => POST body object
     ctx.body = JSON.stringify(body, null, 2);
-  }
-);
+  });
 
 /*!
  * Display HTML page with basic form.
@@ -45,14 +52,14 @@ router.post('/post/upload',
   koaBody({
     multipart: true,
     formidable: {
-      uploadDir: __dirname + '/uploads'
-    }
+      uploadDir: `${__dirname}/uploads`,
+    },
   }),
   (ctx) => {
-    const fields = ctx.request.body.fields; // this will be undefined for file uploads
-    const files = ctx.request.files;
-    log('files', JSON.stringify(files, null, 2));
-    /*{
+    const { fields } = ctx.request.body; // this will be undefined for file uploads
+    const { files } = ctx.request;
+    console.log('files', JSON.stringify(files, null, 2));
+    /* {
       "requestFields": null,
       "requestFiles": {
         "source": {
@@ -63,23 +70,22 @@ router.post('/post/upload',
           "mtime": "2018-07-07T14:16:22.576Z"
         }
       }
-    }*/
+    } */
 
     // respond with the fields and files for example purposes
     ctx.body = JSON.stringify({
       requestFields: fields || null,
-      requestFiles: files || null
-    }, null, 2)
-  }
-)
+      requestFiles: files || null,
+    }, null, 2);
+  });
 
 app.use(router.routes());
 app.listen(port);
 
-log('Visit %s:%s/ in browser.', host, port);
-log();
-log('Test with executing this commands:');
-log('curl -i %s:%s/post/users -d "user=admin"', host, port);
-log('curl -i %s:%s/post/upload -F "source=@%s/avatar.png"', host, port, __dirname);
-log();
-log('Press CTRL+C to stop...');
+console.log('Visit %s:%s/ in browser.', host, port);
+console.log();
+console.log('Test with executing this commands:');
+console.log('curl -i %s:%s/post/users -d "user=admin"', host, port);
+console.log('curl -i %s:%s/post/upload -F "source=@%s/avatar.png"', host, port, __dirname);
+console.log();
+console.log('Press CTRL+C to stop...');
