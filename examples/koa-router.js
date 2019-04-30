@@ -56,9 +56,7 @@ router.post('/post/upload',
     },
   }),
   (ctx) => {
-    const { fields } = ctx.request.body; // this will be undefined for file uploads
-    const { files } = ctx.request;
-    console.log('files', JSON.stringify(files, null, 2));
+    console.log('files', JSON.stringify(ctx.request.files, null, 2));
     /* {
       "requestFields": null,
       "requestFiles": {
@@ -74,8 +72,8 @@ router.post('/post/upload',
 
     // respond with the fields and files for example purposes
     ctx.body = JSON.stringify({
-      requestFields: fields || null,
-      requestFiles: files || null,
+      requestFields: ctx.request.body || null,
+      requestFiles: ctx.request.files || null,
     }, null, 2);
   });
 
