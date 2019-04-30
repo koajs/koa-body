@@ -1,17 +1,24 @@
-'use strict';
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-console */
 
-const Koa       = require('koa');
-const app       = new Koa();
-const router    = require('koa-router')();
-const koaBody   = require('../index')({multipart:true});
+//
+// This example demonstrates POSTing multipart form data to a server.
+//
+// To run this example, please be sure to run `npm install`.
+//
+
+const Koa = require('koa');
+
+const app = new Koa();
+const router = require('koa-router')();
+const koaBody = require('../index')({ multipart: true });
 
 router.post('/users', koaBody,
   (ctx) => {
     console.log(ctx.request.body);
     // => POST body
     ctx.body = JSON.stringify(ctx.request.body, null, 2);
-  }
-);
+  });
 
 router.get('/', (ctx) => {
   ctx.set('Content-Type', 'text/html');
@@ -52,8 +59,7 @@ router.post('/', koaBody,
           ]}
     */
     ctx.body = JSON.stringify(ctx.request.body, null, 2);
-  }
-)
+  });
 
 app.use(router.routes());
 
