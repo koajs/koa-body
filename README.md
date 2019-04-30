@@ -96,7 +96,7 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
 - `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encodedand and JSON requests the raw, unparsed requesty body will be attached to `ctx.reqeust.body` using a `Symbol`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
-- `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
+- `onError` **{Function}** Custom error handler. If a function is provided, a custom error can be thrown. By default, koa-body will throw any parse errors.
 - `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`.
 
 ## A note about `parsedMethods`

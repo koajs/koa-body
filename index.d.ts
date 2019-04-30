@@ -121,7 +121,7 @@ declare namespace koaBody {
         formidable?: IKoaBodyFormidableOptions;
 
         /**
-         * {Function} Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
+         * {Function} Custom error handler. If a function is provided, a custom error can be thrown. By default, koa-body will throw any parse errors.
          */
         onError?: (err: Error, ctx: Koa.Context) => void;
 
