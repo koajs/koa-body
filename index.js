@@ -25,7 +25,7 @@ const symbolUnparsed = require('./unparsed.js');
  * @api private
  */
 function formy(ctx, opts) {
-  return new Promise(((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const fields = {};
     const files = {};
     const form = new forms.IncomingForm(opts);
@@ -43,7 +43,8 @@ function formy(ctx, opts) {
         } else {
           fields[field] = value;
         }
-      }).on('file', (field, file) => {
+      })
+      .on('file', (field, file) => {
         if (files[field]) {
           if (!Array.isArray(files[field])) {
             files[field] = [files[field]];
@@ -60,7 +61,7 @@ function formy(ctx, opts) {
     }
 
     form.parse(ctx.req);
-  }));
+  });
 }
 
 /**
