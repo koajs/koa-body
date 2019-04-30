@@ -316,7 +316,7 @@ describe('koa-body', async () => {
       }
 
       expect(err).to.be.an('Error');
-      expect(err.message).to.equal('opts.onError must be provided a function');
+      expect(err.message).to.equal('opts.onError must be a function');
     });
   });
 
