@@ -90,7 +90,7 @@ function requestbody(_opts) {
   opts.parsedMethods = opts.parsedMethods.map(method => method.toUpperCase());
 
   if (typeof opts.onError !== 'function') {
-    throw new Error('opts.onError must be provided a function');
+    throw new Error('opts.onError must be a function');
   }
 
   return async function closure(ctx, next) {
