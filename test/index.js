@@ -289,11 +289,11 @@ describe('koa-body', async () => {
         }
       });
       app.use(koaBody({
-        onError: (err, ctx) => {
+        onError: (err) => {
           koaBodyError = err;
-        }
+        },
       }));
-      app.use(async (ctx, next) => {
+      app.use(async (ctx) => {
         ctx.status = 200;
         throw new Error();
       });
@@ -302,14 +302,14 @@ describe('koa-body', async () => {
         .get('/test')
         .expect(201);
 
-      expect(koaBodyError).to.be.undefined;
+      expect(koaBodyError).to.be.an('undefined');
     });
 
     it('onError should throw when provided something other than a function', () => {
       let err;
       try {
         app.use(koaBody({
-          onError: 10
+          onError: 10,
         }));
       } catch (_err) {
         err = _err;
