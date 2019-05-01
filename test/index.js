@@ -278,48 +278,6 @@ describe('koa-body', async () => {
     });
   });
 
-  describe('onError option', () => {
-    it('onError should not capture errors thrown in downstream middleware', async () => {
-      let koaBodyError;
-      app.use(async (ctx, next) => {
-        try {
-          await next();
-        } catch (err) {
-          ctx.status = 201;
-        }
-      });
-      app.use(koaBody({
-        onError: (err) => {
-          koaBodyError = err;
-        },
-      }));
-      app.use(async (ctx) => {
-        ctx.status = 200;
-        throw new Error();
-      });
-
-      await request(http.createServer(app.callback()))
-        .get('/test')
-        .expect(201);
-
-      expect(koaBodyError).to.be.an('undefined');
-    });
-
-    it('onError should throw when provided something other than a function', () => {
-      let err;
-      try {
-        app.use(koaBody({
-          onError: 10,
-        }));
-      } catch (_err) {
-        err = _err;
-      }
-
-      expect(err).to.be.an('Error');
-      expect(err.message).to.equal('opts.onError must be a function');
-    });
-  });
-
   /**
    * JSON request body
    */
