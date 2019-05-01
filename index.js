@@ -140,7 +140,6 @@ function requestbody(_opts) {
 
       if (opts.includeUnparsed) {
         ctx.request.body = body.parsed || {};
-        ctx.request.body[symbolUnparsed] = body.raw;
       } else {
         ctx.request.body = body;
       }
