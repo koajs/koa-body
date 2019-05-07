@@ -4,12 +4,12 @@
 - drops support for Node.js 6
 - deprecated `strict` option removed
 - drops `patchNode` option
-  - there is no longer an option to add body to the node `request` object
+  - there is not longer an option to add body to the node `request` object
 - drops `patchKoa` option
   - body is always added to Koa's `ctx.request` object
 - `ctx.request.body` is not modified if another body parser has run
 - `ctx.request.body`, if `koa-body` executes, is always defined
-- drops support for the `onError` option; if you want to handle presentation of parsing errors, you must use a middleware loaded before `koa-body`.
+- `onError` option now throws an error if provided something other than a function
 
 ### Non-Breaking Changes
 - internally refactored to use async/await

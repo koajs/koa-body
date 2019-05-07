@@ -73,6 +73,7 @@ function formy(ctx, opts) {
 function requestbody(_opts) {
   const opts = _opts || {};
 
+  opts.onError = 'onError' in opts ? opts.onError : ((err) => { throw err; });
   opts.multipart = 'multipart' in opts ? opts.multipart : false;
   opts.urlencoded = 'urlencoded' in opts ? opts.urlencoded : true;
   opts.json = 'json' in opts ? opts.json : true;
@@ -89,6 +90,10 @@ function requestbody(_opts) {
   opts.parsedMethods = 'parsedMethods' in opts ? opts.parsedMethods : ['POST', 'PUT', 'PATCH'];
   opts.parsedMethods = opts.parsedMethods.map(method => method.toUpperCase());
 
+  if (typeof opts.onError !== 'function') {
+    throw new Error('opts.onError must be a function');
+  }
+
   return async function closure(ctx, next) {
     // bail out if the request body has already been handled by another body parser
     if (ctx.request.body !== undefined) {
@@ -103,51 +108,63 @@ function requestbody(_opts) {
       return next();
     }
 
-    if (opts.json && ctx.is('json')) {
-      const body = await buddy.json(ctx, {
-        encoding: opts.encoding,
-        limit: opts.jsonLimit,
-        strict: opts.jsonStrict,
-        returnRawBody: opts.includeUnparsed,
-      });
+    try {
+      if (opts.json && ctx.is('json')) {
+        const body = await buddy.json(ctx, {
+          encoding: opts.encoding,
+          limit: opts.jsonLimit,
+          strict: opts.jsonStrict,
+          returnRawBody: opts.includeUnparsed,
+        });
 
+        if (opts.includeUnparsed) {
+          ctx.request.body = body.parsed || {};
+          ctx.request.body[symbolUnparsed] = body.raw;
+        } else {
+          ctx.request.body = body;
+        }
+      } else if (opts.urlencoded && ctx.is('urlencoded')) {
+        const body = await buddy.form(ctx, {
+          encoding: opts.encoding,
+          limit: opts.formLimit,
+          queryString: opts.queryString,
+          returnRawBody: opts.includeUnparsed,
+        });
+
+        if (opts.includeUnparsed) {
+          ctx.request.body = body.parsed || {};
+          ctx.request.body[symbolUnparsed] = body.raw;
+        } else {
+          ctx.request.body = body;
+        }
+      } else if (opts.text && ctx.is('text')) {
+        const body = await buddy.text(ctx, {
+          encoding: opts.encoding,
+          limit: opts.textLimit,
+          returnRawBody: opts.includeUnparsed,
+        });
+
+        if (opts.includeUnparsed) {
+          ctx.request.body = body.parsed || {};
+          ctx.request.body[symbolUnparsed] = body.raw;
+        } else {
+          ctx.request.body = body;
+        }
+      } else if (opts.multipart && ctx.is('multipart')) {
+        const body = await formy(ctx, opts.formidable);
+
+<<<<<<< HEAD
       if (opts.includeUnparsed) {
         ctx.request.body = body.parsed || {};
-        ctx.request.body[symbolUnparsed] = body.raw;
       } else {
         ctx.request.body = body;
+=======
+        ctx.request.body = body.fields;
+        ctx.request.files = body.files;
+>>>>>>> parent of 1b91816... Remove support for "onError" option.
       }
-    } else if (opts.urlencoded && ctx.is('urlencoded')) {
-      const body = await buddy.form(ctx, {
-        encoding: opts.encoding,
-        limit: opts.formLimit,
-        queryString: opts.queryString,
-        returnRawBody: opts.includeUnparsed,
-      });
-
-      if (opts.includeUnparsed) {
-        ctx.request.body = body.parsed || {};
-        ctx.request.body[symbolUnparsed] = body.raw;
-      } else {
-        ctx.request.body = body;
-      }
-    } else if (opts.text && ctx.is('text')) {
-      const body = await buddy.text(ctx, {
-        encoding: opts.encoding,
-        limit: opts.textLimit,
-        returnRawBody: opts.includeUnparsed,
-      });
-
-      if (opts.includeUnparsed) {
-        ctx.request.body = body.parsed || {};
-      } else {
-        ctx.request.body = body;
-      }
-    } else if (opts.multipart && ctx.is('multipart')) {
-      const body = await formy(ctx, opts.formidable);
-
-      ctx.request.body = body.fields;
-      ctx.request.files = body.files;
+    } catch (err) {
+      opts.onError(err, ctx);
     }
 
     return next();

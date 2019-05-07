@@ -121,6 +121,11 @@ declare namespace koaBody {
         formidable?: IKoaBodyFormidableOptions;
 
         /**
+         * {Function} Custom error handler. If a function is provided, a custom error can be thrown. By default, koa-body will throw any parse errors.
+         */
+        onError?: (err: Error, ctx: Koa.Context) => void;
+
+        /**
          * {String[]} What HTTP methods to enable body parsing for; should be used in preference to strict mode.
          *
          * GET, HEAD, and DELETE requests have no defined semantics for the request body,
