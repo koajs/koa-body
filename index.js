@@ -47,6 +47,7 @@ function requestbody(opts) {
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
   opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
+  opts.cspReportJson = 'cspReportJson' in opts ? opts.cspReportJson : false;
 
   // @todo: next major version, opts.strict support should be removed
   if (opts.strict && opts.parsedMethods) {
@@ -70,7 +71,15 @@ function requestbody(opts) {
     // only parse the body on specifically chosen methods
     if (opts.parsedMethods.includes(ctx.method.toUpperCase())) {
       try {
-        if (opts.json && ctx.is('json')) {
+        var isJson = opts.json &&
+        (
+          ctx.is('json') ||
+          (
+            opts.cspReportJson &&
+            ctx.is('application/csp-report')
+          )
+        );
+        if (isJson) {
           bodyPromise = buddy.json(ctx, {
             encoding: opts.encoding,
             limit: opts.jsonLimit,

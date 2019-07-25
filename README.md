@@ -101,6 +101,7 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `strict` **{Boolean}** ***DEPRECATED*** If enabled, don't parse GET, HEAD, DELETE requests, default `true`
 - `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`. Replaces `strict` option.
+- `cspReportJson` **{Boolean}** Parses `application/csp-report` like json, default `false`
 
 ## A note about `parsedMethods`
 > see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
