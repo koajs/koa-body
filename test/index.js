@@ -525,7 +525,6 @@ describe('koa-body', () => {
     it('should set the follower count',  (done) => {
       app.use(koaBody({ strict: false }));
       app.use(router.routes());
-      let response = null;
 
       request(http.createServer(app.callback()))
         .post('/users')
@@ -536,10 +535,8 @@ describe('koa-body', () => {
         })
         .expect(201)
         .end((err, res) => {
-          const mostRecentUser = database.users[database.users.length - 1];
           res.body.user.should.have.properties({ followers: "313", name: "json" });
-
-        done(err);
+          done(err);
         });
     });
   });
@@ -574,6 +571,56 @@ describe('koa-body', () => {
       response.body.followers.should.equal(111);
     });
   });
+
+  describe('JSON media types', () => {
+    const types = [
+      'application/json',
+      'application/json-patch+json',
+      'application/vnd.api+json',
+
+      // NOTE: application/csp-report is not supported by superagent
+      // See https://github.com/visionmedia/superagent/issues/1482
+      //'application/csp-report'
+    ]
+
+    for (const type of types) {
+      it(`should decode body as JSON object for type ${type}`, (done) => {
+        app.use(koaBody());
+        app.use(router.routes());
+
+        request(http.createServer(app.callback()))
+          .post('/echo_body')
+          .type(type)
+          .send({
+            a: 'foo',
+            b: [42]
+          })
+          .expect(200, {
+            a: 'foo',
+            b: [42]
+          }, done);
+      })
+    }
+
+    for (const type of types) {
+      it(`should decode body as JSON array for type ${type}`, (done) => {
+        app.use(koaBody());
+        app.use(router.routes());
+
+        request(http.createServer(app.callback()))
+          .post('/echo_body')
+          .type(type)
+          .send([{
+            a: 'foo',
+            b: [42]
+          }])
+          .expect(200, [{
+            a: 'foo',
+            b: [42]
+          }], done);
+      })
+    }
+  })
 
   const ERR_413_STATUSTEXT = 'request entity too large';
 

@@ -15,6 +15,9 @@ npm install koa-body
   * **multipart/form-data**
   * **application/x-www-urlencoded**
   * **application/json**
+  * **application/json-patch+json**
+  * **application/vnd.api+json**
+  * **application/csp-report**
 - option for patch to Koa or Node, or either
 - file uploads
 - body, fields and files size limiting
