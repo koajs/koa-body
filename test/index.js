@@ -618,9 +618,9 @@ describe('koa-body', () => {
             a: 'foo',
             b: [42]
           }], done);
-      })
+      });
     }
-  })
+  });
 
   const ERR_413_STATUSTEXT = 'request entity too large';
 
