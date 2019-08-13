@@ -1,3 +1,9 @@
+## 4.1.1
+- adds support for JSON Patch, JSON API and CSP report out of the box:
+  - application/json-patch+json (https://tools.ietf.org/html/rfc6902)
+  - application/vnd.api+json (https://jsonapi.org/)
+  - application/csp-report (https://www.w3.org/TR/CSP2/#violation-reports)
+
 ## 4.1.0
 - adds `parsedMethods` option to specify which request methods will be parsed
 - deprecates `strict` option, which will be removed in koa-body 5.0.0
