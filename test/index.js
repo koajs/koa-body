@@ -580,8 +580,8 @@ describe('koa-body', () => {
 
       // NOTE: application/csp-report is not supported by superagent
       // See https://github.com/visionmedia/superagent/issues/1482
-      //'application/csp-report'
-    ]
+      // 'application/csp-report'
+    ];
 
     for (const type of types) {
       it(`should decode body as JSON object for type ${type}`, (done) => {
@@ -599,7 +599,7 @@ describe('koa-body', () => {
             a: 'foo',
             b: [42]
           }, done);
-      })
+      });
     }
 
     for (const type of types) {
