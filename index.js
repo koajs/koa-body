@@ -24,6 +24,13 @@ const symbolUnparsed = require('./unparsed.js');
 
 module.exports = requestbody;
 
+const jsonTypes = [
+  'application/json',
+  'application/json-patch+json',
+  'application/vnd.api+json',
+  'application/csp-report'
+];
+
 /**
  *
  * @param {Object} options
@@ -70,7 +77,7 @@ function requestbody(opts) {
     // only parse the body on specifically chosen methods
     if (opts.parsedMethods.includes(ctx.method.toUpperCase())) {
       try {
-        if (opts.json && ctx.is('json')) {
+        if (opts.json && ctx.is(jsonTypes)) {
           bodyPromise = buddy.json(ctx, {
             encoding: opts.encoding,
             limit: opts.jsonLimit,
