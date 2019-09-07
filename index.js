@@ -206,6 +206,28 @@ function formy(ctx, opts) {
     if (opts.onFileBegin) {
       form.on('fileBegin', opts.onFileBegin);
     }
+
+    if (opts.onFormidableFileBegin) {
+      form.on('fileBegin', opts.onFormidableFileBegin);
+    }
+    if (opts.onFormidableProgress) {
+      form.on('progress', opts.onFormidableProgress);
+    }
+    if (opts.onFormidableField) {
+      form.on('field', opts.onFormidableProgress);
+    }
+    if (opts.onFormidableFile) {
+      form.on('file', opts.onFormidableFile);
+    }
+    if (opts.onFormidableError) {
+      form.on('error', opts.onFormidableError);
+    }
+    if (opts.onFormidableAborted) {
+      form.on('aborted', opts.onFormidableAborted);
+    }
+    if (opts.onFormidableEnd) {
+      form.on('end', opts.onFormidableEnd);
+    }
     form.parse(ctx.req);
   });
 }
