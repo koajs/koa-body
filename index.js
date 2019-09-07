@@ -206,7 +206,6 @@ function formy(ctx, opts) {
     if (opts.onFileBegin) {
       form.on('fileBegin', opts.onFileBegin);
     }
-
     if (opts.onFormidableFileBegin) {
       form.on('fileBegin', opts.onFormidableFileBegin);
     }
