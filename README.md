@@ -110,6 +110,9 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `GET`, `HEAD`, and `DELETE` requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
 - koa-body is strict by default, parsing only `POST`, `PUT`, and `PATCH` requests
 
+## File Support
+Uploaded files are accessible via `ctx.request.files`.
+
 ## A note about unparsed request bodies
 Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
 
