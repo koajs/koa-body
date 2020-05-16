@@ -1,8 +1,8 @@
 import * as Koa from "koa";
 import { Files } from 'formidable';
 
-declare module koa {
-    interface Request extends Koa.BaseRequest {
+declare module "koa" {
+    interface Request {
         body?: any;
         files?: Files;
     }
@@ -163,6 +163,6 @@ declare namespace koaBody {
     }
 }
 
-declare function koaBody (options?: koaBody.IKoaBodyOptions): Koa.Middleware<{}, {}>;
+declare function koaBody (options?: koaBody.IKoaBodyOptions): Koa.Middleware;
 
 export = koaBody;
