@@ -5,7 +5,7 @@
   "main": "index.js",
   "types": "./index.d.ts",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha test/unit/",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
