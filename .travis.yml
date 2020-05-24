@@ -6,8 +6,7 @@ node_js:
 
 jobs:
   include:
-    - stage: unit test
-      script: npm t
+    # note that unit tests are run on the Node.js versions specified above
     - stage: TS integration test
       script: |
         npm pack
