@@ -1,3 +1,13 @@
+## Unreleased
+- adds TypeScript integration testing
+- removes testing against EOL Node.js verions
+
+## 4.1.3
+- reverted changes: 4.1.3 is effectively the same as 4.1.1
+
+## 4.1.2
+- bad TypeScript definition file change (#173)
+
 ## 4.1.1
 - adds support for JSON Patch, JSON API and CSP report out of the box:
   - application/json-patch+json (https://tools.ietf.org/html/rfc6902)

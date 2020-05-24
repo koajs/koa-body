@@ -1,7 +1,16 @@
 language: node_js
 node_js:
-  - "6"
-  - "8"
   - "10"
   - "12"
   - "14"
+
+jobs:
+  include:
+    - stage: unit test
+      script: npm t
+    - stage: TS integration test
+      script: |
+        npm pack
+        cd test/ts-module-integration
+        npm install
+        npm run build

@@ -12,7 +12,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const http = require('http');
-const koaBody = require('../index');
+const koaBody = require('../../index.js');
 const path = require('path');
 const request = require('supertest');
 const should = require('should');
@@ -20,7 +20,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const sinon = require('sinon');
 
-const unparsed = require('../unparsed.js');
+const unparsed = require('../../unparsed.js');
 
 describe('koa-body', () => {
   let database;
