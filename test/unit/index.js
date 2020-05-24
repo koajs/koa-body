@@ -169,7 +169,7 @@ describe('koa-body', () => {
         res.body.user.names[1].should.equal('Paul');
         res.body._files.firstField.should.be.an.Object();
         res.body._files.firstField.name.should.equal('package.json');
-        should(fs.statSync(res.body._files.firstField.path)).be.ok;
+        should(fs.statSync(res.body._files.firstField.path)).be.ok();
         fs.unlinkSync(res.body._files.firstField.path);
 
         res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
@@ -179,8 +179,8 @@ describe('koa-body', () => {
         res.body._files.secondField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body._files.secondField[0].path)).be.ok;
-        should(fs.statSync(res.body._files.secondField[1].path)).be.ok;
+        should(fs.statSync(res.body._files.secondField[0].path)).be.ok();
+        should(fs.statSync(res.body._files.secondField[1].path)).be.ok();
         fs.unlinkSync(res.body._files.secondField[0].path);
         fs.unlinkSync(res.body._files.secondField[1].path);
 
@@ -195,11 +195,11 @@ describe('koa-body', () => {
         res.body._files.thirdField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok;
+        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok();
         fs.unlinkSync(res.body._files.thirdField[0].path);
-        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok;
+        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok();
         fs.unlinkSync(res.body._files.thirdField[1].path);
-        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok;
+        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok();
         fs.unlinkSync(res.body._files.thirdField[2].path);
 
         done();
