@@ -145,7 +145,7 @@ describe('koa-body', () => {
     app.use(koaBody({
       multipart: true,
       formidable: {
-        uploadDir: __dirname + '/temp'
+        uploadDir: '/tmp'
       }
     }));
     app.use(router.routes());
@@ -210,7 +210,7 @@ describe('koa-body', () => {
     app.use(koaBody({
       multipart: true,
       formidable: {
-        uploadDir: __dirname + '/temp',
+        uploadDir: '/tmp',
         onFileBegin:  (name, file) => {
           file.name = 'backage.json'
           const folder = path.dirname(file.path);
@@ -223,8 +223,6 @@ describe('koa-body', () => {
     request(http.createServer(app.callback()))
       .post('/users')
       .type('multipart/form-data')
-      .field('names', 'John')
-      .field('names', 'Paul')
       .attach('firstField', 'package.json')
       .expect(201)
       .end( (err, res) => {
