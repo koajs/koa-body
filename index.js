@@ -91,7 +91,7 @@ function requestbody(opts) {
             queryString: opts.queryString,
             returnRawBody: opts.includeUnparsed
           });
-        } else if (opts.text && ctx.is('text')) {
+        } else if (opts.text && ctx.is('text/*')) {
           bodyPromise = buddy.text(ctx, {
             encoding: opts.encoding,
             limit: opts.textLimit,
