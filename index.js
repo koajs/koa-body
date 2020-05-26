@@ -125,7 +125,7 @@ function requestbody(opts) {
           ctx.req.files = body.files;
         } else if (opts.includeUnparsed) {
           ctx.req.body = body.parsed || {};
-          if (! ctx.is('text')) {
+          if (! ctx.is('text/*')) {
             ctx.req.body[symbolUnparsed] = body.raw;
           }
         } else {
