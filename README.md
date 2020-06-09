@@ -11,13 +11,14 @@ npm install koa-body
 ```
 
 ## Features
-- can handle three type requests
+- can handle requests such as:
   * **multipart/form-data**
   * **application/x-www-urlencoded**
   * **application/json**
   * **application/json-patch+json**
   * **application/vnd.api+json**
   * **application/csp-report**
+  * **text/xml**
 - option for patch to Koa or Node, or either
 - file uploads
 - body, fields and files size limiting
@@ -96,8 +97,8 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
 - `multipart` **{Boolean}** Parse multipart bodies, default `false`
 - `urlencoded` **{Boolean}** Parse urlencoded bodies, default `true`
-- `text` **{Boolean}** Parse text bodies, default `true`
-- `json` **{Boolean}** Parse json bodies, default `true`
+- `text` **{Boolean}** Parse text bodies, such as XML, default `true`
+- `json` **{Boolean}** Parse JSON bodies, default `true`
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
 - `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encodedand and JSON requests the raw, unparsed requesty body will be attached to `ctx.request.body` using a `Symbol`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
