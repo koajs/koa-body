@@ -84,6 +84,41 @@ app.listen(3000);
 console.log('curl -i http://localhost:3000/users -d "name=test"');
 ```
 
+## Usage with unsupported text body type
+> for unsupported text body type for example `text/xml`. Raw and unparsed request body can be found at `ctx.request.body`, no `includeUnparsed` setting required
+
+index.js:
+```js
+const Koa = require('koa');
+const koaBody = require('koa-body');
+const convert = require('xml-js');
+
+const app = new Koa();
+
+app.use(koaBody());
+app.use(ctx => {
+  const obj = convert.xml2js(ctx.request.body)
+  ctx.body = `Request Body: ${JSON.stringify(obj)}`;
+});
+
+app.listen(3000);
+```
+
+```sh
+node index.js
+curl -i http://localhost:3000/users -H "Content-Type: text/xml" -d '<?xml version="1.0"?><catalog id="1"></catalog>'
+```
+
+Output:
+```text
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Content-Length: 135
+Date: Tue, 09 Jun 2020 11:17:38 GMT
+Connection: keep-alive
+
+Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type":"element","name":"catalog","attributes":{"id":"1"}}]}%
+```
 
 ## Options
 > Options available for `koa-body`. Four custom options, and others are from `raw-body` and `formidable`.
