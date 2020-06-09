@@ -404,7 +404,7 @@ describe('koa-body', () => {
   /**
    * TEXT request body
    */
-  it('should recieve `text` request bodies',  (done) => {
+  it('should recieve `text` request bodies', (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -423,18 +423,17 @@ describe('koa-body', () => {
       });
   });
 
-  it('should recieve any `text` request bodies',  (done) => {
+  it('should recieve xml with `text` request bodies', (done) => {
     app.use(koaBody({ text: true, includeUnparsed: true }));
     app.use(router.routes());
-    const type = 'text/xml';
-	const body = '<?xml version="1.0"?><catalog></catalog>';
+    const body = '<?xml version="1.0"?><catalog></catalog>';
 
     const echoRouterLayer = router.stack.filter(layer => layer.path === "/echo_body");
     const requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
 
     request(http.createServer(app.callback()))
       .post('/echo_body')
-      .type(type)
+      .type('text/xml')
       .send(body)
       .expect(200)
       .end( (err, res) => {
