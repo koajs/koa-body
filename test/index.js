@@ -423,7 +423,7 @@ describe('koa-body', () => {
       });
   });
 
-  it('should recieve xml with `text` request bodies', (done) => {
+  it('should recieve raw XML with `text` request bodies', (done) => {
     app.use(koaBody({ text: true, includeUnparsed: true }));
     app.use(router.routes());
     const body = '<?xml version="1.0"?><catalog></catalog>';
