@@ -1,5 +1,9 @@
 ## Unreleased
-- adds TypeScript integration testing
+
+
+## 4.2.0
+- support all text content types (#179)
+- adds TypeScript integration testing (#177)
 - removes testing against EOL Node.js verions
 
 ## 4.1.3
