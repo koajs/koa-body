@@ -7,6 +7,8 @@ node_js:
 jobs:
   include:
     # note that unit tests are run on the Node.js versions specified above
+
+    # packages koa-body and installs it in the integration project as a dependency
     - stage: TS integration test
       script: |
         npm pack
