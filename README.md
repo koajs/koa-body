@@ -11,13 +11,14 @@ npm install koa-body
 ```
 
 ## Features
-- can handle three type requests
+- can handle requests such as:
   * **multipart/form-data**
   * **application/x-www-urlencoded**
   * **application/json**
   * **application/json-patch+json**
   * **application/vnd.api+json**
   * **application/csp-report**
+  * **text/xml**
 - option for patch to Koa or Node, or either
 - file uploads
 - body, fields and files size limiting
@@ -62,7 +63,7 @@ Request Body: {"name":"test"}%
 **For a more comprehensive example, see** `examples/multipart.js`
 
 ## Usage with [koa-router](https://github.com/alexmingoia/koa-router)
-> It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
+It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
 
 ```js
 const Koa = require('koa');
@@ -84,6 +85,41 @@ app.listen(3000);
 console.log('curl -i http://localhost:3000/users -d "name=test"');
 ```
 
+## Usage with unsupported text body type
+For unsupported text body type, for example, `text/xml`, you can use the unparsed request body at `ctx.request.body`. For the text content type, the `includeUnparsed` setting is not required.
+
+```js
+// xml-parse.js:
+const Koa = require('koa');
+const koaBody = require('koa-body');
+const convert = require('xml-js');
+
+const app = new Koa();
+
+app.use(koaBody());
+app.use(ctx => {
+  const obj = convert.xml2js(ctx.request.body)
+  ctx.body = `Request Body: ${JSON.stringify(obj)}`;
+});
+
+app.listen(3000);
+```
+
+```sh
+node xml-parse.js
+curl -i http://localhost:3000/users -H "Content-Type: text/xml" -d '<?xml version="1.0"?><catalog id="1"></catalog>'
+```
+
+Output:
+```text
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Content-Length: 135
+Date: Tue, 09 Jun 2020 11:17:38 GMT
+Connection: keep-alive
+
+Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type":"element","name":"catalog","attributes":{"id":"1"}}]}%
+```
 
 ## Options
 > Options available for `koa-body`. Four custom options, and others are from `raw-body` and `formidable`.
@@ -96,8 +132,8 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 - `encoding` **{String}** Sets encoding for incoming form fields, default `utf-8`
 - `multipart` **{Boolean}** Parse multipart bodies, default `false`
 - `urlencoded` **{Boolean}** Parse urlencoded bodies, default `true`
-- `text` **{Boolean}** Parse text bodies, default `true`
-- `json` **{Boolean}** Parse json bodies, default `true`
+- `text` **{Boolean}** Parse text bodies, such as XML, default `true`
+- `json` **{Boolean}** Parse JSON bodies, default `true`
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
 - `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encodedand and JSON requests the raw, unparsed requesty body will be attached to `ctx.request.body` using a `Symbol`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
