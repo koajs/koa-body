@@ -63,7 +63,7 @@ Request Body: {"name":"test"}%
 **For a more comprehensive example, see** `examples/multipart.js`
 
 ## Usage with [koa-router](https://github.com/alexmingoia/koa-router)
-> It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
+It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
 
 ```js
 const Koa = require('koa');
