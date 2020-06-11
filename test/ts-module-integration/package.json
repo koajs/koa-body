@@ -1,0 +1,21 @@
+{
+    "name": "ts-koa-body-test",
+    "private": true,
+    "version": "0.0.0",
+    "description": "koa-body TS integration test",
+    "main": "dist/lib/index.js",
+    "module": "dist/lib/index.js",
+    "types": "dist/types/index.d.ts",
+    "scripts": {
+        "build": "tsc --module commonjs"
+    },
+    "dependencies": {
+        "@types/koa": "^2.11.3",
+        "@types/node": "^11.15.10",
+        "koa": "^2.12.0",
+        "koa-body": "../../"
+    },
+    "devDependencies": {
+        "typescript": "^3.8.3"
+    }
+}

@@ -1,3 +1,7 @@
+## Unreleased
+- adds TypeScript integration testing
+- removes testing against EOL Node.js verions
+
 ## 4.1.3
 Reverted changes introduced in 4.1.2. Now 4.1.3 is effectively the same as 4.1.1.
 

@@ -12,7 +12,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const http = require('http');
-const koaBody = require('../index');
+const koaBody = require('../../index.js');
 const path = require('path');
 const request = require('supertest');
 const should = require('should');
@@ -20,7 +20,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const sinon = require('sinon');
 
-const unparsed = require('../unparsed.js');
+const unparsed = require('../../unparsed.js');
 
 describe('koa-body', () => {
   let database;
@@ -145,7 +145,7 @@ describe('koa-body', () => {
     app.use(koaBody({
       multipart: true,
       formidable: {
-        uploadDir: __dirname + '/temp'
+        uploadDir: '/tmp'
       }
     }));
     app.use(router.routes());
@@ -169,7 +169,7 @@ describe('koa-body', () => {
         res.body.user.names[1].should.equal('Paul');
         res.body._files.firstField.should.be.an.Object();
         res.body._files.firstField.name.should.equal('package.json');
-        should(fs.statSync(res.body._files.firstField.path)).be.ok;
+        should(fs.statSync(res.body._files.firstField.path)).be.ok();
         fs.unlinkSync(res.body._files.firstField.path);
 
         res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
@@ -179,8 +179,8 @@ describe('koa-body', () => {
         res.body._files.secondField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body._files.secondField[0].path)).be.ok;
-        should(fs.statSync(res.body._files.secondField[1].path)).be.ok;
+        should(fs.statSync(res.body._files.secondField[0].path)).be.ok();
+        should(fs.statSync(res.body._files.secondField[1].path)).be.ok();
         fs.unlinkSync(res.body._files.secondField[0].path);
         fs.unlinkSync(res.body._files.secondField[1].path);
 
@@ -195,11 +195,11 @@ describe('koa-body', () => {
         res.body._files.thirdField.should.containDeep([{
           name: 'package.json'
         }]);
-        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok;
+        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok();
         fs.unlinkSync(res.body._files.thirdField[0].path);
-        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok;
+        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok();
         fs.unlinkSync(res.body._files.thirdField[1].path);
-        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok;
+        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok();
         fs.unlinkSync(res.body._files.thirdField[2].path);
 
         done();
@@ -210,7 +210,7 @@ describe('koa-body', () => {
     app.use(koaBody({
       multipart: true,
       formidable: {
-        uploadDir: __dirname + '/temp',
+        uploadDir: '/tmp',
         onFileBegin:  (name, file) => {
           file.name = 'backage.json'
           const folder = path.dirname(file.path);
@@ -223,8 +223,6 @@ describe('koa-body', () => {
     request(http.createServer(app.callback()))
       .post('/users')
       .type('multipart/form-data')
-      .field('names', 'John')
-      .field('names', 'Paul')
       .attach('firstField', 'package.json')
       .expect(201)
       .end( (err, res) => {
