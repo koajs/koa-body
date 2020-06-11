@@ -86,10 +86,10 @@ console.log('curl -i http://localhost:3000/users -d "name=test"');
 ```
 
 ## Usage with unsupported text body type
-> for unsupported text body type for example `text/xml`. Raw and unparsed request body can be found at `ctx.request.body`, no `includeUnparsed` setting required
+For unsupported text body type, for example, `text/xml`, you can use the unparsed request body at `ctx.request.body`. For the text content type, the `includeUnparsed` setting is not required.
 
-index.js:
 ```js
+// xml-parse.js:
 const Koa = require('koa');
 const koaBody = require('koa-body');
 const convert = require('xml-js');
@@ -106,7 +106,7 @@ app.listen(3000);
 ```
 
 ```sh
-node index.js
+node xml-parse.js
 curl -i http://localhost:3000/users -H "Content-Type: text/xml" -d '<?xml version="1.0"?><catalog id="1"></catalog>'
 ```
 
