@@ -402,7 +402,7 @@ describe('koa-body', () => {
   /**
    * TEXT request body
    */
-  it('should recieve `text` request bodies',  (done) => {
+  it('should recieve `text` request bodies', (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -416,6 +416,32 @@ describe('koa-body', () => {
 
         res.type.should.equal('text/plain');
         res.text.should.equal('plain text');
+
+        done();
+      });
+  });
+
+  it('should recieve raw XML with `text` request bodies', (done) => {
+    app.use(koaBody({ text: true, includeUnparsed: true }));
+    app.use(router.routes());
+    const body = '<?xml version="1.0"?><catalog></catalog>';
+
+    const echoRouterLayer = router.stack.filter(layer => layer.path === "/echo_body");
+    const requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
+
+    request(http.createServer(app.callback()))
+      .post('/echo_body')
+      .type('text/xml')
+      .send(body)
+      .expect(200)
+      .end( (err, res) => {
+        if (err) return done(err);
+
+        assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
+        const req = requestSpy.firstCall.args[0].request;
+        assert.equal(req.body[unparsed], undefined);
+        req.body.should.equal(body);
+        res.text.should.equal(body);
 
         done();
       });

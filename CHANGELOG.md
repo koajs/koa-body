@@ -3,10 +3,10 @@
 - removes testing against EOL Node.js verions
 
 ## 4.1.3
-- reverted changes: 4.1.3 is effectively the same as 4.1.1
+Reverted changes introduced in 4.1.2. Now 4.1.3 is effectively the same as 4.1.1.
 
 ## 4.1.2
-- bad TypeScript definition file change (#173)
+Bad TypeScript definition file change (#173). Do not use this version.
 
 ## 4.1.1
 - adds support for JSON Patch, JSON API and CSP report out of the box:
