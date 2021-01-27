@@ -40,6 +40,9 @@
     "co-body": "^5.1.1",
     "formidable": "^1.1.1"
   },
+  "peerDependencies": {
+    "koa": "2.x.x"
+  },
   "devDependencies": {
     "@types/koa": "^2.0.39",
     "koa": "^2.0.0",
