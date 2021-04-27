@@ -110,7 +110,7 @@ function requestbody(opts) {
     }
 
     bodyPromise = bodyPromise || Promise.resolve({});
-    return bodyPromise.catch(function(parsingError) {
+    return bodyPromise.catch(function (parsingError) {
       if (typeof opts.onError === 'function') {
         opts.onError(parsingError, ctx);
       } else {
@@ -118,35 +118,35 @@ function requestbody(opts) {
       }
       return next();
     })
-    .then(function(body) {
-      if (opts.patchNode) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.req.body = body.fields;
-          ctx.req.files = body.files;
-        } else if (opts.includeUnparsed) {
-          ctx.req.body = body.parsed || {};
-          if (! ctx.is('text/*')) {
-            ctx.req.body[symbolUnparsed] = body.raw;
+      .then(function (body) {
+        if (opts.patchNode) {
+          if (isMultiPart(ctx, opts)) {
+            ctx.req.body = body.fields;
+            ctx.req.files = body.files;
+          } else if (opts.includeUnparsed) {
+            ctx.req.body = body.parsed || {};
+            if (!ctx.is('text/*')) {
+              ctx.req.body[symbolUnparsed] = body.raw;
+            }
+          } else {
+            ctx.req.body = body;
           }
-        } else {
-          ctx.req.body = body;
         }
-      }
-      if (opts.patchKoa) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.request.body = body.fields;
-          ctx.request.files = body.files;
-        } else if (opts.includeUnparsed) {
-          ctx.request.body = body.parsed || {};
-          if (! ctx.is('text/*')) {
-            ctx.request.body[symbolUnparsed] = body.raw;
+        if (opts.patchKoa) {
+          if (isMultiPart(ctx, opts)) {
+            ctx.request.body = body.fields;
+            ctx.request.files = body.files;
+          } else if (opts.includeUnparsed) {
+            ctx.request.body = body.parsed || {};
+            if (!ctx.is('text/*')) {
+              ctx.request.body[symbolUnparsed] = body.raw;
+            }
+          } else {
+            ctx.request.body = body;
           }
-        } else {
-          ctx.request.body = body;
         }
-      }
-      return next();
-    })
+        return next();
+      })
   };
 }
 
@@ -172,40 +172,21 @@ function isMultiPart(ctx, opts) {
  */
 function formy(ctx, opts) {
   return new Promise(function (resolve, reject) {
-    var fields = {};
-    var files = {};
     var form = new forms.IncomingForm(opts);
-    form.on('end', function () {
+
+    if (opts.onFileBegin) {
+      form.on('fileBegin', opts.onFileBegin);
+    }
+
+    form.parse(ctx.req, (err, fields, files) => {
+      if (err) {
+        return reject(err);
+      }
+
       return resolve({
         fields: fields,
         files: files
       });
-    }).on('error', function (err) {
-      return reject(err);
-    }).on('field', function (field, value) {
-      if (fields[field]) {
-        if (Array.isArray(fields[field])) {
-          fields[field].push(value);
-        } else {
-          fields[field] = [fields[field], value];
-        }
-      } else {
-        fields[field] = value;
-      }
-    }).on('file', function (field, file) {
-      if (files[field]) {
-        if (Array.isArray(files[field])) {
-          files[field].push(file);
-        } else {
-          files[field] = [files[field], file];
-        }
-      } else {
-        files[field] = file;
-      }
     });
-    if (opts.onFileBegin) {
-      form.on('fileBegin', opts.onFileBegin);
-    }
-    form.parse(ctx.req);
   });
 }
