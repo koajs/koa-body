@@ -163,6 +163,8 @@ declare namespace koaBody {
     }
 }
 
-declare function koaBody (options?: koaBody.IKoaBodyOptions): Koa.Middleware<{}, {}>;
+declare function koaBody<StateT = {}, ContextT = {}, ResponseBodyT = any> (
+    options?: koaBody.IKoaBodyOptions
+): Koa.Middleware<StateT, ContextT, ResponseBodyT>;
 
 export = koaBody;
