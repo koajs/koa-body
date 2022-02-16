@@ -13,7 +13,7 @@ npm install koa-body
 ## Features
 - can handle requests such as:
   * **multipart/form-data**
-  * **application/x-www-urlencoded**
+  * **application/x-www-form-urlencoded**
   * **application/json**
   * **application/json-patch+json**
   * **application/vnd.api+json**
