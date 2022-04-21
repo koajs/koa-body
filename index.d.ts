@@ -1,5 +1,5 @@
 import * as Koa from "koa";
-import { Files } from 'formidable';
+import { File, Files } from 'formidable';
 
 declare module "koa" {
     interface Request extends Koa.BaseRequest {
@@ -40,7 +40,7 @@ declare namespace koaBody {
         /**
          * {String} If you want checksums calculated for incoming files, set this to either 'sha1' or 'md5', default false
          */
-        hash?: string;
+        hashAlgorithm?: string;
 
         /**
          * {Boolean} Multiple file uploads or no, default true
@@ -51,7 +51,7 @@ declare namespace koaBody {
          * {Function} Special callback on file begin. The function is executed directly by formidable.
          * It can be used to rename files before saving them to disk. See https://github.com/felixge/node-formidable#filebegin
          */
-        onFileBegin?: (name: string, file: any) => void;
+        onFileBegin?: (name: string, file: File) => void;
     }
     interface IKoaBodyOptions {
         /**

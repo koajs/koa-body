@@ -13,7 +13,7 @@ npm install koa-body
 ## Features
 - can handle requests such as:
   * **multipart/form-data**
-  * **application/x-www-urlencoded**
+  * **application/x-www-form-urlencoded**
   * **application/json**
   * **application/json-patch+json**
   * **application/vnd.api+json**
@@ -158,7 +158,7 @@ Some applications require crytopgraphic verification of request bodies, for exam
 - `maxFieldsSize` **{Integer}** Limits the amount of memory all fields together (except files) can allocate in bytes. If this value is exceeded, an 'error' event is emitted, default `2mb (2 * 1024 * 1024)`
 - `uploadDir` **{String}** Sets the directory for placing file uploads in, default `os.tmpDir()`
 - `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `false`
-- `hash` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
+- `hashAlgorithm` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
 - `multiples` **{Boolean}** Multiple file uploads or no, default `true`
 - `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/felixge/node-formidable#filebegin)
 

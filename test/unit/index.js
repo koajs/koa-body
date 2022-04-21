@@ -168,39 +168,39 @@ describe('koa-body', () => {
         res.body.user.names[0].should.equal('John');
         res.body.user.names[1].should.equal('Paul');
         res.body._files.firstField.should.be.an.Object();
-        res.body._files.firstField.name.should.equal('package.json');
-        should(fs.statSync(res.body._files.firstField.path)).be.ok();
-        fs.unlinkSync(res.body._files.firstField.path);
+        res.body._files.firstField.originalFilename.should.equal('package.json');
+        should(fs.statSync(res.body._files.firstField.filepath)).be.ok();
+        fs.unlinkSync(res.body._files.firstField.filepath);
 
         res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
         res.body._files.secondField.should.containDeep([{
-          name: 'index.js'
+          originalFilename: 'index.js'
         }]);
         res.body._files.secondField.should.containDeep([{
-          name: 'package.json'
+          originalFilename: 'package.json'
         }]);
-        should(fs.statSync(res.body._files.secondField[0].path)).be.ok();
-        should(fs.statSync(res.body._files.secondField[1].path)).be.ok();
-        fs.unlinkSync(res.body._files.secondField[0].path);
-        fs.unlinkSync(res.body._files.secondField[1].path);
+        should(fs.statSync(res.body._files.secondField[0].filepath)).be.ok();
+        should(fs.statSync(res.body._files.secondField[1].filepath)).be.ok();
+        fs.unlinkSync(res.body._files.secondField[0].filepath);
+        fs.unlinkSync(res.body._files.secondField[1].filepath);
 
         res.body._files.thirdField.should.be.an.Array().and.have.lengthOf(3);
 
         res.body._files.thirdField.should.containDeep([{
-          name: 'LICENSE'
+          originalFilename: 'LICENSE'
         }]);
         res.body._files.thirdField.should.containDeep([{
-          name: 'README.md'
+          originalFilename: 'README.md'
         }]);
         res.body._files.thirdField.should.containDeep([{
-          name: 'package.json'
+          originalFilename: 'package.json'
         }]);
-        should(fs.statSync(res.body._files.thirdField[0].path)).be.ok();
-        fs.unlinkSync(res.body._files.thirdField[0].path);
-        should(fs.statSync(res.body._files.thirdField[1].path)).be.ok();
-        fs.unlinkSync(res.body._files.thirdField[1].path);
-        should(fs.statSync(res.body._files.thirdField[2].path)).be.ok();
-        fs.unlinkSync(res.body._files.thirdField[2].path);
+        should(fs.statSync(res.body._files.thirdField[0].filepath)).be.ok();
+        fs.unlinkSync(res.body._files.thirdField[0].filepath);
+        should(fs.statSync(res.body._files.thirdField[1].filepath)).be.ok();
+        fs.unlinkSync(res.body._files.thirdField[1].filepath);
+        should(fs.statSync(res.body._files.thirdField[2].filepath)).be.ok();
+        fs.unlinkSync(res.body._files.thirdField[2].filepath);
 
         done();
       });
@@ -212,9 +212,9 @@ describe('koa-body', () => {
       formidable: {
         uploadDir: '/tmp',
         onFileBegin:  (name, file) => {
-          file.name = 'backage.json'
-          const folder = path.dirname(file.path);
-          file.path = path.join(folder, file.name);
+          file.newFilename = 'backage.json'
+          const folder = path.dirname(file.filepath);
+          file.filepath = path.join(folder, file.newFilename);
         }
       }
     }));
@@ -229,9 +229,9 @@ describe('koa-body', () => {
         if (err) return done(err);
 
         res.body._files.firstField.should.be.an.Object();
-        res.body._files.firstField.name.should.equal('backage.json');
-        should(fs.statSync(res.body._files.firstField.path)).be.ok();
-        fs.unlinkSync(res.body._files.firstField.path);
+        res.body._files.firstField.newFilename.should.equal('backage.json');
+        should(fs.statSync(res.body._files.firstField.filepath)).be.ok();
+        fs.unlinkSync(res.body._files.firstField.filepath);
 
         done();
       });
