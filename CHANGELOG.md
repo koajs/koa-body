@@ -1,5 +1,5 @@
 ## Unreleased
-
+- updated formidable 
 
 ## 4.2.0
 - support all text content types (#179)
