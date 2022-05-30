@@ -38,7 +38,7 @@
   "dependencies": {
     "@types/formidable": "^2.0.4",
     "co-body": "^5.1.1",
-    "formidable": "^2.0.1"
+    "formidable": "^3.2.4"
   },
   "devDependencies": {
     "@types/koa": "^2.0.39",
