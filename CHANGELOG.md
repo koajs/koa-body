@@ -1,6 +1,7 @@
 ## Unreleased
 
 - add "application/reports+json" to allowed types (#204)
+- test against Node.js 14+
 
 ## 4.2.0
 - support all text content types (#179)
