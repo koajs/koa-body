@@ -1,5 +1,6 @@
 ## Unreleased
 
+- add "application/reports+json" to allowed types (#204)
 
 ## 4.2.0
 - support all text content types (#179)
