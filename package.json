@@ -2,10 +2,21 @@
   "name": "koa-body",
   "version": "5.0.0",
   "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
-  "main": "index.js",
-  "types": "./index.d.ts",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "LICENSE",
+    "README.md",
+    "package.json",
+    "index.d.ts"
+  ],
   "scripts": {
-    "test": "mocha test/unit/",
+    "build": "npm run check-format && npm run test && npm run clean && npm run build:typescript",
+    "build:typescript": "tsc --build tsconfig.build.json",
+    "clean": "rimraf lib",
+    "format": "prettier -w .",
+    "check-format": "prettier --check .",
+    "test": "mocha",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
@@ -27,27 +38,29 @@
     "parser",
     "form"
   ],
-  "files": [
-    "LICENSE",
-    "README.md",
-    "index.js",
-    "index.d.ts",
-    "package.json",
-    "unparsed.js"
-  ],
   "dependencies": {
-    "@types/formidable": "^2.0.4",
-    "co-body": "^5.1.1",
-    "formidable": "^2.0.1"
+    "@types/co-body": "^6.1.0",
+    "@types/formidable": "^2.0.5",
+    "@types/koa": "^2.13.5",
+    "co-body": "^6.1.0",
+    "formidable": "^2.0.1",
+    "zod": "^3.19.1"
   },
   "devDependencies": {
-    "@types/koa": "^2.0.39",
-    "koa": "^2.0.0",
-    "koa-router": "^7.0.1",
-    "mocha": "10.0.0",
-    "should": "13.2.1",
-    "sinon": "^7.2.2",
-    "supertest": "3.1.0"
+    "@types/koa-router": "^7.4.4",
+    "@types/mocha": "^10.0.0",
+    "@types/sinon": "^10.0.13",
+    "@types/supertest": "^2.0.12",
+    "koa": "^2.13.4",
+    "koa-router": "^12.0.0",
+    "mocha": "10.1.0",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "should": "13.2.3",
+    "sinon": "^14.0.1",
+    "supertest": "6.3.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
   },
   "contributors": [
     {

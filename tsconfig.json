@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2021"],
+    "target": "ES2021",
+    "module": "commonjs",
+    "strict": true,
+    "sourceMap": true,
+    "noUnusedParameters": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noUnusedLocals": false,
+    "typeRoots": ["node_modules/@types", "index.d.ts"],
+    "outDir": "lib"
+  },
+  "include": ["src/**/**.ts", "index.d.ts"],
+  "exclude": ["node_modules"]
+}

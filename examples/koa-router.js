@@ -1,24 +1,22 @@
 'use strict';
 
-const log       = console.log;
-const Koa       = require('koa');
-const app       = new Koa();
-const router    = require('koa-router')();
-const koaBody   = require('../index');
-const port      = process.env.PORT || 4290;
-const host      = process.env.HOST || 'http://localhost';
+const log = console.log;
+const Koa = require('koa');
+const app = new Koa();
+const router = require('koa-router')();
+const koaBody = require('../index');
+const port = process.env.PORT || 4290;
+const host = process.env.HOST || 'http://localhost';
 
 /*!
  * Accepts only urlencoded and json bodies.
  */
-router.post('/post/users', koaBody(),
-  (ctx) => {
-    const body = ctx.request.body;
-    log('body', body);
-    // => POST body object
-    ctx.body = JSON.stringify(body, null, 2);
-  }
-);
+router.post('/post/users', koaBody(), (ctx) => {
+  const body = ctx.request.body;
+  log('body', body);
+  // => POST body object
+  ctx.body = JSON.stringify(body, null, 2);
+});
 
 /*!
  * Display HTML page with basic form.
@@ -41,12 +39,13 @@ router.get('/', (ctx) => {
 /*!
  * Accepts `multipart`, `json` and `urlencoded` bodies.
  */
-router.post('/post/upload',
+router.post(
+  '/post/upload',
   koaBody({
     multipart: true,
     formidable: {
-      uploadDir: __dirname + '/uploads'
-    }
+      uploadDir: __dirname + '/uploads',
+    },
   }),
   (ctx) => {
     const fields = ctx.request.body.fields; // this will be undefined for file uploads
@@ -66,12 +65,16 @@ router.post('/post/upload',
     }*/
 
     // respond with the fields and files for example purposes
-    ctx.body = JSON.stringify({
-      requestFields: fields || null,
-      requestFiles: files || null
-    }, null, 2)
-  }
-)
+    ctx.body = JSON.stringify(
+      {
+        requestFields: fields || null,
+        requestFiles: files || null,
+      },
+      null,
+      2,
+    );
+  },
+);
 
 app.use(router.routes());
 app.listen(port);
