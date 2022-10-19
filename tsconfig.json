@@ -11,9 +11,9 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "noUnusedLocals": false,
-    "typeRoots": ["node_modules/@types", "index.d.ts"],
+    "typeRoots": ["node_modules/@types"],
     "outDir": "lib"
   },
-  "include": ["src/**/**.ts", "index.d.ts"],
+  "include": ["src/**/**.ts"],
   "exclude": ["node_modules"]
 }
