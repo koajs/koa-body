@@ -20,6 +20,7 @@ export function isUrlencodedBody(ctx: Context, options: KoaBodyMiddlewareOptions
 export function isTextBody(ctx: Context, options: KoaBodyMiddlewareOptions) {
   return options.text && ctx.is('text/*');
 }
+
 export function isMultipartBody(ctx: Context, options: KoaBodyMiddlewareOptions) {
   return options.multipart && ctx.is('multipart');
 }
