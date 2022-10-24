@@ -7,8 +7,7 @@
     "lib",
     "LICENSE",
     "README.md",
-    "package.json",
-    "index.d.ts"
+    "package.json"
   ],
   "scripts": {
     "build": "npm run check-format && npm run test && npm run clean && npm run build:typescript",
