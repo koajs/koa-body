@@ -155,6 +155,7 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 
 - `GET`, `HEAD`, and `DELETE` requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
 - koa-body is strict by default, parsing only `POST`, `PUT`, and `PATCH` requests
+- you may use either the enumeration or strings to chose which methods to parse: For example, `HttpMethodEnum.PATCH`
 
 ## File Support
 
