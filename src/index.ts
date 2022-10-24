@@ -11,7 +11,7 @@ import parseWithFormidable from './utils/parse-with-formidable';
 import { patchNodeAndKoa } from './utils/patch-util';
 import type { ContextWithBodyAndFiles } from './utils/patch-util';
 
-export { HttpMethodEnum } from './types';
+export * from './types';
 
 declare module 'koa' {
   interface Request extends Koa.BaseRequest {
