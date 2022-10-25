@@ -1,7 +1,15 @@
 ## Unreleased
 
+## 6.0.0 (future release)
+
+- rewrite in TypeScript (thanks @TheDadi)
+- removed the deprecated strict option
 - add "application/reports+json" to allowed types (#204)
 - test against Node.js 14+
+
+## 5.0.0
+
+Mistakenly republished v4.2.0. See #207.
 
 ## 4.2.0
 
