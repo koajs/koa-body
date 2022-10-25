@@ -3,6 +3,7 @@
   "version": "5.0.0",
   "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
     "lib",
     "LICENSE",
@@ -15,6 +16,7 @@
     "clean": "rimraf lib",
     "format": "prettier -w .",
     "check-format": "prettier --check .",
+    "prepack": "npm run build",
     "test": "mocha",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
