@@ -1,17 +1,15 @@
 'use strict';
 
-const Koa       = require('koa');
-const app       = new Koa();
-const router    = require('koa-router')();
-const koaBody   = require('../index')({multipart:true});
+const Koa = require('koa');
+const app = new Koa();
+const router = require('koa-router')();
+const koaBody = require('../index')({ multipart: true });
 
-router.post('/users', koaBody,
-  (ctx) => {
-    console.log(ctx.request.body);
-    // => POST body
-    ctx.body = JSON.stringify(ctx.request.body, null, 2);
-  }
-);
+router.post('/users', koaBody, (ctx) => {
+  console.log(ctx.request.body);
+  // => POST body
+  ctx.body = JSON.stringify(ctx.request.body, null, 2);
+});
 
 router.get('/', (ctx) => {
   ctx.set('Content-Type', 'text/html');
@@ -28,13 +26,12 @@ router.get('/', (ctx) => {
 </html>`;
 });
 
-router.post('/', koaBody,
-  (ctx) => {
-    console.log('fields: ', ctx.request.body);
-    // => {username: ""} - if empty
+router.post('/', koaBody, (ctx) => {
+  console.log('fields: ', ctx.request.body);
+  // => {username: ""} - if empty
 
-    console.log('files: ', ctx.request.files);
-    /* => {uploads: [
+  console.log('files: ', ctx.request.files);
+  /* => {uploads: [
             {
               "size": 748831,
               "path": "/tmp/f7777b4269bf6e64518f96248537c0ab.png",
@@ -51,9 +48,8 @@ router.post('/', koaBody,
             }
           ]}
     */
-    ctx.body = JSON.stringify(ctx.request.body, null, 2);
-  }
-)
+  ctx.body = JSON.stringify(ctx.request.body, null, 2);
+});
 
 app.use(router.routes());
 
