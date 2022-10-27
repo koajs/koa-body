@@ -3,7 +3,7 @@
 [![CI](https://github.com/koajs/koa-body/actions/workflows/ci.yaml/badge.svg)](https://github.com/koajs/koa-body/actions/workflows/ci.yaml)
 [![KoaJs Slack](https://img.shields.io/badge/Koa.Js-Slack%20Channel-Slack.svg?longCache=true)](https://communityinviter.com/apps/koa-js/koajs)
 
------
+---
 
 > A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Supports `multipart`, `urlencoded`, and `json` request bodies. Provides the same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer).
 
