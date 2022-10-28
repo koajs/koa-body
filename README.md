@@ -39,7 +39,7 @@ index.js:
 
 ```js
 const Koa = require('koa');
-const koaBody = require('koa-body');
+const { koaBody } = require('koa-body');
 
 const app = new Koa();
 
@@ -78,7 +78,7 @@ It's generally better to only parse the body as needed, if using a router that s
 const Koa = require('koa');
 const app = new Koa();
 const router = require('koa-router')();
-const koaBody = require('koa-body');
+const { koaBody } = require('koa-body');
 
 router.post('/users', koaBody(), (ctx) => {
   console.log(ctx.request.body);
@@ -99,7 +99,7 @@ For unsupported text body type, for example, `text/xml`, you can use the unparse
 ```js
 // xml-parse.js:
 const Koa = require('koa');
-const koaBody = require('koa-body');
+const { koaBody } = require('koa-body');
 const convert = require('xml-js');
 
 const app = new Koa();

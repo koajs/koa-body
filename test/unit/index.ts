@@ -9,7 +9,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import http from 'http';
-import koaBody from '../../src/index';
+import koaBody, { HttpMethodEnum } from '../../src/index';
 import path from 'path';
 import request, { Response } from 'supertest';
 import should from 'should';
@@ -18,7 +18,6 @@ import Router from 'koa-router';
 import sinon, { SinonSpy } from 'sinon';
 
 import unparsed from '../../src/unparsed';
-import { HttpMethodEnum } from '../../src/types';
 
 describe('koa-body', () => {
   let database: { users: Array<{ name: string; followers?: number }> };
