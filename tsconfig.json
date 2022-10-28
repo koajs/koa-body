@@ -5,6 +5,7 @@
     "module": "commonjs",
     "strict": true,
     "sourceMap": true,
+    "moduleResolution": "Node",
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
