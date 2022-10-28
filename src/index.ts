@@ -20,7 +20,7 @@ declare module 'koa' {
   }
 }
 
-export function koaBodyMiddleware(options: Partial<KoaBodyMiddlewareOptions> = {}): Middleware {
+export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middleware {
   const validatedOptions = KoaBodyMiddlewareOptionsSchema.parse(options);
   const optionsToUse = { ...options, ...validatedOptions };
   return async (ctx: Context, next: Next) => {
@@ -121,4 +121,4 @@ export function koaBodyMiddleware(options: Partial<KoaBodyMiddlewareOptions> = {
   };
 }
 
-export default koaBodyMiddleware;
+export default koaBody;
