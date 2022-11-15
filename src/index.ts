@@ -94,6 +94,18 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
             patchKoa,
             patchNode,
           });
+        } else {
+          patchNodeAndKoa(
+            ctx as ContextWithBodyAndFiles,
+            {},
+            {
+              isText,
+              includeUnparsed: returnRawBody,
+              isMultipart,
+              patchKoa,
+              patchNode,
+            },
+          );
         }
       } catch (parsingError) {
         const error = throwableToError(parsingError);
