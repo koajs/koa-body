@@ -101,6 +101,11 @@ export const KoaBodyMiddlewareOptionsSchema = z.object({
     .array(HttpMethod)
     .optional()
     .default([HttpMethodEnum.POST, HttpMethodEnum.PUT, HttpMethodEnum.PATCH]),
+
+  /**
+   * {Boolean} When content-type does not match a supported type, if an empty body value should be set, default false
+   */
+  setEmptyBody: z.boolean().optional().default(false),
 });
 
 export type KoaBodyDirectOptions = z.infer<typeof KoaBodyMiddlewareOptionsSchema>;

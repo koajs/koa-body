@@ -685,4 +685,49 @@ describe('koa-body', () => {
       .expect(413, ERR_413_STATUSTEXT)
       .end(done);
   });
+
+  it('should have no body value if the content-type header value is not a match (default behavior)', (done) => {
+    app.use(koaBody());
+    app.use(router.routes());
+
+    const echoRouterLayer = router.stack.filter((layer) => layer.path === '/echo_body');
+    // @ts-ignore
+    const requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
+
+    request(http.createServer(app.callback()))
+      .post('/echo_body')
+      .expect(204)
+      .end((err) => {
+        if (err) return done(err);
+
+        assert(requestSpy?.calledOnce, 'Spy for /echo_body not called');
+        const req = requestSpy?.firstCall.args[0].request;
+        assert.equal(req.body, undefined);
+        req.should.not.hasOwnProperty('body');
+
+        done();
+      });
+  });
+
+  it('should have an empty body if the content-type header value is not a match and `setEmptyBody` is true', (done) => {
+    app.use(koaBody({ setEmptyBody: true }));
+    app.use(router.routes());
+
+    const echoRouterLayer = router.stack.filter((layer) => layer.path === '/echo_body');
+    // @ts-ignore
+    const requestSpy = sinon.spy(echoRouterLayer[0].stack, '0');
+
+    request(http.createServer(app.callback()))
+      .post('/echo_body')
+      .expect(200)
+      .end((err) => {
+        if (err) return done(err);
+
+        assert(requestSpy?.calledOnce, 'Spy for /echo_body not called');
+        const req = requestSpy?.firstCall.args[0].request;
+        req.body.should.eql({});
+
+        done();
+      });
+  });
 });
