@@ -248,7 +248,7 @@ describe('koa-body', () => {
   /**
    * URLENCODED request body
    */
-  it('should recieve `urlencoded` request bodies', (done) => {
+  it('should receive `urlencoded` request bodies', (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -315,7 +315,7 @@ describe('koa-body', () => {
         });
     });
 
-    it('should recieve `urlencoded` request bodies with the `includeUnparsed` option', (done) => {
+    it('should receive `urlencoded` request bodies with the `includeUnparsed` option', (done) => {
       const userRouterLayer = router.stack.filter(
         (layer) => layer.path === '/users' && layer.methods.includes('POST'),
       );
@@ -412,7 +412,7 @@ describe('koa-body', () => {
   /**
    * TEXT request body
    */
-  it('should recieve `text` request bodies', (done) => {
+  it('should receive `text` request bodies', (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -431,7 +431,7 @@ describe('koa-body', () => {
       });
   });
 
-  it('should recieve raw XML with `text` request bodies', (done) => {
+  it('should receive raw XML with `text` request bodies', (done) => {
     app.use(koaBody({ text: true, includeUnparsed: true }));
     app.use(router.routes());
     const body = '<?xml version="1.0"?><catalog></catalog>';
