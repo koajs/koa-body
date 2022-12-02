@@ -145,8 +145,7 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 - `text` **{Boolean}** Parse text bodies, such as XML, default `true`
 - `json` **{Boolean}** Parse JSON bodies, default `true`
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
-- `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encoded and JSON requests the raw, unparsed request body will be attached to
-- `ctx.request.body` using a `Symbol` ([see details](#a-note-about-unparsed-request-bodies)), default `false`
+- `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encoded and JSON requests the raw, unparsed request body will be attached to `ctx.request.body` using a `Symbol` ([see details](#a-note-about-unparsed-request-bodies)), default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`. Replaces `strict` option.
