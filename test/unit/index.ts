@@ -125,8 +125,8 @@ describe('koa-body', () => {
         res.body.user.should.have.property('name', mostRecentUser.name);
         res.body.user.should.have.property('followers', mostRecentUser.followers);
 
-        res.body.user.should.have.property('name', 'daryl');
-        res.body.user.should.have.property('followers', '30');
+        res.body.user.should.have.property('name', ['daryl']);
+        res.body.user.should.have.property('followers', ['30']);
 
         done();
       });
@@ -163,10 +163,10 @@ describe('koa-body', () => {
         res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
         res.body.user.names[0].should.equal('John');
         res.body.user.names[1].should.equal('Paul');
-        res.body._files.firstField.should.be.an.Object();
-        res.body._files.firstField.originalFilename.should.equal('package.json');
-        should(fs.statSync(res.body._files.firstField.filepath)).be.ok();
-        fs.unlinkSync(res.body._files.firstField.filepath);
+        res.body._files.firstField.should.be.an.Array().and.have.lengthOf(1);
+        res.body._files.firstField[0].originalFilename.should.equal('package.json');
+        should(fs.statSync(res.body._files.firstField[0].filepath)).be.ok();
+        fs.unlinkSync(res.body._files.firstField[0].filepath);
 
         res.body._files.secondField.should.be.an.Array().and.have.lengthOf(2);
         res.body._files.secondField.should.containDeep([
@@ -236,10 +236,10 @@ describe('koa-body', () => {
       .end((err, res) => {
         if (err) return done(err);
 
-        res.body._files.firstField.should.be.an.Object();
-        res.body._files.firstField.newFilename.should.equal('backage.json');
-        should(fs.statSync(res.body._files.firstField.filepath)).be.ok();
-        fs.unlinkSync(res.body._files.firstField.filepath);
+        res.body._files.firstField.should.be.an.Array().and.have.lengthOf(1);
+        res.body._files.firstField[0].newFilename.should.equal('backage.json');
+        should(fs.statSync(res.body._files.firstField[0].filepath)).be.ok();
+        fs.unlinkSync(res.body._files.firstField[0].filepath);
 
         done();
       });

@@ -8,7 +8,7 @@ export type ParseWithFormidableResult = {
   files: Files;
 };
 
-export default function parseWithFormidable(
+export default async function parseWithFormidable(
   ctx: Context,
   options: ExtendedFormidableOptions,
 ): Promise<ParseWithFormidableResult> {
@@ -17,13 +17,6 @@ export default function parseWithFormidable(
   if (onFileBegin) {
     form.on('fileBegin', onFileBegin);
   }
-  return new Promise((resolve, reject) => {
-    form.parse(ctx.req, (error, fields, files) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve({ fields, files });
-    });
-  });
+  const [fields, files] = await form.parse(ctx.req);
+  return { fields, files };
 }
