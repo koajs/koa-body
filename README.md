@@ -164,7 +164,7 @@ Uploaded files are accessible via `ctx.request.files`.
 
 ## A note about unparsed request bodies
 
-Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
+Some applications require cryptographic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
 
 ## Some options for formidable
 
