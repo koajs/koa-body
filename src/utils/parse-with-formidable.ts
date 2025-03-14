@@ -1,7 +1,7 @@
 import type { Fields, Files } from 'formidable';
 import formidable from 'formidable';
 import type { Context } from 'koa';
-import type { ExtendedFormidableOptions } from '../types';
+import type { ExtendedFormidableOptions } from '../types.js';
 
 export type ParseWithFormidableResult = {
   fields: Fields;
@@ -17,6 +17,7 @@ export default function parseWithFormidable(
   if (onFileBegin) {
     form.on('fileBegin', onFileBegin);
   }
+
   return new Promise((resolve, reject) => {
     form.parse(ctx.req, (error, fields, files) => {
       if (error) {

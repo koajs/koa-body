@@ -1,5 +1,5 @@
-import type { File, Options as FormidableOptions } from 'formidable';
 import type { Options as CoBodyOptions } from 'co-body';
+import type { File, Options as FormidableOptions } from 'formidable';
 import type { Context } from 'koa';
 import { z } from 'zod';
 
@@ -68,7 +68,7 @@ export const KoaBodyMiddlewareOptionsSchema = z.object({
    */
   json: z.boolean().optional().default(true),
   /**
-   * Toggles co-body strict mode; if true, only parses arrays or objects, default true
+   * {Boolean} Toggles co-body strict mode; if true, only parses arrays or objects, default true
    */
   jsonStrict: z.boolean().optional().default(true),
 

@@ -1,5 +1,5 @@
-import type { KoaBodyMiddlewareOptions } from '../types';
 import type { Context } from 'koa';
+import type { KoaBodyMiddlewareOptions } from '../types.js';
 
 const jsonTypes = [
   'application/json',
