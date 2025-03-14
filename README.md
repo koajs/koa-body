@@ -70,14 +70,14 @@ Request Body: {"name":"test"}%
 
 **For a more comprehensive example, see** `examples/multipart.js`
 
-## Usage with [koa-router](https://github.com/alexmingoia/koa-router)
+## Usage with [@koa/router](https://github.com/koajs/router)
 
 It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
 
 ```js
 const Koa = require('koa');
 const app = new Koa();
-const router = require('koa-router')();
+const router = require('@koa/router')();
 const { koaBody } = require('koa-body');
 
 router.post('/users', koaBody(), (ctx) => {
@@ -132,7 +132,7 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 
 ## Options
 
-> Options available for `koa-body`. Four custom options, and others are from `raw-body` and `formidable`.
+> Options available for `koa-body`. Four custom options, and others are from `co-body` and `formidable`.
 
 - `patchNode` **{Boolean}** Patch request body to Node's `ctx.req`, default `false`
 - `patchKoa` **{Boolean}** Patch request body to Koa's `ctx.request`, default `true`
@@ -145,7 +145,7 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 - `text` **{Boolean}** Parse text bodies, such as XML, default `true`
 - `json` **{Boolean}** Parse JSON bodies, default `true`
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
-- `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encoded and JSON requests the raw, unparsed request body will be attached to `ctx.request.body` using a `Symbol` ([see details](#a-note-about-unparsed-request-bodies)), default `false`
+- `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encoded and JSON requests the raw, unparsed request body will be attached to `ctx.request.rawBody`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`. Replaces `strict` option.
@@ -164,11 +164,11 @@ Uploaded files are accessible via `ctx.request.files`.
 
 ## A note about unparsed request bodies
 
-Some applications require cryptographic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
+Some applications require cryptographic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. Then the unparsed body is available at `ctx.request.rawBody`. This only works for non `multipart` bodies. 
 
 ## Some options for formidable
 
-> See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options
+> See [node-formidable](https://github.com/node-formidable/formidable) for a full list of options
 
 - `maxFields` **{Integer}** Limits the number of fields that the querystring parser will decode, default `1000`
 - `maxFieldsSize` **{Integer}** Limits the amount of memory all fields together (except files) can allocate in bytes. If this value is exceeded, an 'error' event is emitted, default `2mb (2 * 1024 * 1024)`
@@ -176,7 +176,8 @@ Some applications require cryptographic verification of request bodies, for exam
 - `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `false`
 - `hashAlgorithm` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
 - `multiples` **{Boolean}** Multiple file uploads or no, default `true`
-- `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/felixge/node-formidable#filebegin)
+- `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/node-formidable/formidable#filebegin)
+- `onPart` **{Function}** Overrides the default onPart of formidable. The function can be used to filter out parts based on their mimetype. For more use cases. [See the docs](https://github.com/node-formidable/formidable#formonpart)
 
 ## Changelog
 

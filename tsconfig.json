@@ -1,19 +1,17 @@
 {
   "compilerOptions": {
-    "lib": ["ES2021"],
-    "target": "ES2021",
-    "module": "commonjs",
+    "lib": ["es2023"],
+    "module": "node16",
+    "target": "es2022",
     "strict": true,
     "sourceMap": true,
-    "moduleResolution": "Node",
-    "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true,
     "declaration": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node16",
     "resolveJsonModule": true,
-    "noUnusedLocals": false,
-    "typeRoots": ["node_modules/@types"],
-    "outDir": "lib"
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/**.ts"],
   "exclude": ["node_modules"]

@@ -1,9 +1,13 @@
-'use strict';
+import Router from '@koa/router';
+import Koa from 'koa';
+import koaBodyMiddleware from '../src/index.js';
 
-const Koa = require('koa');
 const app = new Koa();
-const router = require('koa-router')();
-const koaBody = require('../index')({ multipart: true });
+const router = new Router();
+const koaBody = koaBodyMiddleware({ multipart: true });
+
+const port = process.env.PORT || 4290;
+const host = process.env.HOST || 'http://localhost';
 
 router.post('/users', koaBody, (ctx) => {
   console.log(ctx.request.body);
@@ -15,7 +19,7 @@ router.get('/', (ctx) => {
   ctx.set('Content-Type', 'text/html');
   ctx.body = `
 <!doctype html>
-<html>
+<html lang="en">
   <body>
     <form action="/" enctype="multipart/form-data" method="post">
     <input type="text" name="username" placeholder="username"><br>
@@ -53,8 +57,11 @@ router.post('/', koaBody, (ctx) => {
 
 app.use(router.routes());
 
-const port = process.env.PORT || 3333;
 app.listen(port);
-console.log('Koa server with `koa-body` parser start listening to port %s', port);
+
+console.log('Visit %s:%s/ in browser.', host, port);
+console.log();
 console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
 console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);
+console.log();
+console.log('Press CTRL+C to stop...');

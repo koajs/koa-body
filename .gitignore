@@ -1,8 +1,5 @@
-.directory
 node_modules
-npm-debug.log
-yarn.lock
-package-lock.json
-*.tgz
-lib/
+dist
+.idea
+.tshy*
 

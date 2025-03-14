@@ -1,51 +1,52 @@
 import type { Context } from 'koa';
-import symbolUnparsed from '../unparsed';
-import type { Files } from 'formidable';
+import type { ParseWithFormidableResult } from './parse-with-formidable.js';
+
+export type ParseWithCoBodyTextResult = string;
+export type ParseWithCoBodyJsonResult = { [key: string]: unknown };
+export type ParseWithCoBodyUrlEncodedResult = { [key: string]: unknown };
+export type ParseWithCoBodyIncludeUnparsedResult = { parsed: ParseWithCoBodyResult; raw: string };
+
+export type ParseWithCoBodyResult =
+  | ParseWithCoBodyTextResult
+  | ParseWithCoBodyJsonResult
+  | ParseWithCoBodyUrlEncodedResult;
 
 type PatchOptions = {
   isMultipart: string | boolean | null;
-  isText: string | boolean | null;
   includeUnparsed: boolean;
   patchNode: boolean;
   patchKoa: boolean;
 };
 
-export type ContextWithBodyAndFiles = Context & {
-  req: {
-    body?: any;
-    files?: Files;
-  };
-  request: {
-    body?: any;
-    files?: Files;
-  };
-};
-
-export function patchNodeAndKoa(ctx: ContextWithBodyAndFiles, body: any, options: PatchOptions) {
-  const { patchKoa, patchNode, isMultipart, includeUnparsed, isText } = options;
+export function patchNodeAndKoa(
+  ctx: Context,
+  body: ParseWithFormidableResult | ParseWithCoBodyResult | ParseWithCoBodyIncludeUnparsedResult,
+  options: PatchOptions,
+) {
+  const { patchKoa, patchNode, isMultipart, includeUnparsed } = options;
 
   if (patchNode) {
     if (isMultipart) {
-      ctx.req.body = body.fields;
-      ctx.req.files = body.files;
+      const { fields, files } = body as ParseWithFormidableResult;
+      ctx.req.body = fields;
+      ctx.req.files = files;
     } else if (includeUnparsed) {
-      ctx.req.body = body.parsed || {};
-      if (!isText) {
-        ctx.req.body[symbolUnparsed] = body.raw;
-      }
+      const { parsed, raw } = body as ParseWithCoBodyIncludeUnparsedResult;
+      ctx.req.body = parsed;
+      ctx.req.rawBody = raw;
     } else {
       ctx.req.body = body;
     }
   }
   if (patchKoa) {
     if (isMultipart) {
-      ctx.request.body = body.fields;
-      ctx.request.files = body.files;
+      const { fields, files } = body as ParseWithFormidableResult;
+      ctx.request.body = fields;
+      ctx.request.files = files;
     } else if (includeUnparsed) {
-      ctx.request.body = body.parsed || {};
-      if (!isText) {
-        ctx.request.body[symbolUnparsed] = body.raw;
-      }
+      const { parsed, raw } = body as ParseWithCoBodyIncludeUnparsedResult;
+      ctx.request.body = parsed;
+      ctx.request.rawBody = raw;
     } else {
       ctx.request.body = body;
     }
