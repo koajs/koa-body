@@ -2,7 +2,6 @@ import Router from '@koa/router';
 import Koa from 'koa';
 import koaBody from '../src/index.js';
 
-const log = console.log;
 const app = new Koa();
 const router = new Router();
 const port = process.env.PORT || 4290;
