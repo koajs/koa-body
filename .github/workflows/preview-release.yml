@@ -3,11 +3,11 @@ on:
   pull_request_review:
     types: [submitted]
   pull_request:
-    branches: [master]
+    types: [labeled]
 
 jobs:
   check:
-    if: github.event.review.state == 'approved'
+    if: ${{ github.event.review.state == 'approved' || contains(github.event.pull_request.labels.*.name, 'ready-for-preview') }}
     runs-on: ubuntu-latest
     outputs:
       has-permissions: ${{ steps.checkPermissions.outputs.require-result }}
