@@ -232,7 +232,7 @@ describe('koa-body', () => {
   /**
    * URLENCODED request body
    */
-  it('should recieve `urlencoded` request bodies', async () => {
+  it('should receive `urlencoded` request bodies', async () => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -278,7 +278,7 @@ describe('koa-body', () => {
       assert.strictEqual(ctx.request.rawBody, '');
     });
 
-    it('should recieve `urlencoded` request bodies with the `includeUnparsed` option', async () => {
+    it('should receive `urlencoded` request bodies with the `includeUnparsed` option', async () => {
       const koaBodyMock = mock.fn(koaBody({ includeUnparsed: true }));
       app.use(koaBodyMock);
       app.use(router.routes());
@@ -362,7 +362,7 @@ describe('koa-body', () => {
   /**
    * TEXT request body
    */
-  it('should recieve `text` request bodies', async () => {
+  it('should receive `text` request bodies', async () => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -375,7 +375,7 @@ describe('koa-body', () => {
     assert.strictEqual(response.text, 'plain text');
   });
 
-  it('should recieve raw XML with `text` request bodies', async () => {
+  it('should receive raw XML with `text` request bodies', async () => {
     const koaBodyMock = mock.fn(koaBody({ text: true, includeUnparsed: true }));
     app.use(koaBodyMock);
     app.use(router.routes());
