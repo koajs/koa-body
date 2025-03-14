@@ -75,6 +75,10 @@ describe('koa-body', () => {
         ctx.status = 200;
         ctx.body = ctx.request.body;
       })
+      .post('/echo_body_and_files', (ctx) => {
+        ctx.status = 200;
+        ctx.body = { _body: ctx.request.body, _files: ctx.request.files };
+      })
       .delete('/users/:user', (ctx) => {
         const user = ctx.params.user;
         const schema = z.object({ multi: z.coerce.boolean().optional() });
@@ -615,5 +619,39 @@ describe('koa-body', () => {
 
     assert.strictEqual(response.status, 413);
     assert.strictEqual(response.text, ERR_413_STATUSTEXT);
+  });
+
+  it('should be able to override onPart to filter out files and fields not to parse', async () => {
+    app.use(
+      koaBody({
+        multipart: true,
+        formidable: {
+          onPart: (part, handlePart) => {
+            if (part.mimetype === 'application/json' || part.name === 'test2') {
+              handlePart(part);
+            }
+          },
+        },
+      }),
+    );
+    app.use(router.routes());
+
+    const response = await request(http.createServer(app.callback()))
+      .post('/echo_body_and_files')
+      .type('multipart/form-data')
+      .field('test', 'foo')
+      .field('test', 'bar')
+      .field('test2', 'baz')
+      .attach('firstFile', 'package.json')
+      .attach('secondFile', 'src/index.ts');
+
+    assert.strictEqual(response.status, 200);
+    assert.strictEqual(typeof response.body._files.firstFile, 'object');
+    assert.strictEqual(response.body._files.firstFile.originalFilename, 'package.json');
+    assert.strictEqual(response.body._files.firstFile.mimetype, 'application/json');
+    fs.unlinkSync(response.body._files.firstFile.filepath);
+    assert.strictEqual(response.body._files.secondFile, undefined);
+    assert.strictEqual(response.body._body.test, undefined);
+    assert.strictEqual(response.body._body.test2, 'baz');
   });
 });

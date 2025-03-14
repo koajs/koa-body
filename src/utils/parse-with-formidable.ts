@@ -1,4 +1,4 @@
-import type { Fields, Files } from 'formidable';
+import type { Fields, Files, Part } from 'formidable';
 import formidable from 'formidable';
 import type { Context } from 'koa';
 import type { ExtendedFormidableOptions } from '../types.js';
@@ -12,8 +12,15 @@ export default function parseWithFormidable(
   ctx: Context,
   options: ExtendedFormidableOptions,
 ): Promise<ParseWithFormidableResult> {
-  const { onFileBegin, ...directOptions } = options;
+  const { onFileBegin, onPart, ...directOptions } = options;
   const form = formidable({ multiples: true, ...directOptions });
+
+  if (onPart) {
+    form.onPart = function (part: Part) {
+      onPart(part, form._handlePart.bind(this));
+    };
+  }
+
   if (onFileBegin) {
     form.on('fileBegin', onFileBegin);
   }

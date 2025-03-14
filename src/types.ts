@@ -1,5 +1,5 @@
 import type { Options as CoBodyOptions } from 'co-body';
-import type { File, Options as FormidableOptions } from 'formidable';
+import type { File, Options as FormidableOptions, Part } from 'formidable';
 import type { Context } from 'koa';
 import { z } from 'zod';
 
@@ -17,6 +17,7 @@ export type HttpMethod = z.infer<typeof HttpMethod>;
 
 export type ExtendedFormidableOptions = FormidableOptions & {
   onFileBegin?: (name: string, file: File) => void;
+  onPart?: (part: Part, handlePart: (part: Part) => void) => void;
 };
 
 export const KoaBodyMiddlewareOptionsSchema = z.object({

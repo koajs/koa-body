@@ -168,7 +168,7 @@ Some applications require cryptographic verification of request bodies, for exam
 
 ## Some options for formidable
 
-> See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options
+> See [node-formidable](https://github.com/node-formidable/formidable) for a full list of options
 
 - `maxFields` **{Integer}** Limits the number of fields that the querystring parser will decode, default `1000`
 - `maxFieldsSize` **{Integer}** Limits the amount of memory all fields together (except files) can allocate in bytes. If this value is exceeded, an 'error' event is emitted, default `2mb (2 * 1024 * 1024)`
@@ -176,7 +176,8 @@ Some applications require cryptographic verification of request bodies, for exam
 - `keepExtensions` **{Boolean}** Files written to `uploadDir` will include the extensions of the original files, default `false`
 - `hashAlgorithm` **{String}** If you want checksums calculated for incoming files, set this to either `'sha1'` or `'md5'`, default `false`
 - `multiples` **{Boolean}** Multiple file uploads or no, default `true`
-- `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/felixge/node-formidable#filebegin)
+- `onFileBegin` **{Function}** Special callback on file begin. The function is executed directly by formidable. It can be used to rename files before saving them to disk. [See the docs](https://github.com/node-formidable/formidable#filebegin)
+- `onPart` **{Function}** Overrides the default onPart of formidable. The function can be used to filter out parts based on their mimetype. For more use cases. [See the docs](https://github.com/node-formidable/formidable#formonpart)
 
 ## Changelog
 
