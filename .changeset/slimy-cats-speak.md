@@ -4,8 +4,8 @@
 
 chore: introduce `@biomejs/biome` as linter and formatter instead of `prettier`
 chore: introduce `@changesets/cli` to automate publish and changelog
-chore: introduce github actions for publishing to npm
-chore: introduce github actions for preview publish using `pkg-pr-new`
+chore: introduce GitHub actions for publishing to npm
+chore: introduce GitHub actions for preview publish using `pkg-pr-new`
 chore: replace `mocha` with `node:test`
 chore: updated all dependencies to latest except `formidable` because of https://github.com/node-formidable/formidable/issues/958
 chore: updated dev dependency `koa-router` to use `@koa/router` instead
