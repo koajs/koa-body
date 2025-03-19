@@ -47,6 +47,9 @@
     "formidable": "^2.0.1",
     "zod": "^3.19.1"
   },
+  "peerDependencies": {
+    "koa": "2.x.x"
+  },
   "devDependencies": {
     "@types/koa-router": "^7.4.4",
     "@types/mocha": "^10.0.0",
