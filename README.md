@@ -149,6 +149,7 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
 - `parsedMethods` **{String[]}** Declares the HTTP methods where bodies will be parsed, default `['POST', 'PUT', 'PATCH']`. Replaces `strict` option.
+- `setEmptyBody` **{Boolean}** When the `content-type` header value does not match a supported type, if an empty body value should be set, default `false`
 
 ## A note about `parsedMethods`
 

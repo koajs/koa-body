@@ -40,6 +40,7 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
       onError,
       patchNode,
       patchKoa,
+      setEmptyBody,
     } = optionsToUse;
     // only parse the body on specifically chosen methods
     if (validatedOptions.parsedMethods.includes(toHttpMethod(ctx.method.toUpperCase()))) {
@@ -94,6 +95,18 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
             patchKoa,
             patchNode,
           });
+        } else if (setEmptyBody) {
+          patchNodeAndKoa(
+            ctx as ContextWithBodyAndFiles,
+            {},
+            {
+              isText,
+              includeUnparsed: returnRawBody,
+              isMultipart,
+              patchKoa,
+              patchNode,
+            },
+          );
         }
       } catch (parsingError) {
         const error = throwableToError(parsingError);
