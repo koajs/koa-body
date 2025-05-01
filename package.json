@@ -41,10 +41,10 @@
   ],
   "dependencies": {
     "@types/co-body": "^6.1.0",
-    "@types/formidable": "^2.0.5",
+    "@types/formidable": "^3.4.5",
     "@types/koa": "^2.13.5",
     "co-body": "^6.1.0",
-    "formidable": "^2.0.1",
+    "formidable": "^3.5.4",
     "zod": "^3.19.1"
   },
   "devDependencies": {
