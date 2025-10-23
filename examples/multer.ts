@@ -1,9 +1,14 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import Koa from 'koa';
 import koaBody from '../src/index.js';
 
 const app = new Koa();
 const port = process.env.PORT || 4290;
 const host = 'http://localhost';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app
   .use(

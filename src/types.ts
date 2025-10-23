@@ -12,12 +12,20 @@ export enum HttpMethodEnum {
   HEAD = 'HEAD',
 }
 
-const HttpMethod = z.nativeEnum(HttpMethodEnum);
+const HttpMethod = z.enum(HttpMethodEnum);
 export type HttpMethod = z.infer<typeof HttpMethod>;
 
 export type ExtendedFormidableOptions = FormidableOptions & {
   onFileBegin?: (name: string, file: File) => void;
   onPart?: (part: Part, handlePart: (part: Part) => void) => void;
+};
+
+export type ScalarOrArrayFields = {
+  [field: string]: string | string[];
+};
+
+export type ScalarOrArrayFiles = {
+  [file: string]: File | File[];
 };
 
 export const KoaBodyMiddlewareOptionsSchema = z.object({

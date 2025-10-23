@@ -7,7 +7,7 @@ chore: introduce `@changesets/cli` to automate publish and changelog
 chore: introduce GitHub actions for publishing to npm
 chore: introduce GitHub actions for preview publish using `pkg-pr-new`
 chore: replace `mocha` with `node:test`
-chore: updated all dependencies to latest except `formidable` because of https://github.com/node-formidable/formidable/issues/958
+chore: updated all dependencies to latest
 chore: updated dev dependency `koa-router` to use `@koa/router` instead
 chore: introduce `tshy` and `@arethetypeswrong/cli` to have esm and commonjs exports and verification that types and exports are compatible with different module resolutions (fixes: https://github.com/koajs/koa-body/issues/233)
 chore: introduce `pnpm` as package-manager

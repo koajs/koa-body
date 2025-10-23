@@ -1,7 +1,6 @@
 import * as coBody from 'co-body';
-import type { Files } from 'formidable';
 import type { Middleware, Next } from 'koa';
-import type { KoaBodyMiddlewareOptions } from './types.js';
+import type { KoaBodyMiddlewareOptions, ScalarOrArrayFiles } from './types.js';
 import { KoaBodyMiddlewareOptionsSchema } from './types.js';
 import {
   isJsonBody,
@@ -20,7 +19,7 @@ declare module 'koa' {
   interface Request {
     body?: { [key: string]: unknown } | string;
     rawBody?: string;
-    files?: Files;
+    files?: ScalarOrArrayFiles;
   }
 }
 
@@ -28,7 +27,7 @@ declare module 'http' {
   interface IncomingMessage {
     body?: { [key: string]: unknown } | string;
     rawBody?: string;
-    files?: Files;
+    files?: ScalarOrArrayFiles;
   }
 }
 

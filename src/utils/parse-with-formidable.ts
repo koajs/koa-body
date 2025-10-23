@@ -1,14 +1,44 @@
 import type { Fields, Files, Part } from 'formidable';
 import formidable from 'formidable';
 import type { Context } from 'koa';
-import type { ExtendedFormidableOptions } from '../types.js';
+import type {
+  ExtendedFormidableOptions,
+  ScalarOrArrayFields,
+  ScalarOrArrayFiles,
+} from '../types.js';
 
 export type ParseWithFormidableResult = {
-  fields: Fields;
-  files: Files;
+  fields: ScalarOrArrayFields;
+  files: ScalarOrArrayFiles;
 };
 
-export default function parseWithFormidable(
+function convertFormidableFields(fields: Fields): ScalarOrArrayFields {
+  const result: ScalarOrArrayFields = {};
+
+  for (const key in fields) {
+    const value = fields[key];
+    if (value !== undefined) {
+      result[key] = value.length === 1 ? value[0] : value;
+    }
+  }
+
+  return result;
+}
+
+function convertFormidableFiles(files: Files): ScalarOrArrayFiles {
+  const result: ScalarOrArrayFiles = {};
+
+  for (const key in files) {
+    const value = files[key];
+    if (value !== undefined) {
+      result[key] = value.length === 1 ? value[0] : value;
+    }
+  }
+
+  return result;
+}
+
+export default async function parseWithFormidable(
   ctx: Context,
   options: ExtendedFormidableOptions,
 ): Promise<ParseWithFormidableResult> {
@@ -16,22 +46,15 @@ export default function parseWithFormidable(
   const form = formidable({ multiples: true, ...directOptions });
 
   if (onPart) {
-    form.onPart = function (part: Part) {
-      onPart(part, form._handlePart.bind(this));
+    const delegate = form._handlePart.bind(form);
+    form.onPart = (part: Part) => {
+      onPart(part, delegate);
     };
   }
 
   if (onFileBegin) {
     form.on('fileBegin', onFileBegin);
   }
-
-  return new Promise((resolve, reject) => {
-    form.parse(ctx.req, (error, fields, files) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve({ fields, files });
-    });
-  });
+  const [fields, files] = await form.parse(ctx.req);
+  return { fields: convertFormidableFields(fields), files: convertFormidableFiles(files) };
 }

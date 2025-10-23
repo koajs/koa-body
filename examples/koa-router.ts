@@ -1,3 +1,5 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import Router from '@koa/router';
 import Koa from 'koa';
 import koaBody from '../src/index.js';
@@ -6,6 +8,8 @@ const app = new Koa();
 const router = new Router();
 const port = process.env.PORT || 4290;
 const host = process.env.HOST || 'http://localhost';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /*!
  * Accepts only urlencoded and json bodies.

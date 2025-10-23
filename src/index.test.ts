@@ -2,14 +2,13 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { beforeEach, describe, it, mock } from 'node:test';
 import Router from '@koa/router';
 import type { File } from 'formidable';
 import Koa from 'koa';
 import request, { type Response } from 'supertest';
-import koaBody, { HttpMethodEnum } from './index.js';
-
-import { beforeEach, describe, it, mock } from 'node:test';
 import { z } from 'zod';
+import koaBody, { HttpMethodEnum } from './index.js';
 
 describe('koa-body', () => {
   let database: { users: Array<{ name: string; followers?: number }> };
@@ -31,13 +30,13 @@ describe('koa-body', () => {
       ],
     };
     router = new Router()
-      .get('/users', (ctx, next) => {
+      .get('/users', (ctx) => {
         const schema = z.object({ name: z.string() });
         const user = schema.safeParse(ctx.request.body);
         if (user.success) {
           ctx.body = database.users.find((element) => element.name === user.data.name);
           ctx.status = 200;
-          return next();
+          return;
         }
         ctx.status = 200;
         ctx.body = database;
@@ -47,20 +46,20 @@ describe('koa-body', () => {
         ctx.status = 200;
         ctx.body = user;
       })
-      .post('/users', (ctx, next) => {
+      .post('/users', (ctx) => {
         const schema = z.union([
           z.object({ name: z.string(), followers: z.coerce.number() }),
           z.object({ names: z.array(z.string()) }),
-          z.object({}),
+          z.any(),
         ]);
         const body = schema.safeParse(ctx.request.body);
 
-        if (body.error) {
+        if (!body.success) {
           ctx.status = 400;
-          return next();
+          return;
         }
 
-        if (body.data && 'name' in body.data) {
+        if ('name' in body.data) {
           database.users.push(body.data);
         }
         ctx.status = 201;
