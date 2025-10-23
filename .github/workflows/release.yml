@@ -36,6 +36,10 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+      - name: Update npm
+        # npm version npm 11.5.1 or later needed for Trusted Publishing
+        run: npm install -g npm@latest
+
       - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@v1
         with:
