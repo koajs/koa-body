@@ -1,5 +1,5 @@
-import type { File, Options as FormidableOptions } from 'formidable';
 import type { Options as CoBodyOptions } from 'co-body';
+import type { File, Options as FormidableOptions, Part } from 'formidable';
 import type { Context } from 'koa';
 import { z } from 'zod';
 
@@ -12,11 +12,20 @@ export enum HttpMethodEnum {
   HEAD = 'HEAD',
 }
 
-const HttpMethod = z.nativeEnum(HttpMethodEnum);
+const HttpMethod = z.enum(HttpMethodEnum);
 export type HttpMethod = z.infer<typeof HttpMethod>;
 
 export type ExtendedFormidableOptions = FormidableOptions & {
   onFileBegin?: (name: string, file: File) => void;
+  onPart?: (part: Part, handlePart: (part: Part) => void) => void;
+};
+
+export type ScalarOrArrayFields = {
+  [field: string]: string | string[];
+};
+
+export type ScalarOrArrayFiles = {
+  [file: string]: File | File[];
 };
 
 export const KoaBodyMiddlewareOptionsSchema = z.object({
@@ -68,7 +77,7 @@ export const KoaBodyMiddlewareOptionsSchema = z.object({
    */
   json: z.boolean().optional().default(true),
   /**
-   * Toggles co-body strict mode; if true, only parses arrays or objects, default true
+   * {Boolean} Toggles co-body strict mode; if true, only parses arrays or objects, default true
    */
   jsonStrict: z.boolean().optional().default(true),
 

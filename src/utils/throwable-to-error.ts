@@ -3,7 +3,7 @@ export default function throwableToError(e: unknown): Error {
     return e;
   }
 
-  const error = new Error(typeof e === 'object' ? JSON.stringify(e) : '' + e);
+  const error = new Error(typeof e === 'object' ? JSON.stringify(e) : `${e}`);
   error.name = typeof e;
   error.stack = undefined;
 

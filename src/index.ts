@@ -1,29 +1,40 @@
-import { KoaBodyMiddlewareOptionsSchema } from './types';
-import type { KoaBodyMiddlewareOptions } from './types';
-import type { Context, Middleware, Next } from 'koa';
-import * as Koa from 'koa';
-import type { Files } from 'formidable';
-import coBody from 'co-body';
-import toHttpMethod from './utils/string-method-to-enum-method';
-import throwableToError from './utils/throwable-to-error';
-import { isJsonBody, isMultipartBody, isTextBody, isUrlencodedBody } from './utils/body-type-util';
-import parseWithFormidable from './utils/parse-with-formidable';
-import { patchNodeAndKoa } from './utils/patch-util';
-import type { ContextWithBodyAndFiles } from './utils/patch-util';
+import * as coBody from 'co-body';
+import type { Middleware, Next } from 'koa';
+import type { KoaBodyMiddlewareOptions, ScalarOrArrayFiles } from './types.js';
+import { KoaBodyMiddlewareOptionsSchema } from './types.js';
+import {
+  isJsonBody,
+  isMultipartBody,
+  isTextBody,
+  isUrlencodedBody,
+} from './utils/body-type-util.js';
+import parseWithFormidable from './utils/parse-with-formidable.js';
+import { patchNodeAndKoa } from './utils/patch-util.js';
+import toHttpMethod from './utils/string-method-to-enum-method.js';
+import throwableToError from './utils/throwable-to-error.js';
 
-export * from './types';
+export * from './types.js';
 
 declare module 'koa' {
-  interface Request extends Koa.BaseRequest {
-    body?: any;
-    files?: Files;
+  interface Request {
+    body?: { [key: string]: unknown } | string;
+    rawBody?: string;
+    files?: ScalarOrArrayFiles;
+  }
+}
+
+declare module 'http' {
+  interface IncomingMessage {
+    body?: { [key: string]: unknown } | string;
+    rawBody?: string;
+    files?: ScalarOrArrayFiles;
   }
 }
 
 export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middleware {
   const validatedOptions = KoaBodyMiddlewareOptionsSchema.parse(options);
   const optionsToUse = { ...options, ...validatedOptions };
-  return async (ctx: Context, next: Next) => {
+  return async (ctx, next: Next) => {
     const isJson = isJsonBody(ctx, optionsToUse);
     const isText = isTextBody(ctx, optionsToUse);
     const isUrlencoded = isUrlencodedBody(ctx, optionsToUse);
@@ -32,7 +43,7 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
       encoding,
       jsonStrict,
       jsonLimit,
-      includeUnparsed: returnRawBody,
+      includeUnparsed,
       formLimit,
       textLimit,
       queryString,
@@ -49,11 +60,10 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
             encoding,
             limit: jsonLimit,
             strict: jsonStrict,
-            returnRawBody,
+            returnRawBody: includeUnparsed,
           });
-          patchNodeAndKoa(ctx as ContextWithBodyAndFiles, jsonBody, {
-            isText,
-            includeUnparsed: returnRawBody,
+          patchNodeAndKoa(ctx, jsonBody, {
+            includeUnparsed,
             isMultipart,
             patchKoa,
             patchNode,
@@ -63,11 +73,10 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
             encoding,
             limit: formLimit,
             queryString: queryString,
-            returnRawBody,
+            returnRawBody: includeUnparsed,
           });
-          patchNodeAndKoa(ctx as ContextWithBodyAndFiles, urlEncodedBody, {
-            isText,
-            includeUnparsed: returnRawBody,
+          patchNodeAndKoa(ctx, urlEncodedBody, {
+            includeUnparsed,
             isMultipart,
             patchKoa,
             patchNode,
@@ -76,20 +85,18 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
           const textBody = await coBody.text(ctx, {
             encoding,
             limit: textLimit,
-            returnRawBody,
+            returnRawBody: includeUnparsed,
           });
-          patchNodeAndKoa(ctx as ContextWithBodyAndFiles, textBody, {
-            isText,
-            includeUnparsed: returnRawBody,
+          patchNodeAndKoa(ctx, textBody, {
+            includeUnparsed,
             isMultipart,
             patchKoa,
             patchNode,
           });
         } else if (isMultipart) {
           const multipartBody = await parseWithFormidable(ctx, formidable || {});
-          patchNodeAndKoa(ctx as ContextWithBodyAndFiles, multipartBody, {
-            isText,
-            includeUnparsed: returnRawBody,
+          patchNodeAndKoa(ctx, multipartBody, {
+            includeUnparsed,
             isMultipart,
             patchKoa,
             patchNode,
@@ -103,18 +110,6 @@ export function koaBody(options: Partial<KoaBodyMiddlewareOptions> = {}): Middle
           throw error;
         }
       }
-    } else {
-      patchNodeAndKoa(
-        ctx as ContextWithBodyAndFiles,
-        {},
-        {
-          isText,
-          includeUnparsed: returnRawBody,
-          isMultipart,
-          patchKoa,
-          patchNode,
-        },
-      );
     }
 
     return next();

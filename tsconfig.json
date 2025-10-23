@@ -1,20 +1,16 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": ["@tsconfig/node22/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
   "compilerOptions": {
-    "lib": ["ES2021"],
-    "target": "ES2021",
-    "module": "commonjs",
-    "strict": true,
-    "sourceMap": true,
-    "moduleResolution": "Node",
-    "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "esModuleInterop": true,
     "resolveJsonModule": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
     "noUnusedLocals": false,
-    "typeRoots": ["node_modules/@types"],
-    "outDir": "lib"
-  },
-  "include": ["src/**/**.ts"],
-  "exclude": ["node_modules"]
+    "noUnusedParameters": false,
+    "sourceMap": true,
+    "declaration": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext"
+  }
 }
