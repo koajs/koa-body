@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 7.0.1
+
+### Patch Changes
+
+- [`c060a9b`](https://github.com/koajs/koa-body/commit/c060a9b5f09b683319e75f31e334c4c747e39359) Thanks [@TheDadi](https://github.com/TheDadi)! - fix: use JsonValue from type-fest as body type fixes: #245
+
 ## 7.0.0
 
 ### Major Changes
