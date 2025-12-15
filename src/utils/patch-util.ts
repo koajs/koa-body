@@ -1,15 +1,10 @@
 import type { Context } from 'koa';
+import type { JsonValue } from 'type-fest';
 import type { ParseWithFormidableResult } from './parse-with-formidable.js';
 
-export type ParseWithCoBodyTextResult = string;
-export type ParseWithCoBodyJsonResult = { [key: string]: unknown };
-export type ParseWithCoBodyUrlEncodedResult = { [key: string]: unknown };
 export type ParseWithCoBodyIncludeUnparsedResult = { parsed: ParseWithCoBodyResult; raw: string };
 
-export type ParseWithCoBodyResult =
-  | ParseWithCoBodyTextResult
-  | ParseWithCoBodyJsonResult
-  | ParseWithCoBodyUrlEncodedResult;
+export type ParseWithCoBodyResult = JsonValue;
 
 type PatchOptions = {
   isMultipart: string | boolean | null;
@@ -35,7 +30,7 @@ export function patchNodeAndKoa(
       ctx.req.body = parsed;
       ctx.req.rawBody = raw;
     } else {
-      ctx.req.body = body;
+      ctx.req.body = body as ParseWithCoBodyResult;
     }
   }
   if (patchKoa) {
@@ -48,7 +43,7 @@ export function patchNodeAndKoa(
       ctx.request.body = parsed;
       ctx.request.rawBody = raw;
     } else {
-      ctx.request.body = body;
+      ctx.request.body = body as ParseWithCoBodyResult;
     }
   }
 }
