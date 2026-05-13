@@ -82,6 +82,35 @@ export const KoaBodyMiddlewareOptionsSchema = z.object({
   jsonStrict: z.boolean().optional().default(true),
 
   /**
+   * {String[]} Content-types matched as JSON bodies; passed to ctx.is(...).
+   */
+  jsonTypes: z
+    .array(z.string())
+    .optional()
+    .default([
+      'application/json',
+      'application/json-patch+json',
+      'application/vnd.api+json',
+      'application/csp-report',
+      'application/reports+json',
+    ]),
+
+  /**
+   * {String[]} Content-types matched as urlencoded bodies; passed to ctx.is(...).
+   */
+  urlencodedTypes: z.array(z.string()).optional().default(['urlencoded']),
+
+  /**
+   * {String[]} Content-types matched as text bodies; passed to ctx.is(...).
+   */
+  textTypes: z.array(z.string()).optional().default(['text/*']),
+
+  /**
+   * {String[]} Content-types matched as multipart bodies; passed to ctx.is(...).
+   */
+  multipartTypes: z.array(z.string()).optional().default(['multipart']),
+
+  /**
      * Toggles co-body returnRawBody mode; if true,
      * the raw body will be available using a Symbol for 'unparsedBody'.
      *

@@ -503,15 +503,7 @@ describe('koa-body', () => {
   });
 
   describe('JSON media types', () => {
-    const types = [
-      'application/json',
-      'application/json-patch+json',
-      'application/vnd.api+json',
-
-      // NOTE: application/csp-report is not supported by superagent
-      // See https://github.com/visionmedia/superagent/issues/1482
-      // 'application/csp-report'
-    ];
+    const types = ['application/json', 'application/json-patch+json', 'application/vnd.api+json'];
 
     for (const type of types) {
       it(`should decode body as JSON object for type ${type}`, async () => {
@@ -652,5 +644,87 @@ describe('koa-body', () => {
     assert.strictEqual(response.body._files.secondFile, undefined);
     assert.strictEqual(response.body._body.test, undefined);
     assert.strictEqual(response.body._body.test2, 'baz');
+  });
+
+  describe('custom body type matchers', () => {
+    it('parses a custom content-type as JSON when added to jsonTypes', async () => {
+      app.use(koaBody({ jsonTypes: ['application/vnd.custom+json'] }));
+      app.use(router.routes());
+
+      const response = await request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('application/vnd.custom+json')
+        .send({ a: 'foo' });
+
+      assert.strictEqual(response.status, 200);
+      assert.deepEqual(response.body, { a: 'foo' });
+    });
+
+    it('does not parse default JSON content-types when jsonTypes is overridden', async () => {
+      app.use(koaBody({ jsonTypes: ['application/vnd.custom+json'] }));
+      app.use(router.routes());
+
+      const response = await request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('application/json')
+        .send({ a: 'foo' });
+
+      // Body wasn't parsed, so the echo handler sets ctx.body = undefined -> 204.
+      assert.strictEqual(response.status, 204);
+    });
+
+    it('parses a custom content-type as urlencoded when added to urlencodedTypes', async () => {
+      app.use(koaBody({ urlencodedTypes: ['application/x-custom-form'] }));
+      app.use(router.routes());
+
+      const response = await request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('application/x-custom-form')
+        .send('name=foo&followers=7');
+
+      assert.strictEqual(response.status, 200);
+      assert.deepEqual(response.body, { name: 'foo', followers: '7' });
+    });
+
+    it('parses a custom content-type as text when added to textTypes', async () => {
+      app.use(koaBody({ textTypes: ['application/x-custom-text'] }));
+      app.use(router.routes());
+
+      const response = await request(http.createServer(app.callback()))
+        .post('/echo_body')
+        .type('application/x-custom-text')
+        .send('hello world');
+
+      assert.strictEqual(response.status, 200);
+      assert.strictEqual(response.text, 'hello world');
+    });
+
+    it('parses a custom content-type as multipart when added to multipartTypes', async () => {
+      app.use(
+        koaBody({
+          multipart: true,
+          multipartTypes: ['application/x-custom-multipart'],
+        }),
+      );
+      app.use(router.routes());
+
+      const boundary = '----CustomBoundary';
+      const body = [
+        `--${boundary}`,
+        'Content-Disposition: form-data; name="greeting"',
+        '',
+        'hello',
+        `--${boundary}--`,
+        '',
+      ].join('\r\n');
+
+      const response = await request(http.createServer(app.callback()))
+        .post('/echo_body_and_files')
+        .set('Content-Type', `application/x-custom-multipart; boundary=${boundary}`)
+        .send(body);
+
+      assert.strictEqual(response.status, 200);
+      assert.strictEqual(response.body._body.greeting, 'hello');
+    });
   });
 });
