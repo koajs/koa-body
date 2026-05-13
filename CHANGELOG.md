@@ -1,5 +1,40 @@
 ## Unreleased
 
+## 8.0.0
+
+### Major Changes
+
+- [`f858724`](https://github.com/koajs/koa-body/commit/f8587241f53b7171d5f13dd3d01261248d117978) Thanks [@TheDadi](https://github.com/TheDadi)! - Drop support for Node.js 18 and 20, both of which are past end-of-life (Node 18 EOL April 2025, Node 20 EOL April 2026).
+
+  The minimum supported version is now **Node.js 22**. CI is tested against Node 22 (Maintenance LTS), 24 (Active LTS), and 26 (Current).
+
+  If you are on Node 18 or 20, upgrade to Node 22+ before updating `koa-body`. No source-level API changes accompany this bump — it reflects the supported runtime floor only.
+
+### Minor Changes
+
+- [`9b3b5b6`](https://github.com/koajs/koa-body/commit/9b3b5b68736129cb547dbc40d0cf207cfac4411c) Thanks [@TheDadi](https://github.com/TheDadi)! - Add configurable body-type matchers: `jsonTypes`, `urlencodedTypes`, `textTypes`, and `multipartTypes`.
+
+  These options let callers customize which `Content-Type` values are parsed as which body kind, without patching the middleware internals. Each accepts an array of types passed directly to Koa's `ctx.is(...)`, so the standard mime patterns (e.g. `urlencoded`, `multipart`, `text/*`, `application/vnd.custom+json`) all work.
+
+  Defaults preserve the previous behavior:
+
+  - `jsonTypes`: `application/json`, `application/json-patch+json`, `application/vnd.api+json`, `application/csp-report`, `application/reports+json`
+  - `urlencodedTypes`: `urlencoded`
+  - `textTypes`: `text/*`
+  - `multipartTypes`: `multipart`
+
+  Example — parse a vendor JSON type and a custom multipart type:
+
+  ```ts
+  app.use(
+    koaBody({
+      jsonTypes: ["application/json", "application/vnd.custom+json"],
+      multipart: true,
+      multipartTypes: ["multipart", "application/x-custom-multipart"],
+    })
+  );
+  ```
+
 ## 7.0.1
 
 ### Patch Changes
