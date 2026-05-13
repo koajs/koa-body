@@ -24,7 +24,9 @@ npm install koa-body
   - **application/json-patch+json**
   - **application/vnd.api+json**
   - **application/csp-report**
+  - **application/reports+json**
   - **text/xml**
+- configurable content-type matchers per body kind (`jsonTypes`, `urlencodedTypes`, `textTypes`, `multipartTypes`) for vendor or custom mime types
 - option for patch to Koa or Node, or either
 - file uploads
 - body, fields and files size limiting
@@ -32,7 +34,7 @@ npm install koa-body
 ## Hello World - Quickstart
 
 ```sh
-npm install koa koa-body # Note that Koa requires Node.js 7.6.0+ for async/await support
+npm install koa koa-body # Requires Node.js 22+
 ```
 
 index.js:
@@ -145,6 +147,10 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 - `text` **{Boolean}** Parse text bodies, such as XML, default `true`
 - `json` **{Boolean}** Parse JSON bodies, default `true`
 - `jsonStrict` **{Boolean}** Toggles co-body strict mode; if set to true - only parses arrays or objects, default `true`
+- `jsonTypes` **{String[]}** Content-types matched as JSON bodies (passed to `ctx.is(...)`), default `['application/json', 'application/json-patch+json', 'application/vnd.api+json', 'application/csp-report', 'application/reports+json']`
+- `urlencodedTypes` **{String[]}** Content-types matched as urlencoded bodies (passed to `ctx.is(...)`), default `['urlencoded']`
+- `textTypes` **{String[]}** Content-types matched as text bodies (passed to `ctx.is(...)`), default `['text/*']`
+- `multipartTypes` **{String[]}** Content-types matched as multipart bodies (passed to `ctx.is(...)`), default `['multipart']`
 - `includeUnparsed` **{Boolean}** Toggles co-body returnRawBody option; if set to true, for form encoded and JSON requests the raw, unparsed request body will be attached to `ctx.request.rawBody`, default `false`
 - `formidable` **{Object}** Options to pass to the formidable multipart parser
 - `onError` **{Function}** Custom error handle, if throw an error, you can customize the response - onError(error, context), default will throw
