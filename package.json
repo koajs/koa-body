@@ -20,6 +20,10 @@
     "type": "git",
     "url": "git://github.com/koajs/koa-body.git"
   },
+  "homepage": "https://github.com/koajs/koa-body#readme",
+  "bugs": {
+    "url": "https://github.com/koajs/koa-body/issues"
+  },
   "keywords": [
     "koa",
     "urlencoded",
