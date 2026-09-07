@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 8.0.1
+
+### Patch Changes
+
+- [#260](https://github.com/koajs/koa-body/pull/260) [`6657991`](https://github.com/koajs/koa-body/commit/665799123fa64e3edd630700c6ec43524dd6085c) Thanks [@TheDadi](https://github.com/TheDadi)! - Update dependencies (`zod`, `type-fest`, `@types/koa`) and toolchain: CI now uses `pnpm/setup` and `changesets/action` v2, Node 24.20.0, pnpm 12, TypeScript 7, Biome 2.5.
+
 ## 8.0.0
 
 ### Major Changes
