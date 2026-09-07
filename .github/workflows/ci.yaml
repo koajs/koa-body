@@ -16,23 +16,17 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x, 24.x, 26.x]
+        node-version: [22, 24, 26]
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
-
-      - name: Install Dependencies
-        run: pnpm install
+          runtime: node@${{ matrix.node-version }}
+          cache: true
 
       - name: Build Package
         run: pnpm build

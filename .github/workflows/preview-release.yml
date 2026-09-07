@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Check permissions
         id: checkPermissions
-        uses: actions-cool/check-user-permission@v2
+        uses: actions-cool/check-user-permission@c21884f3dda18dafc2f8b402fe807ccc9ec1aa5e # v2.4.0
         with:
           require: "write"
 
@@ -24,19 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          node-version-file: "./.nvmrc"
-          cache: "pnpm"
-
-      - name: Install Dependencies
-        run: pnpm install
+          runtime: node@24
+          cache: true
 
       - name: Build Package
         run: pnpm build
